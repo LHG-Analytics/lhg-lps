@@ -253,15 +253,6 @@
         "copyright": "© 2026 · Todos os direitos reservados",
         "ageNotice": "Experiência para maiores de 18 anos"
       }
-    },
-    {
-      "type": "stickyCta",
-      "props": {
-        "ctas": [
-          { "label": "Ipiranga", "href": "#unidades", "variant": "gold",    "focusUnit": "ipiranga" },
-          { "label": "Lapa",     "href": "#unidades", "variant": "emerald", "focusUnit": "lapa" }
-        ]
-      }
     }
   ]
 }

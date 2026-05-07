@@ -1335,11 +1335,6 @@ section { padding: 96px 0; position: relative; }
     padding: 14px 22px;
     font-size: 11px;
   }
-
-  /* Concierge fica acima do StickyCta + home bar do iOS */
-  .concierge-fab {
-    bottom: calc(88px + env(safe-area-inset-bottom));
-  }
 }
 
 @media (max-width: 480px) {
