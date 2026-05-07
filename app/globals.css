@@ -1312,12 +1312,9 @@ section { padding: 96px 0; position: relative; }
    corrige overflow específico e respeita safe-area do iOS.
 ------------------------------------------------------------- */
 
-/* iOS safe-area: elementos fixos nunca por baixo do home indicator */
+/* iOS safe-area pra StickyCta (a do Concierge mora na seção 13 base) */
 .sticky-cta {
   bottom: max(16px, env(safe-area-inset-bottom));
-}
-.concierge-fab {
-  bottom: max(20px, env(safe-area-inset-bottom));
 }
 
 @media (max-width: 720px) {
@@ -1380,11 +1377,14 @@ section { padding: 96px 0; position: relative; }
 /* -------------------------------------------------------------
    13. CONCIERGE 24H — FAB (fixed action button)
    Lavanda saturada com texto/ícone roxo profundo. Sempre visível
-   no canto inferior direito da LP. Em mobile (<720px) sobe para
-   não brigar com o StickyCta full-width.
+   no canto inferior direito da LP. Bottom usa max() pra respeitar
+   safe-area do iOS (home indicator) — ver seção 14.
 ------------------------------------------------------------- */
 .concierge-fab {
-  position: fixed; bottom: 20px; right: 20px;
+  position: fixed;
+  /* max() respeita safe-area do iOS (home indicator) */
+  bottom: max(20px, env(safe-area-inset-bottom));
+  right: 20px;
   z-index: 70;
   display: inline-flex; align-items: center; gap: 10px;
   padding: 12px 22px;
@@ -1409,8 +1409,6 @@ section { padding: 96px 0; position: relative; }
   flex: 0 0 auto;
 }
 @media (max-width: 720px) {
-  /* StickyCta usa bottom:16px com padding:10px → ~64px de altura.
-     Empurra o concierge pra cima pra não sobrepor. */
-  .concierge-fab { bottom: 88px; right: 16px; padding: 11px 18px; font-size: 13px; }
+  .concierge-fab { right: 16px; padding: 11px 18px; font-size: 13px; }
   .concierge-fab__icon { width: 18px; height: 18px; }
 }
