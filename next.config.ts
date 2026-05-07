@@ -22,7 +22,13 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   async rewrites() {
     if (!basePath) return [];
-    return [{ source: "/", destination: "/lush/namorados" }];
+    // `beforeFiles` é obrigatório aqui — sem ele, o Next encontra o
+    // app/page.tsx (index) primeiro e nunca chega a rewrite.
+    return {
+      beforeFiles: [{ source: "/", destination: "/lush/namorados" }],
+      afterFiles: [],
+      fallback: [],
+    };
   },
 };
 
