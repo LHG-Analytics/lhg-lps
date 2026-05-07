@@ -1305,6 +1305,84 @@ section { padding: 96px 0; position: relative; }
 }
 
 /* -------------------------------------------------------------
+   14. MOBILE POLISH
+   Ajustes cirúrgicos pra 375×812 (iPhone) e 412×915 (Android) —
+   tráfego principal vem de Instagram/WhatsApp, mobile prevalece.
+   Não altera o visual desktop: apenas amplia touch targets,
+   corrige overflow específico e respeita safe-area do iOS.
+------------------------------------------------------------- */
+
+/* iOS safe-area: elementos fixos nunca por baixo do home indicator */
+.sticky-cta {
+  bottom: max(16px, env(safe-area-inset-bottom));
+}
+.concierge-fab {
+  bottom: max(20px, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 720px) {
+  /* Touch targets ≥40px (WCAG 2.5.5 / Apple HIG) */
+  .cats-arrow {
+    width: 40px; height: 40px;
+  }
+  .cats-arrow svg {
+    width: 16px; height: 16px;
+  }
+  .faq-item__q .tog {
+    width: 36px; height: 36px;
+  }
+  .hero__ctas .btn {
+    padding: 14px 22px;
+    font-size: 11px;
+  }
+
+  /* Concierge fica acima do StickyCta + home bar do iOS */
+  .concierge-fab {
+    bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 480px) {
+  /* Hero meta strip mais compacto sem perder hierarquia */
+  .hero__meta {
+    gap: 18px 24px;
+    padding-top: 22px;
+  }
+  .hero__meta strong { font-size: 22px; }
+}
+
+@media (max-width: 420px) {
+  /* Countdown: 4 boxes × 78px min + 3 gaps = 366px estoura em
+     phones <420. Reduz proporcionalmente sem matar a leitura. */
+  .offer__count { gap: 10px; }
+  .count-box {
+    min-width: 64px;
+    padding: 12px 8px;
+  }
+  .count-box b { font-size: 32px; }
+  .count-box span {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    margin-top: 6px;
+  }
+
+  /* Wizard steps: separadores `─` causavam quebra de 2 linhas
+     em ≤420; ocultar deixa a pílula contar a história. */
+  .wizard__steps {
+    gap: 4px;
+    font-size: 9.5px;
+    margin-bottom: 12px;
+  }
+  .wizard__sep { display: none; }
+  .wizard__step { padding: 5px 8px; }
+
+  /* Containers respiram menos pra ganhar largura útil */
+  section { padding: 56px 0; }
+  .wrap { padding: 0 18px; }
+  .offer__inner { padding: 40px 20px; }
+}
+
+/* -------------------------------------------------------------
    13. CONCIERGE 24H — FAB (fixed action button)
    Lavanda saturada com texto/ícone roxo profundo. Sempre visível
    no canto inferior direito da LP. Em mobile (<720px) sobe para
