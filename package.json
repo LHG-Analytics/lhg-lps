@@ -1,0 +1,30 @@
+{
+  "name": "lhg-lps",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build --turbopack",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "validate": "tsx scripts/validate-content.ts"
+  },
+  "dependencies": {
+    "next": "16.2.5",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.2.4",
+    "@types/node": "20.14.10",
+    "@types/react": "19.2.0",
+    "@types/react-dom": "19.2.0",
+    "eslint": "9.18.0",
+    "eslint-config-next": "16.2.5",
+    "tailwindcss": "4.2.4",
+    "tsx": "4.21.0",
+    "typescript": "5.7.3"
+  }
+}

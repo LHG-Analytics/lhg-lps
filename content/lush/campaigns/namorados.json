@@ -1,0 +1,267 @@
+{
+  "slug": "namorados",
+  "brand": "lush",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Lush — Dia dos Namorados",
+    "description": "Dia dos Namorados Lush: 11 a 14 de junho, com 3 horas e pernoite em todas as categorias. Curadoria gastronômica, buquê de rosas e suítes exclusivas em Ipiranga e Lapa."
+  },
+  "campaign": {
+    "name": "Dia dos Namorados 2026",
+    "range": {
+      "start": "2026-06-11",
+      "end": "2026-06-14",
+      "premium": "2026-06-12",
+      "label": "11 a 14 de junho"
+    },
+    "countdown": {
+      "target": "2026-06-12T23:59:59-03:00"
+    },
+    "lots": [
+      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 25, "coupon": "NAMORADOS25", "from": "2026-05-05", "to": "2026-05-19" },
+      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADOS15", "from": "2026-05-20", "to": "2026-06-04" },
+      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADOS10", "from": "2026-06-05", "to": "2026-06-11" },
+      { "id": "pre-abre",   "name": "Primeiro lote — abre 05/05", "discountPct": 25, "coupon": "NAMORADOS25", "before": "2026-05-05" },
+      { "id": "encerrado",  "name": "Lote encerrado",             "discountPct": 0,  "after": "2026-06-11" }
+    ],
+    "periods": [
+      {
+        "id": "3h-18",
+        "label": "3 horas · 18:00 – 21:00",
+        "shortLabel": "3 horas",
+        "meta": "Buquê de rosas · Pacote gastronômico",
+        "scope": "Todas as categorias",
+        "scopeKey": "3h",
+        "inclusos": "Buquê de rosas · Pacote gastronômico"
+      },
+      {
+        "id": "3h-22",
+        "label": "3 horas · 22:00 – 01:00",
+        "shortLabel": "3 horas",
+        "meta": "Buquê de rosas · Pacote gastronômico",
+        "scope": "Todas as categorias",
+        "scopeKey": "3h",
+        "inclusos": "Buquê de rosas · Pacote gastronômico"
+      },
+      {
+        "id": "pernoite",
+        "label": "Pernoite",
+        "shortLabel": "Pernoite",
+        "meta": "Buquê · 2 Welcome Drinks · Jantar completo · Espumante · Café da manhã Premium",
+        "scope": "Todas as categorias",
+        "scopeKey": "all",
+        "featured": true,
+        "featuredTag": "★ Experiência completa",
+        "inclusos": "Buquê · 2 Welcome Drinks · Jantar (2 entradas + 2 pratos + 2 sobremesas) · Espumante · Café da manhã Premium"
+      }
+    ],
+    "dates": [
+      { "value": "2026-06-11", "day": "11", "dow": "Quinta",  "tier": "regular", "label": "11 de junho · Quinta" },
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "premium", "label": "12 de junho · Sexta" },
+      { "value": "2026-06-13", "day": "13", "dow": "Sábado",  "tier": "regular", "label": "13 de junho · Sábado" },
+      { "value": "2026-06-14", "day": "14", "dow": "Domingo", "tier": "regular", "label": "14 de junho · Domingo" }
+    ]
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": {
+        "tag": "Pacote · Dia dos Namorados - 2026"
+      }
+    },
+    {
+      "type": "hero",
+      "props": {
+        "video": "/brands/lush/namorados/hero-cascata.mp4",
+        "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
+        "headlineFull": "O presente perfeito não se embrulha. Se vive.",
+        "headlineEmphasis": "vive",
+        "typewriter": true,
+        "subtitle": "Reserve agora sua experiência Lush.",
+        "primaryCta": { "label": "Escolher unidade", "href": "#unidades" },
+        "meta": [
+          { "label": "Períodos",  "value": "3 horas · Pernoite", "highlight": "Pernoite" },
+          { "label": "Datas",     "value": "11 a 14 de junho",   "highlight": "14" },
+          { "label": "Unidades",  "value": "Ipiranga · Lapa" }
+        ]
+      }
+    },
+    {
+      "type": "benefits",
+      "props": {
+        "eyebrow": "O que está incluso",
+        "headlineFull": "Tudo pensado para vocês dois.",
+        "headlineEmphasis": "vocês dois",
+        "items": [
+          {
+            "icon": "heart",
+            "title": "Buquê de rosas na suíte",
+            "body": "O buquê já espera vocês dentro do quarto. Nada de improviso a suíte recebe o casal como um cenário romântico e finalizado."
+          },
+          {
+            "icon": "calendar",
+            "title": "Gastronomia inclusa",
+            "body": "Jantar romântico (couvert + prato principal) no 3 horas. Jantar completo (entrada + prato principal + sobremesa) e café da manhã Premium no pernoite. Tudo servido na suíte sem dividir mesa com ninguém."
+          },
+          {
+            "icon": "champagne",
+            "title": "Espumante Lush + Welcome Drink",
+            "body": "No pernoite chegam dois Aperol Spritz como Welcome Drink, acompanhados do espumante Lush."
+          },
+          {
+            "icon": "clock",
+            "title": "Concierge 24h",
+            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera vocês pedem, a gente resolve."
+          }
+        ]
+      }
+    },
+    {
+      "type": "unitPicker",
+      "props": {
+        "id": "unidades",
+        "eyebrow": "Escolha sua unidade",
+        "headline": "Ipiranga ou Lapa: sua noite acontece onde for melhor para vocês.",
+        "subtitle": "Selecione a unidade mais próxima — comece pelo período (3 horas ou pernoite), escolha uma das datas (11 a 14/06) e a categoria de suíte.",
+        "units": ["ipiranga", "lapa"],
+        "wizardSteps": [
+          { "n": 1, "label": "Período" },
+          { "n": 2, "label": "Data" },
+          { "n": 3, "label": "Categoria" },
+          { "n": 4, "label": "Resumo" }
+        ],
+        "stepCopy": {
+          "period": {
+            "title": "Escolha o período",
+            "hint": "Cada período tem uma curadoria de inclusos. As categorias disponíveis se ajustam à sua escolha."
+          },
+          "date": {
+            "title": "Escolha sua data",
+            "hint": "12 de junho é a data oficial do Dia dos Namorados — preço premium. As demais com preço regular.",
+            "smallHint": "Após o esgotamento dos lotes promocionais, vagas remanescentes seguem com tarifa cheia.",
+            "couponHint": "Aplique o cupom {coupon} no nosso site oficial para ativar este desconto."
+          },
+          "category": {
+            "title": "Escolha a categoria da suíte",
+            "hint": "As categorias variam conforme o período escolhido.",
+            "hint3hIpiranga": "Todas as categorias da unidade estão disponíveis para 3 horas com pacote gastronômico.",
+            "hint3hLapa": "Todas as categorias da unidade estão disponíveis para 3 horas com pacote gastronômico.",
+            "hintAllPernoite": "Todas as categorias da unidade estão disponíveis para Pernoite."
+          },
+          "summary": {
+            "title": "Sua reserva no Dia dos Namorados",
+            "hint": "Confirme os detalhes e finalize no nosso site seguro.",
+            "labels": {
+              "unit": "Unidade",
+              "period": "Período",
+              "date": "Data",
+              "category": "Suíte",
+              "inclusos": "Inclusos",
+              "lot": "Lote",
+              "price": "Investimento"
+            },
+            "couponLine": "Insira o cupom {coupon} para obter {discount} OFF em nosso site oficial.",
+            "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento.",
+            "placeholderPrice": "R$ 1.500,00"
+          }
+        },
+        "openCtaLabel": "Reservar nesta unidade",
+        "confirmCtaLabel": "Confirmar reserva"
+      }
+    },
+    {
+      "type": "offer",
+      "props": {
+        "eyebrow": "Alta demanda · Vagas limitadas",
+        "headlineFull": "Tudo pronto para o 12/06. Só falta vocês.",
+        "headlineHtml": "Tudo pronto para o <em>12/06</em>.<br>Só falta <em>vocês</em>.",
+        "subtitle": "11 a 14 de junho · 3 horas e pernoite. Lotes limitados",
+        "countdownTo": "2026-06-12T23:59:59-03:00",
+        "ctas": [
+          { "label": "Reservar Ipiranga", "href": "#unidades", "variant": "gold",    "focusUnit": "ipiranga" },
+          { "label": "Reservar Lapa",     "href": "#unidades", "variant": "emerald", "focusUnit": "lapa" }
+        ],
+        "note": "3 horas · Pernoite · Pagamento seguro · Confirmação imediata"
+      }
+    },
+    {
+      "type": "faq",
+      "props": {
+        "eyebrow": "Dúvidas frequentes",
+        "headlineFull": "Antes da reserva.",
+        "headlineEmphasis": "reserva",
+        "intro": "Se sua pergunta não estiver aqui, o concierge responde em minutos pelo WhatsApp.",
+        "items": [
+          {
+            "q": "Como funciona a reserva?",
+            "a": "Escolha a unidade acima e siga o assistente: período (3 horas ou pernoite), data (11 a 14/06), categoria de suíte e resumo. Você é levado direto à finalização com tudo já aplicado."
+          },
+          {
+            "q": "O que está incluso no pacote?",
+            "a": "Depende do período. <b>Pernoite:</b> buquê de rosas, 2 Welcome Drinks (Aperol Spritz), jantar completo (2 entradas + 2 pratos + 2 sobremesas), espumante Lush e café da manhã Premium. <b>3 horas:</b> buquê e pacote gastronômico exclusivo da data."
+          },
+          {
+            "q": "Posso escolher a categoria?",
+            "a": "Sim. Depois de escolher a unidade, você vê em tempo real as suítes disponíveis (Spa, Lounge, Hidro, Cine e outras) e escolhe a que combina com o clima da noite."
+          },
+          {
+            "q": "Como funcionam os períodos?",
+            "a": "São duas opções: <b>3 horas</b> em duas janelas (18h–21h ou 22h–1h) e <b>pernoite</b> das 20h até as 12h do dia seguinte. Em ambos, todas as categorias da unidade ficam disponíveis."
+          },
+          {
+            "q": "E o dia 12/06?",
+            "a": "12 de junho é a data oficial do Dia dos Namorados e opera com tarifa premium. Os dias 11, 13 e 14 mantêm a tarifa regular da campanha — mesma curadoria, mesmos inclusos."
+          },
+          {
+            "q": "E se eu reservar perto da data?",
+            "a": "Os lotes promocionais (com desconto progressivo) são limitados e fecham por ordem de chegada. Quando esgotam, ainda pode haver disponibilidade nas datas de 11 a 14/06 — porém com tarifa cheia, sem desconto. Por isso, quanto mais cedo a reserva, melhor o preço."
+          },
+          {
+            "q": "Política de cancelamento?",
+            "a": "Cancelamento gratuito até 48h antes do horário reservado. Após esse período, a reserva pode ser remarcada para outra data dentro de 30 dias."
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Hospitalidade privada, desenhada para casais que procuram privacidade, design e tempo de qualidade.",
+        "columns": [
+          {
+            "title": "Unidades",
+            "links": [
+              { "label": "Lush Ipiranga", "href": "#unidades", "focusUnit": "ipiranga" },
+              { "label": "Lush Lapa",     "href": "#unidades", "focusUnit": "lapa" }
+            ]
+          },
+          {
+            "title": "Pacotes",
+            "links": [
+              { "label": "Pernoite", "href": "#unidades" },
+              { "label": "3 horas",  "href": "#unidades" }
+            ]
+          },
+          {
+            "title": "Ajuda",
+            "links": [
+              { "label": "Política de privacidade","href": "https://lushmotel.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso",          "href": "https://lushmotel.com.br/pt-BR/terms" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 · Todos os direitos reservados",
+        "ageNotice": "Experiência para maiores de 18 anos"
+      }
+    },
+    {
+      "type": "stickyCta",
+      "props": {
+        "ctas": [
+          { "label": "Ipiranga", "href": "#unidades", "variant": "gold",    "focusUnit": "ipiranga" },
+          { "label": "Lapa",     "href": "#unidades", "variant": "emerald", "focusUnit": "lapa" }
+        ]
+      }
+    }
+  ]
+}
