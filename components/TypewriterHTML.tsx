@@ -13,17 +13,19 @@ type Props = {
 };
 
 /**
- * Replica o `[data-typewriter]` do HTML original — toca uma vez quando
- * o elemento entra no viewport, char-a-char, preservando estrutura de
- * `<em>` e `<br>` ao longo da animação. Usado pelas headlines de
- * Benefits, UnitPicker e Offer.
+ * Replica o `[data-typewriter]` do HTML original — começa a animação
+ * quando o elemento entra no viewport, e depois loopa a cada `LOOP_MS`
+ * (igual ao Hero). Preserva estrutura de `<em>` e `<br>` ao longo da
+ * digitação. Usado pelas headlines de Benefits, UnitPicker e Offer.
  *
  * SSR renderiza o HTML completo (bom pra SEO + primeira pintura). Após
  * hydration, useEffect monta IntersectionObserver: ao bater o threshold,
- * o conteúdo zera e re-cresce char por char. Para elementos below-fold
- * (todos os 3 blocks usam isso), não há flash — a animação inicia já
- * com o usuário rolando até ali.
+ * o conteúdo zera e re-cresce char por char. Quando termina, espera
+ * `LOOP_MS` e reinicia.
  */
+const LOOP_MS = 4000;
+const TICK_MIN = 55;
+const TICK_JITTER = 35;
 export function TypewriterHTML({
   html,
   ariaLabel,
@@ -51,19 +53,28 @@ export function TypewriterHTML({
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
-    const start = () => {
-      if (started || cancelled) return;
-      started = true;
+    const runCycle = () => {
+      if (cancelled) return;
       let i = 0;
+      setContent("");
       const tick = () => {
         if (cancelled) return;
         setContent(renderUntil(tokens, i));
-        if (i >= tokens.length) return;
+        if (i >= tokens.length) {
+          // Termina a digitação, espera LOOP_MS e reinicia.
+          timer = setTimeout(runCycle, LOOP_MS);
+          return;
+        }
         i++;
-        timer = setTimeout(tick, 55 + Math.random() * 35);
+        timer = setTimeout(tick, TICK_MIN + Math.random() * TICK_JITTER);
       };
-      setContent("");
       tick();
+    };
+
+    const start = () => {
+      if (started || cancelled) return;
+      started = true;
+      runCycle();
     };
 
     const el = ref.current;
