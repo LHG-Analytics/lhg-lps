@@ -121,7 +121,7 @@
       "props": {
         "id": "unidades",
         "eyebrow": "Escolha sua unidade",
-        "headline": "Ipiranga ou Lapa: sua noite acontece onde for melhor para vocês.",
+        "headline": "<em>Ipiranga</em> ou <em>Lapa</em>: sua noite acontece onde for melhor para vocês.",
         "subtitle": "Selecione a unidade mais próxima — comece pelo período (3 horas ou pernoite), escolha uma das datas (11 a 14/06) e a categoria de suíte.",
         "units": ["ipiranga", "lapa"],
         "wizardSteps": [

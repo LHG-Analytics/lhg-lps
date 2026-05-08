@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { BenefitsBlockProps } from "@/lib/schema";
+import { TypewriterHTML } from "@/components/TypewriterHTML";
 
 /**
  * Mapa de ícones consumidos pelos benefits. Schema (`BenefitsBlock`)
@@ -35,18 +36,14 @@ export function Benefits({
   headlineEmphasis,
   items,
 }: BenefitsBlockProps) {
-  const split = splitEmphasis(headlineFull, headlineEmphasis);
+  const headlineHtml = composeEmphasisHtml(headlineFull, headlineEmphasis);
 
   return (
     <section className="benefits">
       <div className="wrap">
         <div className="section-head fade-up">
           <span className="eyebrow">{eyebrow}</span>
-          <h2 className="display">
-            {split.before}
-            {split.em ? <em>{split.em}</em> : null}
-            {split.after}
-          </h2>
+          <TypewriterHTML html={headlineHtml} ariaLabel={headlineFull} />
         </div>
         <div
           className="benefits__grid"
@@ -75,12 +72,21 @@ export function Benefits({
   );
 }
 
-function splitEmphasis(full: string, em: string) {
+function composeEmphasisHtml(full: string, em: string): string {
   const idx = full.indexOf(em);
-  if (idx < 0) return { before: full, em: "", after: "" };
-  return {
-    before: full.slice(0, idx),
-    em,
-    after: full.slice(idx + em.length),
-  };
+  if (idx < 0) return escape(full);
+  return (
+    escape(full.slice(0, idx)) +
+    "<em>" +
+    escape(em) +
+    "</em>" +
+    escape(full.slice(idx + em.length))
+  );
+}
+
+function escape(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { OfferBlockProps } from "@/lib/schema";
+import { TypewriterHTML } from "@/components/TypewriterHTML";
 
 /**
  * Offer — countdown ticking + neon spinning border.
@@ -30,11 +31,7 @@ export function Offer({
           <span className="eyebrow" style={{ justifyContent: "center", display: "flex" }}>
             {eyebrow}
           </span>
-          <h2
-            className="display"
-            aria-label={headlineFull}
-            dangerouslySetInnerHTML={{ __html: headlineHtml }}
-          />
+          <TypewriterHTML html={headlineHtml} ariaLabel={headlineFull} />
           <p className="offer__sub">{subtitle}</p>
 
           <div className="offer__count" aria-live="polite">

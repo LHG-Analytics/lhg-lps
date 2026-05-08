@@ -19,6 +19,7 @@ import type {
 import { AmenityChip } from "@/lib/amenities";
 import { getActiveLot, type ActiveLot } from "@/lib/lots";
 import { buildBookingUrl } from "@/lib/booking";
+import { TypewriterHTML } from "@/components/TypewriterHTML";
 
 type Props = UnitPickerBlockProps & {
   brand: Brand;
@@ -95,7 +96,7 @@ export function UnitPicker({
       <div className="wrap">
         <div className="section-head fade-up">
           <span className="eyebrow">{eyebrow}</span>
-          <h2 className="display">{headline}</h2>
+          <TypewriterHTML html={headline} />
           <p>{subtitle}</p>
         </div>
 
