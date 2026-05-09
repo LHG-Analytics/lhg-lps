@@ -182,7 +182,7 @@
               "category": "Suíte",
               "inclusos": "Inclusos",
               "lot": "Lote",
-              "price": "Investimento"
+              "price": "Valor total"
             },
             "couponLine": "Insira o cupom {coupon} para obter {discount} OFF em nosso site oficial.",
             "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento."
