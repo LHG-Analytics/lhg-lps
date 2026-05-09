@@ -101,10 +101,22 @@ export function TypewriterHTML({
   return (
     <h2
       ref={ref}
-      className={className}
+      className={`${className} typewriter-stack`}
       aria-label={ariaLabel ?? stripHtml(html)}
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
+    >
+      {/* Ghost: cópia hidden do HTML completo. Reserva a altura final
+          desde o primeiro paint, evitando layout-shift quando o `live`
+          cresce char-a-char. Ambos ocupam o mesmo grid cell. */}
+      <span
+        aria-hidden="true"
+        className="typewriter-ghost"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
+      <span
+        aria-hidden="true"
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    </h2>
   );
 }
 

@@ -88,7 +88,14 @@
    2. RESET + BASE
 ------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  /* Defense-in-depth contra elementos absolute/fixed que possam vazar do
+     viewport. O body já capa, mas html também previne o scroll horizontal
+     em iOS quando algum filho posiciona-se além da viewport. */
+  overflow-x: hidden;
+}
 body {
   margin: 0;
   background: var(--bg);
@@ -1296,6 +1303,24 @@ section { padding: 96px 0; position: relative; }
 }
 .fade-up.in { opacity: 1; transform: none; }
 
+/* TypewriterHTML: stacking via grid pra reservar a altura final do título.
+   O .typewriter-ghost é uma cópia hidden do HTML completo que ocupa o
+   mesmo grid cell — assim o título não cresce conforme os chars vão sendo
+   digitados (zero layout-shift, sem precisar calcular min-height por
+   viewport). */
+.typewriter-stack {
+  display: grid;
+}
+.typewriter-stack > * {
+  grid-row: 1;
+  grid-column: 1;
+}
+.typewriter-ghost {
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
 [data-stagger] > .reveal,
 [data-stagger] > .fade-up { transition-delay: calc(var(--i, 0) * var(--stagger-step, 90ms)); }
 
@@ -1341,6 +1366,20 @@ section { padding: 96px 0; position: relative; }
     padding-top: 22px;
   }
   .hero__meta strong { font-size: 22px; }
+
+  /* Eyebrow estoura em telas estreitas: "EDIÇÃO LIMITADA · DIA DOS
+     NAMORADOS 2026" tem 40 chars e o letter-spacing 0.28em + display
+     inline-flex impedem o texto de quebrar. Encolhendo levemente fonte
+     e tracking + permitindo flex-wrap, cabe sem trair o look. */
+  .eyebrow {
+    flex-wrap: wrap;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    width: 20px;
+  }
 }
 
 @media (max-width: 420px) {
