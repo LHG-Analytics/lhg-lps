@@ -60,7 +60,31 @@
       { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "premium", "label": "12 de junho · Sexta" },
       { "value": "2026-06-13", "day": "13", "dow": "Sábado",  "tier": "regular", "label": "13 de junho · Sábado" },
       { "value": "2026-06-14", "day": "14", "dow": "Domingo", "tier": "regular", "label": "14 de junho · Domingo" }
-    ]
+    ],
+    "pricing": {
+      "currency": "BRL",
+      "units": {
+        "lapa": {
+          "lush":         { "3h-18": { "premium":  72800, "regular":  65750 }, "3h-22": { "premium":  75800, "regular":  68750 }, "pernoite": { "premium": 154225, "regular": 140100 } },
+          "hidro":        { "3h-18": { "premium":  85800, "regular":  75750 }, "3h-22": { "premium":  88800, "regular":  78750 }, "pernoite": { "premium": 177225, "regular": 159100 } },
+          "lounge-hidro": { "3h-18": { "premium":  96720, "regular":  84150 }, "3h-22": { "premium":  99720, "regular":  87150 }, "pernoite": { "premium": 196545, "regular": 190100 } },
+          "spa":          { "3h-18": { "premium": 103220, "regular":  89150 }, "3h-22": { "premium": 106220, "regular":  92150 }, "pernoite": { "premium": 208045, "regular": 202100 } },
+          "splash":       { "3h-18": { "premium": 121420, "regular": 103150 }, "3h-22": { "premium": 124420, "regular": 106150 }, "pernoite": { "premium": 240245, "regular": 242100 } },
+          "spa-splash":   { "3h-18": { "premium": 130520, "regular": 110150 }, "3h-22": { "premium": 133520, "regular": 113150 }, "pernoite": { "premium": 256345, "regular": 261100 } }
+        },
+        "ipiranga": {
+          "pop":          { "3h-18": { "premium":  68100, "regular":  62150 }, "3h-22": { "premium":  71120, "regular":  65150 }, "pernoite": { "premium": 145945, "regular": 127700 } },
+          "lush":         { "3h-18": { "premium":  75900, "regular":  68150 }, "3h-22": { "premium":  78920, "regular":  71150 }, "pernoite": { "premium": 159745, "regular": 140700 } },
+          "hidro":        { "3h-18": { "premium":  86300, "regular":  76150 }, "3h-22": { "premium":  89320, "regular":  79150 }, "pernoite": { "premium": 178145, "regular": 157700 } },
+          "lounge":       { "3h-18": { "premium":  94100, "regular":  82150 }, "3h-22": { "premium":  97120, "regular":  85150 }, "pernoite": { "premium": 191945, "regular": 169700 } },
+          "cine":         { "3h-18": { "premium":  94100, "regular":  82150 }, "3h-22": { "premium":  97120, "regular":  85150 }, "pernoite": { "premium": 191945, "regular": 169700 } },
+          "spa":          { "3h-18": { "premium": 100600, "regular":  87150 }, "3h-22": { "premium": 103620, "regular":  90150 }, "pernoite": { "premium": 203445, "regular": 191700 } },
+          "splash":       { "3h-18": { "premium": 131800, "regular": 111150 }, "3h-22": { "premium": 134820, "regular": 114150 }, "pernoite": { "premium": 258645, "regular": 235700 } },
+          "spa-splash":   { "3h-18": { "premium": 146100, "regular": 122150 }, "3h-22": { "premium": 149120, "regular": 125150 }, "pernoite": { "premium": 283945, "regular": 282700 } },
+          "casa-lush":    { "3h-18": { "premium": 215000, "regular": 175150 }, "3h-22": { "premium": 218020, "regular": 178150 }, "pernoite": { "premium": 405845, "regular": 401700 } }
+        }
+      }
+    }
   },
   "blocks": [
     {
@@ -161,8 +185,7 @@
               "price": "Investimento"
             },
             "couponLine": "Insira o cupom {coupon} para obter {discount} OFF em nosso site oficial.",
-            "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento.",
-            "placeholderPrice": "R$ 1.500,00"
+            "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento."
           }
         },
         "openCtaLabel": "Reservar nesta unidade",

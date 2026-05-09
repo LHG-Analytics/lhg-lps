@@ -138,6 +138,25 @@ const CampaignDate = z.object({
   label: z.string(),
 });
 
+/* -------------------------------------------------------------
+   PRICING
+   Mapa unit → category → period → { regular, premium } em centavos.
+   Centavos como integer evita aritmética com float. Formatação
+   acontece no display (lib/pricing.ts → formatBRL).
+   Categorias sem entrada de preço são ocultadas no wizard pelo
+   UnitPicker — não confiar no usuário ver "preço sob consulta".
+------------------------------------------------------------- */
+const PriceMatrix = z.object({
+  regular: z.number().int().nonnegative(),
+  premium: z.number().int().nonnegative(),
+});
+const CategoryPricing = z.record(z.string(), PriceMatrix);
+const UnitPricing = z.record(z.string(), CategoryPricing);
+const Pricing = z.object({
+  currency: z.literal("BRL"),
+  units: z.record(z.string(), UnitPricing),
+});
+
 const Range = z.object({
   start: z.string(),
   end: z.string(),
@@ -233,10 +252,6 @@ const UnitPickerBlock = z.object({
         /** Linha do "Lote" no resumo quando não há cupom (lote encerrado).
          * Placeholder `{name}`. */
         lotLineNoCoupon: z.string(),
-        /** Valor cheio mostrado em `<b>` no bloco de Investimento.
-         * Quando os preços reais por categoria entrarem, este placeholder
-         * sai daqui e vira derivado de `category.price`. */
-        placeholderPrice: z.string(),
       }),
     }),
     openCtaLabel: z.string(),
@@ -355,6 +370,10 @@ export const CampaignSchema = z.object({
     lots: z.array(Lot),
     periods: z.array(Period),
     dates: z.array(CampaignDate),
+    /** Tabela de preços por unit × category × period × tier.
+     * Campanha sem `pricing` mostra todas as categorias sem
+     * exibir bloco de preço (degradação suave). */
+    pricing: Pricing.optional(),
   }),
   blocks: z.array(BlockSchema),
 });

@@ -19,6 +19,7 @@ import type {
 import { AmenityChip } from "@/lib/amenities";
 import { getActiveLot, type ActiveLot } from "@/lib/lots";
 import { buildBookingUrl } from "@/lib/booking";
+import { lookupPrice, formatBRL } from "@/lib/pricing";
 import { TypewriterHTML } from "@/components/TypewriterHTML";
 
 type Props = UnitPickerBlockProps & {
@@ -204,10 +205,38 @@ function UnitWizard({
   const period = campaign.campaign.periods.find((p) => p.id === periodId);
   const dateObj = campaign.campaign.dates.find((d) => d.value === dateValue);
   const scopeKey = period?.scopeKey ?? "all";
+  const pricing = campaign.campaign.pricing;
   // Se um período "3h" não declarar um subset próprio em brand.json, cai
   // no catálogo `all` — comportamento default desde a campanha de namorados.
-  const cats = unit.categories[scopeKey] ?? unit.categories.all;
+  // Sob esse catálogo, ainda filtramos: categorias sem preço pra
+  // (period × tier) corrente são ocultadas no carrossel. Isso evita
+  // levar o usuário a um beco sem saída no resumo.
+  const baseCats = unit.categories[scopeKey] ?? unit.categories.all;
+  const cats =
+    pricing && period && dateObj
+      ? baseCats.filter((c) =>
+          lookupPrice(pricing, {
+            unitId: unit.id,
+            categoryId: c.id,
+            periodId: period.id,
+            tier: dateObj.tier,
+          }) != null
+        )
+      : baseCats;
   const category = cats.find((c) => c.id === categoryId);
+
+  // Se o tier mudar e a categoria selecionada não tiver preço pra nova
+  // combinação, limpa — evita resumo com preço fantasma.
+  useEffect(() => {
+    if (!categoryId || !period || !dateObj || !pricing) return;
+    const cents = lookupPrice(pricing, {
+      unitId: unit.id,
+      categoryId,
+      periodId: period.id,
+      tier: dateObj.tier,
+    });
+    if (cents == null) setCategoryId(null);
+  }, [categoryId, period, dateObj, pricing, unit.id]);
 
   const handleSelectPeriod = (next: string) => {
     onInteract();
@@ -326,10 +355,12 @@ function UnitWizard({
         <Summary
           summaryCopy={stepCopy.summary}
           unitName={`${brand.name.split(" ")[0]} ${unit.name}`}
+          unitId={unit.id}
           period={period}
           dateObj={dateObj}
           category={category}
           lots={campaign.campaign.lots}
+          pricing={pricing}
         />
         <div className="wiz-nav">
           <button type="button" className="wiz-back" onClick={() => goto(3)}>
@@ -648,17 +679,21 @@ function CategoryCarousel({
 function Summary({
   summaryCopy,
   unitName,
+  unitId,
   period,
   dateObj,
   category,
   lots,
+  pricing,
 }: {
   summaryCopy: UnitPickerBlockProps["stepCopy"]["summary"];
   unitName: string;
+  unitId: string;
   period?: Period;
   dateObj?: CampaignDate;
   category?: BrandUnit["categories"]["all"][number];
   lots: Campaign["campaign"]["lots"];
+  pricing?: Campaign["campaign"]["pricing"];
 }) {
   const [active, setActive] = useState<ActiveLot | null>(null);
   useEffect(() => {
@@ -672,6 +707,16 @@ function Summary({
     ? summaryCopy.lotLineNoCoupon.replace("{name}", active.name)
     : "—";
 
+  const priceCents =
+    pricing && period && dateObj && category
+      ? lookupPrice(pricing, {
+          unitId,
+          categoryId: category.id,
+          periodId: period.id,
+          tier: dateObj.tier,
+        })
+      : undefined;
+
   return (
     <div className="summary">
       <div className="summary__grid">
@@ -682,12 +727,14 @@ function Summary({
         <Cell full lbl={labels.inclusos} val={period?.inclusos ?? "—"} />
         <Cell full lbl={labels.lot} val={lotLine} />
       </div>
-      <div className="summary__price">
-        <span className="lbl">{labels.price}</span>
-        <span className="val">
-          <b>{summaryCopy.placeholderPrice}</b>
-        </span>
-      </div>
+      {priceCents != null ? (
+        <div className="summary__price">
+          <span className="lbl">{labels.price}</span>
+          <span className="val">
+            <b>{formatBRL(priceCents)}</b>
+          </span>
+        </div>
+      ) : null}
     </div>
   );
 }
