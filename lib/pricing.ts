@@ -35,15 +35,15 @@ export function lookupPrice(
 }
 
 /**
- * Centavos → string formatada em BRL **arredondada pra cima**, sem centavos
- * ("R$ 4.058,45" → "R$ 4.059"). Decisão de UI: campanha mostra valor
+ * Centavos → string formatada em BRL **arredondada pro mais próximo**
+ * (round half-up), sem centavos. Decisão de UI: campanha mostra valor
  * "limpo" e o checkout institucional cobra o número exato.
  *
  * Mantemos o valor exato no JSON pra eventual cálculo de desconto, métricas
  * etc. — só o display arredonda.
  */
 export function formatBRL(cents: number): string {
-  const reais = Math.ceil(cents / 100);
+  const reais = Math.round(cents / 100);
   return reais.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
