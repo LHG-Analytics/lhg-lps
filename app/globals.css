@@ -265,7 +265,8 @@ section { padding: 96px 0; position: relative; }
   display: grid;
   grid-template-columns: 1fr;
   max-width: 1200px;
-  margin: 0;
+  /* margin: 0 auto vem de .wrap — não sobrescrever pra alinhar com
+     a coluna central da nav (logo, tag de campanha) e demais sections. */
   text-align: left;
   align-items: center;
   width: 100%;
