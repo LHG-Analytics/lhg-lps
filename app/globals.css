@@ -1330,6 +1330,44 @@ section { padding: 96px 0; position: relative; }
 }
 
 /* -------------------------------------------------------------
+   15. TYPOGRAPHY REFINEMENTS — orfanagem
+   `text-wrap: balance` distribui texto uniformemente entre as linhas
+   (evita palavra órfã na última). Aplicado a títulos curtos.
+   `text-wrap: pretty` otimiza só as últimas 4 linhas, melhor pra
+   parágrafos longos. Browser support: Chrome 114+ / Safari 17.4+ /
+   Firefox 121+ — degrada pra wrap normal em browsers antigos.
+
+   Nota: `text-wrap` é herdado, então a regra em `.display` propaga
+   pros spans internos do TypewriterHTML (live + ghost). Ambos
+   wrappam pelas mesmas regras — ghost calcula altura final, live
+   anima sempre ≤ essa altura. Layout estável.
+------------------------------------------------------------- */
+.display,
+.unit__name,
+.cat__name,
+.benefit h3,
+.faq-item__q,
+.wizard__title,
+.opt__label {
+  text-wrap: balance;
+}
+
+.hero__sub,
+.section-head p,
+.unit__desc,
+.unit__addr,
+.benefit p,
+.opt__meta,
+.cat__meta,
+.wizard__hint,
+.faq__head p,
+.faq-item__a-inner,
+.offer__sub,
+.summary__cell .val {
+  text-wrap: pretty;
+}
+
+/* -------------------------------------------------------------
    14. MOBILE POLISH
    Ajustes cirúrgicos pra 375×812 (iPhone) e 412×915 (Android) —
    tráfego principal vem de Instagram/WhatsApp, mobile prevalece.
