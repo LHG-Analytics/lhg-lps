@@ -86,7 +86,7 @@
       "props": {
         "video": "/brands/andardecima/namorados/hero-video.mp4",
         "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
-        "headlineFull": "Sua noite mais especial",
+        "headlineFull": "Sua noite mais especial no coração de São Paulo.",
         "headlineEmphasis": "no coração de São Paulo.",
         "typewriter": true,
         "subtitle": "Reserve agora sua experiência no Andar de Cima.",
@@ -101,7 +101,7 @@
       "type": "benefits",
       "props": {
         "eyebrow": "POR QUE ANDAR DE CIMA",
-        "headlineFull": "Uma noite pensada",
+        "headlineFull": "Uma noite pensada em cada detalhe.",
         "headlineEmphasis": "em cada detalhe.",
         "items": [
           {
@@ -202,7 +202,7 @@
       "type": "faq",
       "props": {
         "eyebrow": "DÚVIDAS FREQUENTES",
-        "headlineFull": "Tudo que você",
+        "headlineFull": "Tudo que você precisa saber.",
         "headlineEmphasis": "precisa saber.",
         "intro": "Alguma dúvida? Fale com o nosso concierge 24h via WhatsApp.",
         "ctaLabel": "Falar com concierge",
