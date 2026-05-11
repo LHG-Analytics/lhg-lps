@@ -1,7 +1,7 @@
 {
   "id": "tout",
   "name": "Tout",
-  "domain": "toutsuites.com.br",
+  "domain": "toutmotel.com.br",
   "logo": {
     "src": "/brands/tout/units/svg-tout.png",
     "alt": "Tout"
@@ -50,32 +50,72 @@
   },
   "units": [
     {
-      "id": "sao-paulo",
-      "label": "Tout · São Paulo",
-      "name": "São Paulo",
+      "id": "campinas",
+      "label": "Tout · Campinas",
+      "name": "Campinas",
       "address": "— endereço a confirmar —",
       "image": "/brands/tout/units/fachada-tout.jpg",
-      "imageAlt": "Fachada Tout Suítes iluminada",
-      "bookingBaseUrl": "https://toutsuites.com.br/pt-BR/sao-paulo",
+      "imageAlt": "Fachada Tout Motel iluminada",
+      "bookingBaseUrl": "https://toutmotel.com.br/pt-BR/campinas",
       "categories": {
         "all": [
-          { "id": "suite-premium", "name": "Suíte Premium", "meta": "— detalhes a confirmar —", "slug": "suite-premium", "hero": true, "amenities": ["hidro", "king", "adega", "espresso"] },
-          { "id": "suite-plus",    "name": "Suíte Plus",    "meta": "— detalhes a confirmar —", "slug": "suite-plus",    "amenities": ["king", "adega", "espresso"] },
-          { "id": "suite",         "name": "Suíte",         "meta": "— detalhes a confirmar —", "slug": "suite",         "amenities": ["king", "espresso"] }
+          {
+            "id": "club",
+            "name": "Club",
+            "meta": "130m² · Piscina · Hidro · Sauna · Pista",
+            "slug": "club",
+            "hero": true,
+            "amenities": ["piscina", "cascata", "hidro", "sauna", "pista", "teto", "garagem-2", "adega", "king"]
+          },
+          {
+            "id": "sublime",
+            "name": "Sublime",
+            "meta": "50m² · Hidro · Sauna · Teto Solar",
+            "slug": "sublime",
+            "amenities": ["hidro", "sauna", "teto", "garagem", "adega", "king"]
+          },
+          {
+            "id": "relax",
+            "name": "Relax",
+            "meta": "45m² · Hidromassagem redonda",
+            "slug": "relax",
+            "amenities": ["hidro", "garagem", "king"]
+          },
+          {
+            "id": "glam",
+            "name": "Glam",
+            "meta": "45m² · Hidro com Cromoterapia",
+            "slug": "glam",
+            "amenities": ["hidro", "garagem", "king"]
+          },
+          {
+            "id": "hidro",
+            "name": "Hidro",
+            "meta": "30m² · Hidro com Cromoterapia",
+            "slug": "hidro",
+            "amenities": ["hidro", "garagem", "king", "pcd"]
+          },
+          {
+            "id": "suite-a",
+            "name": "Suíte A",
+            "meta": "30m² · Smart TV · Essencial",
+            "slug": "suite-a",
+            "amenities": ["garagem", "king", "pcd"]
+          }
         ]
       }
     }
   ],
   "booking": {
     "periodIds": {
-      "pernoite": "00000000-0000-0000-0000-000000000001",
-      "3h-18":    "00000000-0000-0000-0000-000000000002",
-      "3h-22":    "00000000-0000-0000-0000-000000000002"
+      "pernoite": "13272a31-4ecd-4314-94c7-b7a02fc6f392",
+      "3h-18":    "TODO-aguardando-id",
+      "3h-22":    "TODO-aguardando-id"
     },
-    "urlTemplate": "https://toutsuites.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+    "urlTemplate": "https://toutmotel.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
   },
   "concierge": {
     "label": "Concierge 24h",
-    "href": "https://wa.me/5511XXXXXXXXX"
+    "href": "https://wa.me/551931996531"
   }
 }

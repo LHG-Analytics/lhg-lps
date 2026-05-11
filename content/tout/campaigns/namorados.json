@@ -4,7 +4,7 @@
   "lang": "pt-BR",
   "meta": {
     "title": "Tout — Dia dos Namorados",
-    "description": "Dia dos Namorados no Tout: 11 a 14 de junho, com 3 horas e pernoite. Buquê de rosas, jantar especial e espumante em São Paulo."
+    "description": "Dia dos Namorados no Tout: 11 a 14 de junho, com 3 horas e pernoite. Buquê de rosas, jantar especial e espumante em Campinas."
   },
   "campaign": {
     "name": "Dia dos Namorados 2026",
@@ -118,9 +118,9 @@
       "props": {
         "id": "reservar",
         "eyebrow": "RESERVAR AGORA",
-        "headline": "<em>Tout</em>: uma noite inesquecível em São Paulo.",
+        "headline": "<em>Tout</em>: uma noite inesquecível em Campinas.",
         "subtitle": "Escolha o período e a suíte ideal para vocês.",
-        "units": ["sao-paulo"],
+        "units": ["campinas"],
         "wizardSteps": [
           { "n": 1, "label": "Período" },
           { "n": 2, "label": "Data" },
@@ -178,7 +178,7 @@
             "label": "Reservar agora",
             "href": "#reservar",
             "variant": "gold",
-            "focusUnit": "sao-paulo"
+            "focusUnit": "campinas"
           }
         ],
         "note": "Desconto válido nas datas indicadas. Condições sujeitas a disponibilidade."
@@ -210,7 +210,7 @@
           },
           {
             "q": "O Tout tem estacionamento?",
-            "a": "Consulte disponibilidade de vaga com o concierge ao realizar sua reserva. Nossa equipe está pronta para orientar sobre as melhores opções de acesso."
+            "a": "Sim, todas as suítes incluem garagem privativa com portão automático."
           }
         ]
       }
@@ -218,7 +218,7 @@
     {
       "type": "footer",
       "props": {
-        "tagline": "Suítes exclusivas para casais em São Paulo, pensadas para quem valoriza privacidade, design e momentos únicos.",
+        "tagline": "Suítes exclusivas para casais em Campinas, pensadas para quem valoriza privacidade, design e momentos únicos.",
         "columns": [
           {
             "title": "EXPERIÊNCIAS",
@@ -231,18 +231,18 @@
             "title": "RESERVAS",
             "links": [
               { "label": "Reservar agora", "href": "#reservar" },
-              { "label": "Concierge 24h", "href": "https://wa.me/5511XXXXXXXXX" }
+              { "label": "Concierge 24h", "href": "https://wa.me/551931996531" }
             ]
           },
           {
             "title": "INSTITUCIONAL",
             "links": [
-              { "label": "Política de privacidade", "href": "https://toutsuites.com.br/pt-BR/privacy-policy" },
-              { "label": "Termos de uso", "href": "https://toutsuites.com.br/pt-BR/terms" }
+              { "label": "Política de privacidade", "href": "https://toutmotel.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso", "href": "https://toutmotel.com.br/pt-BR/terms" }
             ]
           }
         ],
-        "copyright": "© 2026 Tout Suítes. Todos os direitos reservados.",
+        "copyright": "© 2026 Tout Motel. Todos os direitos reservados.",
         "ageNotice": "Experiência para maiores de 18 anos."
       }
     }
