@@ -1,35 +1,18 @@
 import type { NextConfig } from "next";
 
 /**
- * `basePath` permite hospedar a app sob um subdiretório do domínio
- * institucional (ex.: lushmotel.com.br/diadosnamorados2026). Quando
- * `NEXT_PUBLIC_BASE_PATH` está setado em produção (Vercel env), o
- * Next prefixa automaticamente todas as rotas e assets com esse path.
+ * Sem basePath — cada LP é uma rota natural do Next.js:
+ *   /lush/namorados
+ *   /andardecima/namorados
+ *   /tout/<campanha>  ← nova campanha = só JSON novo, sem redeploy de config
  *
- * Em dev local (env não setado) a app fica no root, igual antes.
- *
- * O rewrite `/ → /lush/namorados` só é aplicado quando há basePath:
- * em produção, bater na raiz do subdiretório serve a LP direto sem
- * mudar a URL pro caminho dinâmico interno.
+ * Roteamento por domínio (CloudFront ou subdomínio) é feito em middleware.ts.
  */
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
 const nextConfig: NextConfig = {
-  basePath,
   images: {
     formats: ["image/avif", "image/webp"],
   },
   typedRoutes: true,
-  async rewrites() {
-    if (!basePath) return [];
-    // `beforeFiles` é obrigatório aqui — sem ele, o Next encontra o
-    // app/page.tsx (index) primeiro e nunca chega a rewrite.
-    return {
-      beforeFiles: [{ source: "/", destination: "/lush/namorados" }],
-      afterFiles: [],
-      fallback: [],
-    };
-  },
 };
 
 export default nextConfig;
