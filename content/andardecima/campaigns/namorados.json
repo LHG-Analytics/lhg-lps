@@ -29,7 +29,7 @@
         "id": "3h-18",
         "label": "3 horas · 18:00 – 21:00",
         "shortLabel": "3 horas",
-        "meta": "Buquê de rosas · Jantar completo",
+        "meta": "Buquê de rosas · Pacote gastronômico",
         "scope": "Todas as categorias",
         "scopeKey": "3h",
         "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
@@ -38,7 +38,7 @@
         "id": "3h-22",
         "label": "3 horas · 22:00 – 01:00",
         "shortLabel": "3 horas",
-        "meta": "Buquê de rosas · Jantar completo",
+        "meta": "Buquê de rosas · Pacote gastronômico",
         "scope": "Todas as categorias",
         "scopeKey": "3h",
         "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
@@ -171,7 +171,7 @@
               "lot":       "Lote",
               "price":     "Valor total"
             },
-            "couponLine":    "Insira o cupom {coupon} para obter {discount} em nosso site oficial.",
+            "couponLine":    "Insira o cupom {coupon} para obter {discount} OFF",
             "lotLineNoCoupon": "{name}"
           }
         },

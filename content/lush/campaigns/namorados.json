@@ -184,7 +184,7 @@
               "lot": "Lote",
               "price": "Valor total"
             },
-            "couponLine": "Insira o cupom {coupon} para obter {discount} OFF em nosso site oficial.",
+            "couponLine": "Insira o cupom {coupon} para obter {discount} OFF.",
             "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento."
           }
         },
