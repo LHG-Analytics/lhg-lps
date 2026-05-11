@@ -1,12 +1,12 @@
 {
   "id": "tout",
   "name": "Tout",
-  "domain": "tout.com.br",
+  "domain": "toutsuites.com.br",
   "logo": {
-    "src": "/brands/tout/logo-tout.png",
+    "src": "/brands/tout/units/svg-tout.png",
     "alt": "Tout"
   },
-  "favicon": "/brands/tout/favicon-tout.png",
+  "favicon": "/brands/tout/units/favicon-tout.png",
   "fonts": {
     "display": {
       "family": "Cormorant Garamond",
@@ -25,57 +25,57 @@
     }
   },
   "theme": {
-    "bg": "#0A0A0A",
-    "bgElev": "#111111",
-    "bgCard": "#1A1A1A",
-    "line": "rgba(255,255,255,0.10)",
-    "lineSoft": "rgba(255,255,255,0.05)",
-    "ink": "#F5F5F5",
-    "inkMut": "#A0A0A0",
-    "inkDim": "#666666",
-    "lavender": "#C9A7F5",
-    "lavenderSoft": "#E0C9FF",
-    "lavenderDeep": "#8E6FB8",
-    "lavenderGrad": "linear-gradient(135deg, #E0C9FF 0%, #C9A7F5 50%, #8E6FB8 100%)",
-    "green": "#0A1A10",
-    "greenDeep": "#061209",
+    "bg": "#240A4A",
+    "bgElev": "#2C0232",
+    "bgCard": "#360141",
+    "line": "rgba(0,214,137,0.16)",
+    "lineSoft": "rgba(255,255,255,0.06)",
+    "ink": "#F2ECFF",
+    "inkMut": "#B8C8C0",
+    "inkDim": "#7A8898",
+    "lavender": "#00D689",
+    "lavenderSoft": "#4DFFC0",
+    "lavenderDeep": "#00A868",
+    "lavenderGrad": "linear-gradient(135deg, #4DFFC0 0%, #00D689 50%, #00A868 100%)",
+    "green": "#360141",
+    "greenDeep": "#200322",
     "red": "#E63946",
     "redDeep": "#B0202C",
-    "emerald": "#4FB48A",
-    "emeraldSoft": "#7BD3AC",
-    "emeraldDeep": "#2E7A5A",
-    "emeraldGrad": "linear-gradient(135deg, #7BD3AC 0%, #4FB48A 50%, #2E7A5A 100%)",
-    "lavBright": "#B883EF",
-    "inkDeep": "#2F1A46"
+    "emerald": "#00D689",
+    "emeraldSoft": "#4DFFC0",
+    "emeraldDeep": "#00A868",
+    "emeraldGrad": "linear-gradient(135deg, #4DFFC0 0%, #00D689 50%, #00A868 100%)",
+    "lavBright": "#FF0FFB",
+    "inkDeep": "#200322"
   },
   "units": [
     {
-      "id": "tout",
-      "label": "Tout",
-      "name": "Tout",
-      "address": "São Paulo, SP",
-      "image": "/brands/tout/units/fachada-tout.png",
-      "imageAlt": "Tout",
-      "bookingBaseUrl": "https://tout.com.br/pt-BR/tout",
+      "id": "sao-paulo",
+      "label": "Tout · São Paulo",
+      "name": "São Paulo",
+      "address": "— endereço a confirmar —",
+      "image": "/brands/tout/units/fachada-tout.jpg",
+      "imageAlt": "Fachada Tout Suítes iluminada",
+      "bookingBaseUrl": "https://toutsuites.com.br/pt-BR/sao-paulo",
       "categories": {
         "all": [
-          {
-            "id": "suite",
-            "name": "Suíte",
-            "meta": "Suíte padrão",
-            "slug": "suite",
-            "amenities": ["king"]
-          }
+          { "id": "suite-premium", "name": "Suíte Premium", "meta": "— detalhes a confirmar —", "slug": "suite-premium", "hero": true, "amenities": ["hidro", "king", "adega", "espresso"] },
+          { "id": "suite-plus",    "name": "Suíte Plus",    "meta": "— detalhes a confirmar —", "slug": "suite-plus",    "amenities": ["king", "adega", "espresso"] },
+          { "id": "suite",         "name": "Suíte",         "meta": "— detalhes a confirmar —", "slug": "suite",         "amenities": ["king", "espresso"] }
         ]
       }
     }
   ],
   "booking": {
     "periodIds": {
-      "pernoite": "TODO",
-      "3h-18": "TODO",
-      "3h-22": "TODO"
+      "pernoite": "00000000-0000-0000-0000-000000000001",
+      "3h-18":    "00000000-0000-0000-0000-000000000002",
+      "3h-22":    "00000000-0000-0000-0000-000000000002"
     },
-    "urlTemplate": "https://tout.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+    "urlTemplate": "https://toutsuites.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+  },
+  "concierge": {
+    "label": "Concierge 24h",
+    "href": "https://wa.me/5511XXXXXXXXX"
   }
 }

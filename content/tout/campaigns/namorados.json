@@ -1,0 +1,250 @@
+{
+  "slug": "namorados",
+  "brand": "tout",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Tout — Dia dos Namorados",
+    "description": "Dia dos Namorados no Tout: 11 a 14 de junho, com 3 horas e pernoite. Buquê de rosas, jantar especial e espumante em São Paulo."
+  },
+  "campaign": {
+    "name": "Dia dos Namorados 2026",
+    "range": {
+      "start": "2026-06-11",
+      "end": "2026-06-14",
+      "premium": "2026-06-12",
+      "label": "11 a 14 de junho"
+    },
+    "countdown": {
+      "target": "2026-06-12T23:59:59-03:00"
+    },
+    "lots": [
+      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 25, "coupon": "NAMORADOS25", "from": "2026-05-05", "to": "2026-05-19" },
+      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADOS15", "from": "2026-05-20", "to": "2026-06-04" },
+      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADOS10", "from": "2026-06-05", "to": "2026-06-11" },
+      { "id": "pre-abre",   "name": "Primeiro lote — abre 05/05", "discountPct": 25, "coupon": "NAMORADOS25", "before": "2026-05-05" },
+      { "id": "encerrado",  "name": "Lote encerrado",             "discountPct": 0,  "after": "2026-06-11" }
+    ],
+    "periods": [
+      {
+        "id": "3h-18",
+        "label": "3 horas · 18:00 – 21:00",
+        "shortLabel": "3 horas",
+        "meta": "Buquê de rosas · Pacote gastronômico",
+        "scope": "Todas as categorias",
+        "scopeKey": "3h",
+        "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
+      },
+      {
+        "id": "3h-22",
+        "label": "3 horas · 22:00 – 01:00",
+        "shortLabel": "3 horas",
+        "meta": "Buquê de rosas · Pacote gastronômico",
+        "scope": "Todas as categorias",
+        "scopeKey": "3h",
+        "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
+      },
+      {
+        "id": "pernoite",
+        "label": "Pernoite",
+        "shortLabel": "Pernoite",
+        "meta": "Buquê de rosas · Espumante Pedrucci · Café da manhã",
+        "scope": "Todas as categorias",
+        "scopeKey": "all",
+        "featured": true,
+        "featuredTag": "★ Experiência completa",
+        "inclusos": "Buquê de rosas · Espumante Pedrucci · Café da manhã"
+      }
+    ],
+    "dates": [
+      { "value": "2026-06-11", "day": "11", "dow": "Quinta",  "tier": "regular", "label": "11 de junho · Quinta" },
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "premium", "label": "12 de junho · Sexta" },
+      { "value": "2026-06-13", "day": "13", "dow": "Sábado",  "tier": "regular", "label": "13 de junho · Sábado" },
+      { "value": "2026-06-14", "day": "14", "dow": "Domingo", "tier": "regular", "label": "14 de junho · Domingo" }
+    ]
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": { "tag": "Pacote · Dia dos Namorados - 2026" }
+    },
+    {
+      "type": "hero",
+      "props": {
+        "video": "/brands/tout/namorados/hero-video.mp4",
+        "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
+        "headlineFull": "O presente perfeito não se embrulha. Se vive.",
+        "headlineEmphasis": "vive.",
+        "typewriter": true,
+        "subtitle": "Reserve agora sua experiência no Tout.",
+        "primaryCta": { "label": "Escolher minha suíte", "href": "#reservar" },
+        "meta": [
+          { "label": "Formatos", "value": "3h e Pernoite",   "highlight": "Pernoite" },
+          { "label": "Datas",    "value": "11 – 14 de jun",  "highlight": "14" }
+        ]
+      }
+    },
+    {
+      "type": "benefits",
+      "props": {
+        "eyebrow": "POR QUE TOUT",
+        "headlineFull": "Uma noite pensada em cada detalhe.",
+        "headlineEmphasis": "em cada detalhe.",
+        "items": [
+          {
+            "icon": "heart",
+            "title": "Buquê de rosas na suíte",
+            "body": "O buquê já espera vocês dentro do quarto. Nada de improviso — a suíte recebe o casal como um cenário romântico e finalizado."
+          },
+          {
+            "icon": "calendar",
+            "title": "Gastronomia inclusa",
+            "body": "Jantar romântico (1 couvert + 2 pratos principais) no 3 horas. Tudo servido na suíte, sem dividir mesa com ninguém."
+          },
+          {
+            "icon": "champagne",
+            "title": "Espumante Pedrucci",
+            "body": "No pernoite chega uma garrafa de espumante Pedrucci acompanhada de café da manhã completo para começar a manhã juntos."
+          },
+          {
+            "icon": "clock",
+            "title": "Concierge 24h",
+            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera — vocês pedem, a gente resolve."
+          }
+        ]
+      }
+    },
+    {
+      "type": "unitPicker",
+      "props": {
+        "id": "reservar",
+        "eyebrow": "RESERVAR AGORA",
+        "headline": "<em>Tout</em>: uma noite inesquecível em São Paulo.",
+        "subtitle": "Escolha o período e a suíte ideal para vocês.",
+        "units": ["sao-paulo"],
+        "wizardSteps": [
+          { "n": 1, "label": "Período" },
+          { "n": 2, "label": "Data" },
+          { "n": 3, "label": "Suíte" },
+          { "n": 4, "label": "Resumo" }
+        ],
+        "stepCopy": {
+          "period": {
+            "title": "Qual formato preferem?",
+            "hint": "Escolha entre 3 horas com jantar ou pernoite completo com espumante e café da manhã."
+          },
+          "date": {
+            "title": "Escolha sua data",
+            "hint": "12 de junho é a data oficial do Dia dos Namorados — preço premium. As demais com preço regular.",
+            "smallHint": "Após o esgotamento dos lotes promocionais, vagas remanescentes seguem com tarifa cheia.",
+            "couponHint": "Aplique o cupom {coupon} no nosso site oficial para ativar este desconto."
+          },
+          "category": {
+            "title": "Qual suíte?",
+            "hint": "Suítes disponíveis para o período escolhido.",
+            "hint3hIpiranga": "Todas as categorias disponíveis para este horário.",
+            "hint3hLapa": "Todas as categorias disponíveis para este horário.",
+            "hintAllPernoite": "Todas as categorias disponíveis para pernoite."
+          },
+          "summary": {
+            "title": "Resumo da reserva",
+            "hint": "Revise e confirme antes de prosseguir para o checkout.",
+            "labels": {
+              "unit":      "Localização",
+              "period":    "Formato",
+              "date":      "Data",
+              "category":  "Suíte",
+              "inclusos":  "Inclusos",
+              "lot":       "Lote",
+              "price":     "Valor total"
+            },
+            "couponLine":    "Insira o cupom {coupon} para obter {discount} OFF",
+            "lotLineNoCoupon": "{name}"
+          }
+        },
+        "openCtaLabel":    "Reservar agora",
+        "confirmCtaLabel": "Ir para reserva"
+      }
+    },
+    {
+      "type": "offer",
+      "props": {
+        "eyebrow": "Alta demanda · Vagas limitadas",
+        "headlineFull": "Tudo pronto para o 12/06. Só falta vocês.",
+        "headlineHtml": "Tudo pronto para o <em>12/06</em>.<br>Só falta <em>vocês</em>.",
+        "subtitle": "11 a 14 de junho · 3 horas e pernoite. Lotes limitados",
+        "countdownTo": "2026-06-12T23:59:59-03:00",
+        "ctas": [
+          {
+            "label": "Reservar agora",
+            "href": "#reservar",
+            "variant": "gold",
+            "focusUnit": "sao-paulo"
+          }
+        ],
+        "note": "Desconto válido nas datas indicadas. Condições sujeitas a disponibilidade."
+      }
+    },
+    {
+      "type": "faq",
+      "props": {
+        "eyebrow": "DÚVIDAS FREQUENTES",
+        "headlineFull": "Antes da reserva.",
+        "headlineEmphasis": "reserva.",
+        "intro": "Se sua pergunta não estiver aqui, o concierge responde em minutos pelo WhatsApp.",
+        "items": [
+          {
+            "q": "Como funciona o formato de 3 horas?",
+            "a": "Você escolhe entre dois horários: 18h–21h ou 22h–01h. A reserva inclui buquê de rosas e jantar completo (1 couvert e 2 pratos principais)."
+          },
+          {
+            "q": "O que está incluso no pernoite?",
+            "a": "Buquê de rosas, garrafa de espumante Pedrucci e café da manhã completo. Uma experiência pensada para ser a noite mais especial do casal."
+          },
+          {
+            "q": "Como funciona o cupom de desconto?",
+            "a": "O código aparece no resumo da reserva aqui na LP. Copie e aplique no campo de cupom ao finalizar no site oficial. O desconto é calculado automaticamente no checkout."
+          },
+          {
+            "q": "Posso cancelar ou alterar minha reserva?",
+            "a": "Consulte as políticas de cancelamento diretamente no site oficial ou converse com o concierge via WhatsApp. Estamos disponíveis 24 horas."
+          },
+          {
+            "q": "O Tout tem estacionamento?",
+            "a": "Consulte disponibilidade de vaga com o concierge ao realizar sua reserva. Nossa equipe está pronta para orientar sobre as melhores opções de acesso."
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Suítes exclusivas para casais em São Paulo, pensadas para quem valoriza privacidade, design e momentos únicos.",
+        "columns": [
+          {
+            "title": "EXPERIÊNCIAS",
+            "links": [
+              { "label": "Pernoite completo", "href": "#reservar" },
+              { "label": "3 horas", "href": "#reservar" }
+            ]
+          },
+          {
+            "title": "RESERVAS",
+            "links": [
+              { "label": "Reservar agora", "href": "#reservar" },
+              { "label": "Concierge 24h", "href": "https://wa.me/5511XXXXXXXXX" }
+            ]
+          },
+          {
+            "title": "INSTITUCIONAL",
+            "links": [
+              { "label": "Política de privacidade", "href": "https://toutsuites.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso", "href": "https://toutsuites.com.br/pt-BR/terms" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Tout Suítes. Todos os direitos reservados.",
+        "ageNotice": "Experiência para maiores de 18 anos."
+      }
+    }
+  ]
+}
