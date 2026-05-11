@@ -35,7 +35,7 @@ function WhatsAppIcon() {
       aria-hidden="true"
       className="concierge-fab__icon"
     >
-      <circle cx="16" cy="16" r="16" fill="var(--lav)" />
+      <circle cx="16" cy="16" r="16" fill="var(--ink-deep)" />
       <path
         transform="translate(8 8)"
         fill="#ffffff"
