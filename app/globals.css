@@ -343,7 +343,7 @@ section { padding: 96px 0; position: relative; }
 /* -------------------------------------------------------------
    6. UNIT CHOOSER (CRITICAL)
 ------------------------------------------------------------- */
-.units { background: linear-gradient(180deg, #0A1A10 0%, #0E2217 100%); }
+.units { background: linear-gradient(180deg, var(--green) 0%, var(--green-deep) 100%); }
 .section-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
 .section-head h2 {
   font-size: clamp(36px, 4.4vw, 54px);
@@ -362,6 +362,10 @@ section { padding: 96px 0; position: relative; }
   align-items: stretch;
   max-width: 1180px;
   margin: 0 auto;
+}
+.units__grid:has(.unit:only-child) {
+  grid-template-columns: minmax(0, 640px);
+  justify-content: center;
 }
 .units__grid[data-focus] {
   perspective: 2000px;
@@ -1077,12 +1081,12 @@ section { padding: 96px 0; position: relative; }
 /* -------------------------------------------------------------
    8. OFFER / URGENCY (neon spinning border)
 ------------------------------------------------------------- */
-.offer { background: #081710; position: relative; overflow: hidden; }
+.offer { background: var(--green-deep); position: relative; overflow: hidden; }
 .offer__bg {
   position: absolute; inset: 0; z-index: 0;
   background:
-    radial-gradient(700px 400px at 30% 50%, rgba(201,167,245,0.10), transparent 60%),
-    radial-gradient(700px 400px at 70% 50%, rgba(79,180,138,0.10), transparent 60%);
+    radial-gradient(700px 400px at 30% 50%, color-mix(in srgb, var(--lav) 10%, transparent), transparent 60%),
+    radial-gradient(700px 400px at 70% 50%, color-mix(in srgb, var(--emerald) 10%, transparent), transparent 60%);
   animation: offerBgPulse 6s ease-in-out infinite;
 }
 @keyframes offerBgPulse { 0%, 100% { opacity: 0.85; } 50% { opacity: 1; } }
@@ -1093,7 +1097,7 @@ section { padding: 96px 0; position: relative; }
   padding: 56px 32px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(17,42,28,0.8) 0%, rgba(10,26,16,0.9) 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-elev) 80%, transparent) 0%, color-mix(in srgb, var(--bg) 90%, transparent) 100%);
   backdrop-filter: blur(8px);
 }
 .offer__inner::before {
@@ -1103,13 +1107,13 @@ section { padding: 96px 0; position: relative; }
   padding: 1.5px;
   background: conic-gradient(
     from var(--neon-angle, 0deg),
-    rgba(201,167,245,0.95) 0%,
-    rgba(201,167,245,0.15) 18%,
-    rgba(79,180,138,0.15) 32%,
-    rgba(79,180,138,0.95) 50%,
-    rgba(79,180,138,0.15) 68%,
-    rgba(201,167,245,0.15) 82%,
-    rgba(201,167,245,0.95) 100%
+    color-mix(in srgb, var(--lav) 95%, transparent) 0%,
+    color-mix(in srgb, var(--lav) 15%, transparent) 18%,
+    color-mix(in srgb, var(--emerald) 15%, transparent) 32%,
+    color-mix(in srgb, var(--emerald) 95%, transparent) 50%,
+    color-mix(in srgb, var(--emerald) 15%, transparent) 68%,
+    color-mix(in srgb, var(--lav) 15%, transparent) 82%,
+    color-mix(in srgb, var(--lav) 95%, transparent) 100%
   );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
           mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -1117,7 +1121,7 @@ section { padding: 96px 0; position: relative; }
           mask-composite: exclude;
   pointer-events: none;
   animation: neonSpin 8s linear infinite;
-  filter: drop-shadow(0 0 6px rgba(201,167,245,0.45)) drop-shadow(0 0 10px rgba(79,180,138,0.35));
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--lav) 45%, transparent)) drop-shadow(0 0 10px color-mix(in srgb, var(--emerald) 35%, transparent));
 }
 .offer__inner::after {
   content: "";
@@ -1125,8 +1129,8 @@ section { padding: 96px 0; position: relative; }
   border-radius: inherit;
   pointer-events: none;
   box-shadow:
-    0 0 24px -4px rgba(201,167,245,0.35),
-    0 0 48px -8px rgba(79,180,138,0.25);
+    0 0 24px -4px color-mix(in srgb, var(--lav) 35%, transparent),
+    0 0 48px -8px color-mix(in srgb, var(--emerald) 25%, transparent);
   animation: neonPulse 4s ease-in-out infinite;
 }
 @property --neon-angle {
@@ -1136,8 +1140,8 @@ section { padding: 96px 0; position: relative; }
 }
 @keyframes neonSpin { to { --neon-angle: 360deg; } }
 @keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 24px -4px rgba(201,167,245,0.35), 0 0 48px -8px rgba(79,180,138,0.25); }
-  50%      { box-shadow: 0 0 36px -2px rgba(201,167,245,0.55), 0 0 72px -6px rgba(79,180,138,0.45); }
+  0%, 100% { box-shadow: 0 0 24px -4px color-mix(in srgb, var(--lav) 35%, transparent), 0 0 48px -8px color-mix(in srgb, var(--emerald) 25%, transparent); }
+  50%      { box-shadow: 0 0 36px -2px color-mix(in srgb, var(--lav) 55%, transparent), 0 0 72px -6px color-mix(in srgb, var(--emerald) 45%, transparent); }
 }
 @media (prefers-reduced-motion: reduce) {
   .offer__inner::before,
