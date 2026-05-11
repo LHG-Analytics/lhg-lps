@@ -202,11 +202,9 @@
       "type": "faq",
       "props": {
         "eyebrow": "DÚVIDAS FREQUENTES",
-        "headlineFull": "Tudo que você precisa saber.",
-        "headlineEmphasis": "precisa saber.",
-        "intro": "Alguma dúvida? Fale com o nosso concierge 24h via WhatsApp.",
-        "ctaLabel": "Falar com concierge",
-        "ctaHref": "https://wa.me/551151960787",
+        "headlineFull": "Antes da reserva.",
+        "headlineEmphasis": "reserva.",
+        "intro": "Se sua pergunta não estiver aqui, o concierge responde em minutos pelo WhatsApp.",
         "items": [
           {
             "q": "Como funciona o formato de 3 horas?",
