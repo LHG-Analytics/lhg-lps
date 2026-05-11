@@ -45,11 +45,14 @@ export function UnitPicker({
 }: Props) {
   const [focused, setFocused] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  // Rastreia quais cards já foram revelados no estado React — necessário porque
+  // React reconcilia `className` no re-render e remove qualquer `.in` adicionado
+  // diretamente ao DOM via classList. Com o estado aqui, `.in` sobrevive a
+  // re-renders causados pela mudança de `focused` (hover in/out).
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
 
-  // IO local para o reveal dos cards — garante que `.in` é adicionado ao
-  // entrar no viewport mesmo que o RevealManager global já tenha rodado.
   useEffect(() => {
     const grid = gridRef.current;
     if (!grid) return;
@@ -59,21 +62,25 @@ export function UnitPicker({
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("in");
+            const uid = (entry.target as HTMLElement).dataset.unitId;
+            if (uid) setRevealedIds((prev) => new Set([...prev, uid]));
             io.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
     );
+    const alreadyIn: string[] = [];
     cards.forEach((card) => {
       const r = card.getBoundingClientRect();
       if (r.top < window.innerHeight && r.bottom > 0) {
-        card.classList.add("in");
+        const uid = card.dataset.unitId;
+        if (uid) alreadyIn.push(uid);
       } else {
         io.observe(card);
       }
     });
+    if (alreadyIn.length) setRevealedIds((prev) => new Set([...prev, ...alreadyIn]));
     return () => io.disconnect();
   }, []);
 
@@ -139,11 +146,12 @@ export function UnitPicker({
             const unit = brand.units.find((u) => u.id === unitId);
             if (!unit) return null;
             const isFocused = focused === unitId;
+            const isRevealed = revealedIds.has(unitId);
             const revealVariant = idx === 0 ? "reveal--left" : "reveal--right";
             return (
               <article
                 key={unitId}
-                className={`unit reveal ${revealVariant}${isFocused ? " is-focused" : ""}`}
+                className={`unit reveal ${revealVariant}${isFocused ? " is-focused" : ""}${isRevealed ? " in" : ""}`}
                 data-unit-id={unitId}
                 onMouseEnter={() => handleEnter(unitId)}
                 onMouseLeave={handleLeave}

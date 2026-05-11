@@ -37,7 +37,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
   if (!data) notFound();
 
   return (
-    <div style={themeStyle(data.brand.theme)}>
+    <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
       <BlockRenderer
         brand={data.brand}
         campaign={data.campaign}
