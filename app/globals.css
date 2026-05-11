@@ -325,9 +325,9 @@ section { padding: 96px 0; position: relative; }
   font-size: 26px; font-weight: 500;
   font-variation-settings: "opsz" 36;
   letter-spacing: 0.005em; text-transform: none;
-  color: var(--lav);
+  color: rgba(255, 255, 255, 0.88) !important;
 }
-.hero__meta strong span { color: var(--gold); }
+.hero__meta strong span { color: var(--lav) !important; }
 
 .hero__mark {
   position: absolute; right: -60px; bottom: -60px;

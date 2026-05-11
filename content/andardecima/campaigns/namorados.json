@@ -86,14 +86,14 @@
       "props": {
         "video": "/brands/andardecima/namorados/hero-video.mp4",
         "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
-        "headlineFull": "Sua noite mais especial no coração de São Paulo.",
-        "headlineEmphasis": "no coração de São Paulo.",
+        "headlineFull": "Sua noite mais especial. Se vive.",
+        "headlineEmphasis": "vive.",
         "typewriter": true,
         "subtitle": "Reserve agora sua experiência no Andar de Cima.",
         "primaryCta": { "label": "Escolher minha suíte", "href": "#reservar" },
         "meta": [
-          { "label": "Formatos", "value": "3h e Pernoite" },
-          { "label": "Datas",    "value": "11 – 14 de jun" }
+          { "label": "Formatos", "value": "3h e Pernoite",   "highlight": "Pernoite" },
+          { "label": "Datas",    "value": "11 – 14 de jun",  "highlight": "14" }
         ]
       }
     },
