@@ -1531,6 +1531,7 @@ section { padding: 96px 0; position: relative; }
   background: linear-gradient(160deg, #31023A 0%, #2C0232 55%, #240A4A 100%);
   min-height: 100dvh;
 }
+[data-brand="tout"] .logo__mark { height: 36px; }
 [data-brand="tout"] .nav {
   background: color-mix(in srgb, #31023A 82%, transparent);
 }
