@@ -151,7 +151,7 @@ section { padding: 96px 0; position: relative; }
   padding: 18px 0;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  background: color-mix(in srgb, var(--emerald-deep) 60%, transparent);
+  background: color-mix(in srgb, var(--emerald-deep) 82%, transparent);
   border-bottom: 1px solid transparent;
   transition: background 0.25s ease, border-color 0.25s ease, padding 0.25s ease;
 }
@@ -181,6 +181,7 @@ section { padding: 96px 0; position: relative; }
 .nav__tag {
   font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
   color: var(--ink-mut);
+  text-shadow: 0 1px 6px rgba(0,0,0,0.55);
 }
 .nav__tag b { color: var(--gold); font-weight: 500; }
 @media (max-width: 640px) { .nav__tag { display: none; } }
