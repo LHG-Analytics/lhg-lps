@@ -147,9 +147,9 @@
             "hint": "Escolha entre 3 horas com jantar ou pernoite completo com espumante e café da manhã."
           },
           "date": {
-            "title": "Qual a data?",
-            "hint": "Disponível de 11 a 14 de junho. Dia 12 tem categoria premium.",
-            "smallHint": "Datas marcadas como Premium têm preço diferenciado.",
+            "title": "Escolha sua data",
+            "hint": "12 de junho é a data oficial do Dia dos Namorados — preço premium. As demais com preço regular.",
+            "smallHint": "Após o esgotamento dos lotes promocionais, vagas remanescentes seguem com tarifa cheia.",
             "couponHint": "Aplique o cupom {coupon} no nosso site oficial para ativar este desconto."
           },
           "category": {
