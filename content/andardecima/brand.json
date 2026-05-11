@@ -1,0 +1,128 @@
+{
+  "id": "andardecima",
+  "name": "Andar de Cima",
+  "domain": "andardecimasuites.com.br",
+  "logo": {
+    "src": "/brands/andardecima/units/svg-adc.png",
+    "alt": "Andar de Cima"
+  },
+  "favicon": "/brands/andardecima/units/favicon-adc.png",
+  "fonts": {
+    "display": {
+      "family": "Cormorant Garamond",
+      "google": "Cormorant Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400",
+      "fallback": "'Times New Roman', serif"
+    },
+    "serif": {
+      "family": "Fraunces",
+      "google": "Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500",
+      "fallback": "'Cormorant Garamond', 'Times New Roman', serif"
+    },
+    "sans": {
+      "family": "Inter",
+      "google": "Inter:wght@300;400;500;600;700",
+      "fallback": "system-ui, -apple-system, sans-serif"
+    }
+  },
+  "theme": {
+    "bg": "#FFFFFF",
+    "bgElev": "#F7F7F7",
+    "bgCard": "#F0F0F0",
+    "line": "rgba(16,24,32,0.12)",
+    "lineSoft": "rgba(16,24,32,0.06)",
+    "ink": "#101820",
+    "inkMut": "#4A5568",
+    "inkDim": "#8A95A0",
+    "lavender": "#ED0677",
+    "lavenderSoft": "#FF6EBC",
+    "lavenderDeep": "#A80455",
+    "lavenderGrad": "linear-gradient(135deg, #FF6EBC 0%, #ED0677 50%, #A80455 100%)",
+    "green": "#0D1420",
+    "greenDeep": "#070D16",
+    "red": "#E63946",
+    "redDeep": "#B0202C",
+    "emerald": "#101820",
+    "emeraldSoft": "#2A3A50",
+    "emeraldDeep": "#060E16",
+    "emeraldGrad": "linear-gradient(135deg, #2A3A50 0%, #101820 50%, #060E16 100%)",
+    "lavBright": "#ED0677",
+    "inkDeep": "#FFFFFF"
+  },
+  "units": [
+    {
+      "id": "sao-paulo",
+      "label": "Andar de Cima · São Paulo",
+      "name": "São Paulo",
+      "address": "R. Araújo, 224 · República, SP",
+      "image": "/brands/andardecima/units/fachada-adc.png",
+      "imageAlt": "Suíte Andar de Cima Suítes em São Paulo",
+      "bookingBaseUrl": "https://andardecimasuites.com.br/pt-BR/sao-paulo",
+      "categories": {
+        "all": [
+          {
+            "id": "espuma-copan",
+            "name": "Espuma Copan",
+            "meta": "60m² · Hidro · Pista + Pole · Vista Copan",
+            "slug": "espuma-copan",
+            "hero": true,
+            "amenities": ["hidro", "pista", "adega", "king", "espresso"]
+          },
+          {
+            "id": "espuma-lounge",
+            "name": "Espuma Lounge",
+            "meta": "60m² · Hidro · Pista + Pole Dance",
+            "slug": "espuma-lounge",
+            "amenities": ["hidro", "pista", "adega", "king", "espresso"]
+          },
+          {
+            "id": "espuma",
+            "name": "Espuma",
+            "meta": "40m² · Hidromassagem",
+            "slug": "espuma",
+            "amenities": ["hidro", "king", "espresso", "pcd"]
+          },
+          {
+            "id": "pop-copan",
+            "name": "Pop Copan",
+            "meta": "30m² · Vista privilegiada",
+            "slug": "pop-copan",
+            "amenities": ["king", "espresso", "tv"]
+          },
+          {
+            "id": "love",
+            "name": "Love",
+            "meta": "60m² · Suíte espaçosa",
+            "slug": "love",
+            "amenities": ["king", "espresso", "tv", "pcd"]
+          },
+          {
+            "id": "pop",
+            "name": "Pop",
+            "meta": "30m² · Essencial",
+            "slug": "pop",
+            "amenities": ["king", "espresso", "tv"]
+          },
+          {
+            "id": "cubo",
+            "name": "Cubo",
+            "meta": "30m² · Conforto urbano",
+            "slug": "cubo",
+            "amenities": ["king", "espresso", "tv"]
+          }
+        ]
+      }
+    }
+  ],
+  "booking": {
+    "periodIds": {
+      "pernoite": "13272a31-4ecd-4314-94c7-b7a02fc6f392",
+      "3h-18":    "be7de322-a0a1-4ec4-8316-7f18d1828c71",
+      "3h-22":    "be7de322-a0a1-4ec4-8316-7f18d1828c71"
+    },
+    "urlTemplate": "https://andardecimasuites.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+  },
+  "concierge": {
+    "label": "Concierge 24h",
+    "href": "https://wa.me/551151960787"
+  }
+}

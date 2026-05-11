@@ -142,6 +142,12 @@ export const AMENITY_ICONS: Record<string, ReactNode> = {
       <path d="M9 9v3M12 9v4M15 9v3M8 17v3M12 18v3M16 17v3" />
     </>
   ),
+  tv: (
+    <>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+    </>
+  ),
 };
 
 export const AMENITY_LABELS: Record<string, string> = {
@@ -162,6 +168,7 @@ export const AMENITY_LABELS: Record<string, string> = {
   queen: "Queen-size",
   pcd: "Opção PCD",
   "rooftop-shower": "Ducha c/ teto solar",
+  tv: "Smart TV",
 };
 
 export function AmenityChip({ keyName }: { keyName: string }) {

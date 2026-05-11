@@ -1,0 +1,81 @@
+{
+  "id": "tout",
+  "name": "Tout",
+  "domain": "tout.com.br",
+  "logo": {
+    "src": "/brands/tout/logo-tout.png",
+    "alt": "Tout"
+  },
+  "favicon": "/brands/tout/favicon-tout.png",
+  "fonts": {
+    "display": {
+      "family": "Cormorant Garamond",
+      "google": "Cormorant Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400",
+      "fallback": "'Times New Roman', serif"
+    },
+    "serif": {
+      "family": "Fraunces",
+      "google": "Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500",
+      "fallback": "'Cormorant Garamond', 'Times New Roman', serif"
+    },
+    "sans": {
+      "family": "Inter",
+      "google": "Inter:wght@300;400;500;600;700",
+      "fallback": "system-ui, -apple-system, sans-serif"
+    }
+  },
+  "theme": {
+    "bg": "#0A0A0A",
+    "bgElev": "#111111",
+    "bgCard": "#1A1A1A",
+    "line": "rgba(255,255,255,0.10)",
+    "lineSoft": "rgba(255,255,255,0.05)",
+    "ink": "#F5F5F5",
+    "inkMut": "#A0A0A0",
+    "inkDim": "#666666",
+    "lavender": "#C9A7F5",
+    "lavenderSoft": "#E0C9FF",
+    "lavenderDeep": "#8E6FB8",
+    "lavenderGrad": "linear-gradient(135deg, #E0C9FF 0%, #C9A7F5 50%, #8E6FB8 100%)",
+    "green": "#0A1A10",
+    "greenDeep": "#061209",
+    "red": "#E63946",
+    "redDeep": "#B0202C",
+    "emerald": "#4FB48A",
+    "emeraldSoft": "#7BD3AC",
+    "emeraldDeep": "#2E7A5A",
+    "emeraldGrad": "linear-gradient(135deg, #7BD3AC 0%, #4FB48A 50%, #2E7A5A 100%)",
+    "lavBright": "#B883EF",
+    "inkDeep": "#2F1A46"
+  },
+  "units": [
+    {
+      "id": "tout",
+      "label": "Tout",
+      "name": "Tout",
+      "address": "São Paulo, SP",
+      "image": "/brands/tout/units/fachada-tout.png",
+      "imageAlt": "Tout",
+      "bookingBaseUrl": "https://tout.com.br/pt-BR/tout",
+      "categories": {
+        "all": [
+          {
+            "id": "suite",
+            "name": "Suíte",
+            "meta": "Suíte padrão",
+            "slug": "suite",
+            "amenities": ["king"]
+          }
+        ]
+      }
+    }
+  ],
+  "booking": {
+    "periodIds": {
+      "pernoite": "TODO",
+      "3h-18": "TODO",
+      "3h-22": "TODO"
+    },
+    "urlTemplate": "https://tout.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "slug": "namorados",
+  "brand": "andardecima",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Andar de Cima — Dia dos Namorados",
+    "description": "Dia dos Namorados no Andar de Cima: 11 a 14 de junho, com 3 horas e pernoite em todas as suítes. Buquê de rosas, jantar especial e espumante no coração de São Paulo."
+  },
+  "campaign": {
+    "name": "Dia dos Namorados 2026",
+    "range": {
+      "start": "2026-06-11",
+      "end": "2026-06-14",
+      "premium": "2026-06-12",
+      "label": "11 a 14 de junho"
+    },
+    "countdown": {
+      "target": "2026-06-12T23:59:59-03:00"
+    },
+    "lots": [
+      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 25, "coupon": "NAMORADOS25", "from": "2026-05-05", "to": "2026-05-19" },
+      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADOS15", "from": "2026-05-20", "to": "2026-06-04" },
+      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADOS10", "from": "2026-06-05", "to": "2026-06-11" },
+      { "id": "pre-abre",   "name": "Primeiro lote — abre 05/05", "discountPct": 25, "coupon": "NAMORADOS25", "before": "2026-05-05" },
+      { "id": "encerrado",  "name": "Lote encerrado",             "discountPct": 0,  "after": "2026-06-11" }
+    ],
+    "periods": [
+      {
+        "id": "3h-18",
+        "label": "3 horas · 18:00 – 21:00",
+        "shortLabel": "3 horas",
+        "meta": "Buquê de rosas · Jantar completo",
+        "scope": "Todas as suítes",
+        "scopeKey": "3h",
+        "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
+      },
+      {
+        "id": "3h-22",
+        "label": "3 horas · 22:00 – 01:00",
+        "shortLabel": "3 horas",
+        "meta": "Buquê de rosas · Jantar completo",
+        "scope": "Todas as suítes",
+        "scopeKey": "3h",
+        "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
+      },
+      {
+        "id": "pernoite",
+        "label": "Pernoite",
+        "shortLabel": "Pernoite",
+        "meta": "Buquê de rosas · Espumante Pedrucci · Café da manhã",
+        "scope": "Todas as suítes",
+        "scopeKey": "all",
+        "featured": true,
+        "featuredTag": "★ Experiência completa",
+        "inclusos": "Buquê de rosas · Espumante Pedrucci · Café da manhã"
+      }
+    ],
+    "dates": [
+      { "value": "2026-06-11", "day": "11", "dow": "Quinta",  "tier": "regular", "label": "11 de junho · Quinta" },
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "premium", "label": "12 de junho · Sexta" },
+      { "value": "2026-06-13", "day": "13", "dow": "Sábado",  "tier": "regular", "label": "13 de junho · Sábado" },
+      { "value": "2026-06-14", "day": "14", "dow": "Domingo", "tier": "regular", "label": "14 de junho · Domingo" }
+    ],
+    "pricing": {
+      "currency": "BRL",
+      "units": {
+        "sao-paulo": {
+          "cubo":         { "3h-18": { "premium":  77400, "regular":  71700 }, "3h-22": { "premium":  80400, "regular":  74700 }, "pernoite": { "premium": 113300, "regular": 102200 } },
+          "pop":          { "3h-18": { "premium":  79400, "regular":  73300 }, "3h-22": { "premium":  82400, "regular":  76300 }, "pernoite": { "premium": 115900, "regular": 104200 } },
+          "love":         { "3h-18": { "premium":  80700, "regular":  74300 }, "3h-22": { "premium":  83700, "regular":  77300 }, "pernoite": { "premium": 117200, "regular": 105200 } },
+          "pop-copan":    { "3h-18": { "premium":  82000, "regular":  75300 }, "3h-22": { "premium":  85000, "regular":  78300 }, "pernoite": { "premium": 119800, "regular": 107200 } },
+          "espuma":       { "3h-18": { "premium":  88500, "regular":  80300 }, "3h-22": { "premium":  91500, "regular":  83300 }, "pernoite": { "premium": 130200, "regular": 115200 } },
+          "espuma-lounge":{ "3h-18": { "premium":  89800, "regular":  81300 }, "3h-22": { "premium":  92800, "regular":  84300 }, "pernoite": { "premium": 132800, "regular": 117200 } },
+          "espuma-copan": { "3h-18": { "premium":  98200, "regular":  87700 }, "3h-22": { "premium": 101200, "regular":  90700 }, "pernoite": { "premium": 147100, "regular": 128200 } }
+        }
+      }
+    }
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": { "tag": "EDIÇÃO LIMITADA" }
+    },
+    {
+      "type": "hero",
+      "props": {
+        "video": "/brands/andardecima/namorados/hero-video.mp4",
+        "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
+        "headlineFull": "Sua noite mais especial",
+        "headlineEmphasis": "no coração de São Paulo.",
+        "typewriter": true,
+        "subtitle": "Suítes exclusivas com vista para o Copan. Pernoite com espumante e café da manhã — ou 3 horas com jantar completo e buquê de rosas.",
+        "primaryCta": { "label": "Escolher minha suíte", "href": "#reservar" },
+        "meta": [
+          { "label": "Datas",    "value": "11 – 14 de jun" },
+          { "label": "Formatos", "value": "3h e Pernoite" },
+          { "label": "A partir", "value": "R$ 717",        "highlight": "por suíte" }
+        ]
+      }
+    },
+    {
+      "type": "benefits",
+      "props": {
+        "eyebrow": "POR QUE ANDAR DE CIMA",
+        "headlineFull": "Uma noite pensada",
+        "headlineEmphasis": "em cada detalhe.",
+        "items": [
+          {
+            "icon": "heart",
+            "title": "Pacote romântico completo",
+            "body": "Buquê de rosas, jantar especial (3h) ou espumante Pedrucci + café da manhã (pernoite). Cada detalhe pensado para a data."
+          },
+          {
+            "icon": "champagne",
+            "title": "Espumante & café da manhã",
+            "body": "No pernoite: garrafa de espumante Pedrucci e café da manhã completo para começar a manhã juntos com requinte."
+          },
+          {
+            "icon": "clock",
+            "title": "Dois formatos de 3 horas",
+            "body": "Encontro das 18h às 21h ou das 22h à 01h, com jantar gastronômico e buquê de rosas inclusos."
+          },
+          {
+            "icon": "calendar",
+            "title": "4 datas disponíveis",
+            "body": "De quinta a domingo, 11 a 14 de junho. O dia 12 — Dia dos Namorados — com categoria especial premium."
+          }
+        ]
+      }
+    },
+    {
+      "type": "unitPicker",
+      "props": {
+        "id": "reservar",
+        "eyebrow": "RESERVAR AGORA",
+        "headline": "<em>Andar de Cima</em>: uma noite inesquecível no coração de São Paulo.",
+        "subtitle": "Escolha o período e a suíte ideal para vocês.",
+        "units": ["sao-paulo"],
+        "wizardSteps": [
+          { "n": 1, "label": "Período" },
+          { "n": 2, "label": "Data" },
+          { "n": 3, "label": "Suíte" },
+          { "n": 4, "label": "Resumo" }
+        ],
+        "stepCopy": {
+          "period": {
+            "title": "Qual formato preferem?",
+            "hint": "Escolha entre 3 horas com jantar ou pernoite completo com espumante e café da manhã."
+          },
+          "date": {
+            "title": "Qual a data?",
+            "hint": "Disponível de 11 a 14 de junho. Dia 12 tem categoria premium.",
+            "smallHint": "Datas marcadas como Premium têm preço diferenciado.",
+            "couponHint": "Use o cupom **{coupon}** no checkout para {discount} de desconto."
+          },
+          "category": {
+            "title": "Qual suíte?",
+            "hint": "Suítes disponíveis para o período escolhido.",
+            "hint3hIpiranga": "Todas as suítes disponíveis para este horário.",
+            "hint3hLapa": "Todas as suítes disponíveis para este horário.",
+            "hintAllPernoite": "Todas as suítes disponíveis para pernoite."
+          },
+          "summary": {
+            "title": "Resumo da reserva",
+            "hint": "Revise e confirme antes de prosseguir para o checkout.",
+            "labels": {
+              "unit":      "Localização",
+              "period":    "Formato",
+              "date":      "Data",
+              "category":  "Suíte",
+              "inclusos":  "Inclusos",
+              "lot":       "Lote",
+              "price":     "Valor total"
+            },
+            "couponLine":    "Lote {coupon} · {discount} de desconto no checkout",
+            "lotLineNoCoupon": "{name}"
+          }
+        },
+        "openCtaLabel":    "Reservar agora",
+        "confirmCtaLabel": "Ir para reserva"
+      }
+    },
+    {
+      "type": "offer",
+      "props": {
+        "eyebrow": "OFERTA ESPECIAL",
+        "headlineFull": "Reserve agora e economize",
+        "headlineHtml": "Reserve agora<br>e <em>economize</em>.",
+        "subtitle": "Primeiros lotes com até 25% de desconto. Copie o cupom e aplique no checkout.",
+        "countdownTo": "2026-06-12T23:59:59-03:00",
+        "ctas": [
+          {
+            "label": "Reservar agora",
+            "href": "#reservar",
+            "variant": "gold",
+            "focusUnit": "sao-paulo"
+          }
+        ],
+        "note": "Desconto válido nas datas indicadas. Condições sujeitas a disponibilidade."
+      }
+    },
+    {
+      "type": "faq",
+      "props": {
+        "eyebrow": "DÚVIDAS FREQUENTES",
+        "headlineFull": "Tudo que você",
+        "headlineEmphasis": "precisa saber.",
+        "intro": "Alguma dúvida? Fale com o nosso concierge 24h via WhatsApp.",
+        "ctaLabel": "Falar com concierge",
+        "ctaHref": "https://wa.me/551151960787",
+        "items": [
+          {
+            "q": "Como funciona o formato de 3 horas?",
+            "a": "Você escolhe entre dois horários: 18h–21h ou 22h–01h. A reserva inclui buquê de rosas e jantar completo (1 couvert e 2 pratos principais)."
+          },
+          {
+            "q": "O que está incluso no pernoite?",
+            "a": "Buquê de rosas, garrafa de espumante Pedrucci e café da manhã completo. Uma experiência pensada para ser a noite mais especial do casal."
+          },
+          {
+            "q": "Como funciona o cupom de desconto?",
+            "a": "O código aparece no resumo da reserva aqui na LP. Copie e aplique no campo de cupom ao finalizar no site oficial. O desconto é calculado automaticamente no checkout."
+          },
+          {
+            "q": "Posso cancelar ou alterar minha reserva?",
+            "a": "Consulte as políticas de cancelamento diretamente no site oficial ou converse com o concierge via WhatsApp. Estamos disponíveis 24 horas."
+          },
+          {
+            "q": "O Andar de Cima tem estacionamento?",
+            "a": "Consulte disponibilidade de vaga com o concierge ao realizar sua reserva. Nossa equipe está pronta para orientar sobre as melhores opções de acesso."
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Andar de Cima Suítes · Dia dos Namorados 2026",
+        "columns": [
+          {
+            "title": "EXPERIÊNCIAS",
+            "links": [
+              { "label": "Pernoite completo", "href": "#reservar" },
+              { "label": "3 horas", "href": "#reservar" }
+            ]
+          },
+          {
+            "title": "RESERVAS",
+            "links": [
+              { "label": "Reservar agora", "href": "#reservar" },
+              { "label": "Concierge 24h", "href": "https://wa.me/551151960787" }
+            ]
+          },
+          {
+            "title": "INSTITUCIONAL",
+            "links": [
+              { "label": "Política de privacidade", "href": "https://andardecimasuites.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso", "href": "https://andardecimasuites.com.br/pt-BR/terms" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Andar de Cima Suítes. Todos os direitos reservados.",
+        "ageNotice": "Proibida a hospedagem de menores de 18 anos desacompanhados."
+      }
+    }
+  ]
+}
