@@ -60,7 +60,20 @@
       { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "premium", "label": "12 de junho · Sexta" },
       { "value": "2026-06-13", "day": "13", "dow": "Sábado",  "tier": "regular", "label": "13 de junho · Sábado" },
       { "value": "2026-06-14", "day": "14", "dow": "Domingo", "tier": "regular", "label": "14 de junho · Domingo" }
-    ]
+    ],
+    "pricing": {
+      "currency": "BRL",
+      "units": {
+        "campinas": {
+          "suite-a": { "3h-18": { "premium":  60600, "regular":  55900 }, "3h-22": { "premium":  63600, "regular":  58900 }, "pernoite": { "premium": 102400, "regular":  94000 } },
+          "hidro":   { "3h-18": { "premium":  66400, "regular":  60400 }, "3h-22": { "premium":  69400, "regular":  63400 }, "pernoite": { "premium": 105000, "regular":  96000 } },
+          "glam":    { "3h-18": { "premium":  69000, "regular":  62400 }, "3h-22": { "premium":  72000, "regular":  65400 }, "pernoite": { "premium": 111500, "regular": 101000 } },
+          "relax":   { "3h-18": { "premium":  70300, "regular":  63400 }, "3h-22": { "premium":  73300, "regular":  66400 }, "pernoite": { "premium": 112800, "regular": 102000 } },
+          "sublime": { "3h-18": { "premium":  80700, "regular":  71400 }, "3h-22": { "premium":  83700, "regular":  74400 }, "pernoite": { "premium": 118000, "regular": 106000 } },
+          "club":    { "3h-18": { "premium": 121000, "regular": 102400 }, "3h-22": { "premium": 124000, "regular": 105400 }, "pernoite": { "premium": 164200, "regular": 141500 } }
+        }
+      }
+    }
   },
   "blocks": [
     {
