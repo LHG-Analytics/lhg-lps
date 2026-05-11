@@ -91,10 +91,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
-  /* Defense-in-depth contra elementos absolute/fixed que possam vazar do
-     viewport. O body já capa, mas html também previne o scroll horizontal
-     em iOS quando algum filho posiciona-se além da viewport. */
-  overflow-x: hidden;
+  /* `clip` em vez de `hidden`: previne scroll horizontal sem criar um
+     scroll container (BFC), o que quebra `position: sticky` em descendentes
+     como o sidebar do FAQ. */
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -325,7 +325,7 @@ section { padding: 96px 0; position: relative; }
   font-size: 26px; font-weight: 500;
   font-variation-settings: "opsz" 36;
   letter-spacing: 0.005em; text-transform: none;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--lav);
 }
 .hero__meta strong span { color: var(--gold); }
 
@@ -1470,20 +1470,20 @@ section { padding: 96px 0; position: relative; }
   z-index: 70;
   display: inline-flex; align-items: center; gap: 10px;
   padding: 12px 22px;
-  background: var(--lav-bright);
-  color: var(--ink-deep);
+  background: var(--emerald);
+  color: #ffffff;
   border-radius: 999px;
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 14px; font-weight: 600;
   letter-spacing: 0.01em;
   text-transform: capitalize;
-  box-shadow: 0 12px 28px -10px rgba(184,131,239,0.55);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--emerald) 60%, transparent);
   transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.2s ease;
 }
 .concierge-fab:hover {
   transform: translateY(-2px);
-  background: color-mix(in oklab, var(--lav-bright) 92%, white 8%);
-  box-shadow: 0 18px 36px -12px rgba(184,131,239,0.7);
+  background: var(--emerald-soft);
+  box-shadow: 0 18px 36px -12px color-mix(in srgb, var(--emerald) 70%, transparent);
 }
 .concierge-fab:active { transform: translateY(0); }
 .concierge-fab__icon {

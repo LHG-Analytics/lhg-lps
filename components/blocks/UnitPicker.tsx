@@ -48,6 +48,14 @@ export function UnitPicker({
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
 
+  // Para campanhas com uma única unidade, expande o card automaticamente.
+  useEffect(() => {
+    if (units.length === 1 && units[0]) {
+      setLocked(true);
+      setFocused(units[0]);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Click externo (incluindo `[data-focus-unit]` em outros blocos) destrava
   // ou trava no respectivo card. Espelha a lógica do HTML.
   useEffect(() => {

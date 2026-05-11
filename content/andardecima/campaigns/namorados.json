@@ -79,7 +79,7 @@
   "blocks": [
     {
       "type": "nav",
-      "props": { "tag": "EDIÇÃO LIMITADA" }
+      "props": { "tag": "Pacote · Dia dos Namorados - 2026" }
     },
     {
       "type": "hero",
@@ -89,12 +89,11 @@
         "headlineFull": "Sua noite mais especial",
         "headlineEmphasis": "no coração de São Paulo.",
         "typewriter": true,
-        "subtitle": "Suítes exclusivas com vista para o Copan. Pernoite com espumante e café da manhã — ou 3 horas com jantar completo e buquê de rosas.",
+        "subtitle": "Reserve agora sua experiência no Andar de Cima.",
         "primaryCta": { "label": "Escolher minha suíte", "href": "#reservar" },
         "meta": [
-          { "label": "Datas",    "value": "11 – 14 de jun" },
           { "label": "Formatos", "value": "3h e Pernoite" },
-          { "label": "A partir", "value": "R$ 717",        "highlight": "por suíte" }
+          { "label": "Datas",    "value": "11 – 14 de jun" }
         ]
       }
     },

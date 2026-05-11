@@ -10,6 +10,8 @@ type Props = {
   className?: string;
   /** Fração do elemento visível pra disparar a animação. Default 0.4. */
   threshold?: number;
+  /** Se true, reinicia a digitação a cada LOOP_MS após terminar. Default false. */
+  loop?: boolean;
 };
 
 /**
@@ -31,6 +33,7 @@ export function TypewriterHTML({
   ariaLabel,
   className = "display",
   threshold = 0.4,
+  loop = false,
 }: Props) {
   const ref = useRef<HTMLHeadingElement>(null);
   const [content, setContent] = useState(html);
@@ -61,8 +64,7 @@ export function TypewriterHTML({
         if (cancelled) return;
         setContent(renderUntil(tokens, i));
         if (i >= tokens.length) {
-          // Termina a digitação, espera LOOP_MS e reinicia.
-          timer = setTimeout(runCycle, LOOP_MS);
+          if (loop) timer = setTimeout(runCycle, LOOP_MS);
           return;
         }
         i++;
@@ -96,7 +98,7 @@ export function TypewriterHTML({
       if (timer) clearTimeout(timer);
       io.disconnect();
     };
-  }, [html, threshold]);
+  }, [html, threshold, loop]);
 
   return (
     <h2
