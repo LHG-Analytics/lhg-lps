@@ -106,23 +106,23 @@
         "items": [
           {
             "icon": "heart",
-            "title": "Pacote romântico completo",
-            "body": "Buquê de rosas, jantar especial (3h) ou espumante Pedrucci + café da manhã (pernoite). Cada detalhe pensado para a data."
-          },
-          {
-            "icon": "champagne",
-            "title": "Espumante & café da manhã",
-            "body": "No pernoite: garrafa de espumante Pedrucci e café da manhã completo para começar a manhã juntos com requinte."
-          },
-          {
-            "icon": "clock",
-            "title": "Dois formatos de 3 horas",
-            "body": "Encontro das 18h às 21h ou das 22h à 01h, com jantar gastronômico e buquê de rosas inclusos."
+            "title": "Buquê de rosas na suíte",
+            "body": "O buquê já espera vocês dentro do quarto. Nada de improviso — a suíte recebe o casal como um cenário romântico e finalizado."
           },
           {
             "icon": "calendar",
-            "title": "4 datas disponíveis",
-            "body": "De quinta a domingo, 11 a 14 de junho. O dia 12 — Dia dos Namorados — com categoria especial premium."
+            "title": "Gastronomia inclusa",
+            "body": "Jantar romântico (1 couvert + 2 pratos principais) no 3 horas. Tudo servido na suíte, sem dividir mesa com ninguém."
+          },
+          {
+            "icon": "champagne",
+            "title": "Espumante Pedrucci",
+            "body": "No pernoite chega uma garrafa de espumante Pedrucci acompanhada de café da manhã completo para começar a manhã juntos."
+          },
+          {
+            "icon": "clock",
+            "title": "Concierge 24h",
+            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera — vocês pedem, a gente resolve."
           }
         ]
       }
@@ -182,10 +182,10 @@
     {
       "type": "offer",
       "props": {
-        "eyebrow": "OFERTA ESPECIAL",
-        "headlineFull": "Reserve agora e economize",
-        "headlineHtml": "Reserve agora<br>e <em>economize</em>.",
-        "subtitle": "Primeiros lotes com até 25% de desconto. Copie o cupom e aplique no checkout.",
+        "eyebrow": "Alta demanda · Vagas limitadas",
+        "headlineFull": "Tudo pronto para o 12/06. Só falta vocês.",
+        "headlineHtml": "Tudo pronto para o <em>12/06</em>.<br>Só falta <em>vocês</em>.",
+        "subtitle": "11 a 14 de junho · 3 horas e pernoite. Lotes limitados",
         "countdownTo": "2026-06-12T23:59:59-03:00",
         "ctas": [
           {

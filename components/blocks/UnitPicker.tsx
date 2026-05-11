@@ -48,6 +48,35 @@ export function UnitPicker({
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gridRef = useRef<HTMLDivElement | null>(null);
 
+  // IO local para o reveal dos cards — garante que `.in` é adicionado ao
+  // entrar no viewport mesmo que o RevealManager global já tenha rodado.
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".unit.reveal"));
+    if (!cards.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" }
+    );
+    cards.forEach((card) => {
+      const r = card.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) {
+        card.classList.add("in");
+      } else {
+        io.observe(card);
+      }
+    });
+    return () => io.disconnect();
+  }, []);
+
   // Click externo (incluindo `[data-focus-unit]` em outros blocos) destrava
   // ou trava no respectivo card. Espelha a lógica do HTML.
   useEffect(() => {
