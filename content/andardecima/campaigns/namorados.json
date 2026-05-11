@@ -30,7 +30,7 @@
         "label": "3 horas · 18:00 – 21:00",
         "shortLabel": "3 horas",
         "meta": "Buquê de rosas · Jantar completo",
-        "scope": "Todas as suítes",
+        "scope": "Todas as categorias",
         "scopeKey": "3h",
         "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
       },
@@ -39,7 +39,7 @@
         "label": "3 horas · 22:00 – 01:00",
         "shortLabel": "3 horas",
         "meta": "Buquê de rosas · Jantar completo",
-        "scope": "Todas as suítes",
+        "scope": "Todas as categorias",
         "scopeKey": "3h",
         "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
       },
@@ -48,7 +48,7 @@
         "label": "Pernoite",
         "shortLabel": "Pernoite",
         "meta": "Buquê de rosas · Espumante Pedrucci · Café da manhã",
-        "scope": "Todas as suítes",
+        "scope": "Todas as categorias",
         "scopeKey": "all",
         "featured": true,
         "featuredTag": "★ Experiência completa",
@@ -150,7 +150,7 @@
             "title": "Qual a data?",
             "hint": "Disponível de 11 a 14 de junho. Dia 12 tem categoria premium.",
             "smallHint": "Datas marcadas como Premium têm preço diferenciado.",
-            "couponHint": "Use o cupom **{coupon}** no checkout para {discount} de desconto."
+            "couponHint": "Use o cupom {coupon} no checkout para {discount} de desconto."
           },
           "category": {
             "title": "Qual suíte?",
