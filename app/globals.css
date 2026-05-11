@@ -1523,14 +1523,24 @@ section { padding: 96px 0; position: relative; }
   box-shadow: 0 18px 36px -12px color-mix(in srgb, var(--lav-bright) 70%, transparent);
 }
 /* ─── TOUT — brand overrides ──────────────────────────────────
-   Gradient de fundo: #410151 → #2C0232 → #240A4A.
-   Footer usa #200322 (--green-deep).
-   Concierge: #FF0FFB bg + #200322 texto/ícone — já vem do token
-   --lav-bright e --ink-deep, sem override necessário.
+   Fundo: #31023A → #2C0232 → #240A4A.
+   Nav/hero overlay também usam #31023A.
+   Footer usa #200322. Concierge herda tokens (sem override).
 -------------------------------------------------------------- */
 [data-brand="tout"] {
-  background: linear-gradient(160deg, #410151 0%, #2C0232 55%, #240A4A 100%);
+  background: linear-gradient(160deg, #31023A 0%, #2C0232 55%, #240A4A 100%);
   min-height: 100dvh;
+}
+[data-brand="tout"] .nav {
+  background: color-mix(in srgb, #31023A 82%, transparent);
+}
+[data-brand="tout"] .nav.scrolled {
+  background: color-mix(in srgb, #31023A 94%, transparent);
+}
+[data-brand="tout"] .hero__bg {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, #31023A 85%, transparent) 0%, color-mix(in srgb, #31023A 35%, transparent) 45%, transparent 70%),
+    linear-gradient(180deg, transparent 60%, color-mix(in srgb, #31023A 50%, transparent) 100%);
 }
 [data-brand="tout"] .footer { background: #200322; }
 
