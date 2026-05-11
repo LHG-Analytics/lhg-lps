@@ -1532,6 +1532,7 @@ section { padding: 96px 0; position: relative; }
   min-height: 100dvh;
 }
 [data-brand="tout"] .logo__mark { height: 36px; }
+[data-brand="tout"] .unit__img img { object-position: center 75%; }
 [data-brand="tout"] .nav {
   background: color-mix(in srgb, #31023A 82%, transparent);
 }
