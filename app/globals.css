@@ -151,12 +151,12 @@ section { padding: 96px 0; position: relative; }
   padding: 18px 0;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  background: rgba(10,26,16,0.55);
+  background: color-mix(in srgb, var(--emerald-deep) 60%, transparent);
   border-bottom: 1px solid transparent;
   transition: background 0.25s ease, border-color 0.25s ease, padding 0.25s ease;
 }
 .nav.scrolled {
-  background: rgba(10,26,16,0.9);
+  background: color-mix(in srgb, var(--emerald-deep) 88%, transparent);
   border-bottom-color: var(--line);
   padding: 12px 0;
 }
@@ -251,8 +251,8 @@ section { padding: 96px 0; position: relative; }
 .hero__bg {
   position: absolute; inset: 0; z-index: 1;
   background:
-    linear-gradient(90deg, rgba(10,26,16,0.72) 0%, rgba(10,26,16,0.3) 45%, rgba(10,26,16,0) 70%),
-    linear-gradient(180deg, rgba(10,26,16,0) 60%, rgba(10,26,16,0.4) 100%);
+    linear-gradient(90deg, color-mix(in srgb, var(--emerald-deep) 72%, transparent) 0%, color-mix(in srgb, var(--emerald-deep) 30%, transparent) 45%, transparent 70%),
+    linear-gradient(180deg, transparent 60%, color-mix(in srgb, var(--emerald-deep) 40%, transparent) 100%);
 }
 .hero__grain {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -281,14 +281,14 @@ section { padding: 96px 0; position: relative; }
   font-family: var(--font-display), 'Times New Roman', serif;
   font-size: clamp(42px, 5.2vw, 68px);
   margin: 0 0 22px;
-  color: var(--ink);
+  color: rgba(255, 255, 255, 0.95);
   text-shadow: 0 2px 24px rgba(0,0,0,0.55);
   line-height: 1.08;
   min-height: 3.3em;
 }
 .hero__sub {
   font-size: clamp(14px, 1.05vw, 15px);
-  color: var(--ink);
+  color: rgba(255, 255, 255, 0.82);
   max-width: 440px;
   margin: 0 0 32px;
   text-shadow: 0 2px 12px rgba(0,0,0,0.5);
@@ -318,14 +318,14 @@ section { padding: 96px 0; position: relative; }
 .hero__meta div {
   display: flex; flex-direction: column; gap: 4px;
   font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
-  color: var(--ink-dim);
+  color: rgba(255, 255, 255, 0.55);
 }
 .hero__meta strong {
   font-family: var(--font-serif), var(--font-display), serif;
   font-size: 26px; font-weight: 500;
   font-variation-settings: "opsz" 36;
   letter-spacing: 0.005em; text-transform: none;
-  color: var(--ink);
+  color: rgba(255, 255, 255, 0.92);
 }
 .hero__meta strong span { color: var(--gold); }
 
@@ -1060,7 +1060,7 @@ section { padding: 96px 0; position: relative; }
   display: flex; flex-direction: column; gap: 14px;
   transition: background 0.25s ease;
 }
-.benefit:hover { background: #0e0d0a; }
+.benefit:hover { background: var(--bg-elev); }
 .benefit__icon {
   width: 44px; height: 44px;
   display: grid; place-items: center;

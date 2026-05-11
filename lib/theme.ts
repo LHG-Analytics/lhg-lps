@@ -13,6 +13,11 @@ import type { Brand } from "@/lib/schema";
  */
 export function themeStyle(theme: Brand["theme"]): CSSProperties {
   return {
+    // Forçar re-avaliação das vars no escopo do wrapper — sem isso o body
+    // herda os valores do :root (fallback Lush) e todos os filhos ficam com
+    // as cores erradas mesmo com --ink etc. corretamente definidos.
+    color: "var(--ink)",
+    background: "var(--bg)",
     "--bg": theme.bg,
     "--bg-elev": theme.bgElev,
     "--bg-card": theme.bgCard,
