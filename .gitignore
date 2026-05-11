@@ -41,3 +41,10 @@ yarn-error.log*
 # claude code (local guidance + agent state)
 CLAUDE.md
 .claude/
+.playwright-mcp/
+
+# debug screenshots (gerados por ferramentas de browser durante dev)
+*.png
+*.jpeg
+*.jpg
+!public/**
