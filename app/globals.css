@@ -153,14 +153,20 @@ section { padding: 96px 0; position: relative; }
   padding: 18px 0;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  background: color-mix(in srgb, var(--emerald-deep) 82%, transparent);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
   border-bottom: 1px solid transparent;
   transition: background 0.25s ease, border-color 0.25s ease, padding 0.25s ease;
 }
 .nav.scrolled {
-  background: color-mix(in srgb, var(--emerald-deep) 88%, transparent);
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
   border-bottom-color: var(--line);
   padding: 12px 0;
+}
+[data-brand="andardecima"] .nav {
+  background: color-mix(in srgb, var(--emerald-deep) 82%, transparent);
+}
+[data-brand="andardecima"] .nav.scrolled {
+  background: color-mix(in srgb, var(--emerald-deep) 94%, transparent);
 }
 .nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .logo {
@@ -1491,18 +1497,26 @@ section { padding: 96px 0; position: relative; }
   z-index: 70;
   display: inline-flex; align-items: center; gap: 10px;
   padding: 12px 22px;
-  background: var(--emerald);
+  background: var(--bg);
   color: #ffffff;
   border-radius: 999px;
   font-family: var(--font-sans), system-ui, sans-serif;
   font-size: 14px; font-weight: 600;
   letter-spacing: 0.01em;
   text-transform: capitalize;
-  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--emerald) 60%, transparent);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--bg) 60%, transparent);
   transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.2s ease;
 }
 .concierge-fab:hover {
   transform: translateY(-2px);
+  background: var(--bg-elev);
+  box-shadow: 0 18px 36px -12px color-mix(in srgb, var(--bg) 70%, transparent);
+}
+[data-brand="andardecima"] .concierge-fab {
+  background: var(--emerald);
+  box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--emerald) 60%, transparent);
+}
+[data-brand="andardecima"] .concierge-fab:hover {
   background: var(--emerald-soft);
   box-shadow: 0 18px 36px -12px color-mix(in srgb, var(--emerald) 70%, transparent);
 }
