@@ -24,7 +24,7 @@ export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
       {blocks.map((block, index) =>
         editorMode ? (
           <div
-            key={`${block.type}-${index}`}
+            key={(block as {_id?:string})._id ?? `${block.type}-${index}`}
             data-block-type={block.type}
             data-block-index={index}
             style={{ position: "relative" }}
@@ -33,7 +33,7 @@ export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
           </div>
         ) : (
           <Render
-            key={`${block.type}-${index}`}
+            key={(block as {_id?:string})._id ?? `${block.type}-${index}`}
             block={block}
             brand={brand}
             campaign={campaign}

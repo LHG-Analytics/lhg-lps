@@ -16,7 +16,7 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false 
 /* ── tipos ─────────────────────────────────────────── */
 type EditorTab  = "visual" | "code";
 type SidebarTab = "blocks" | "theme";
-type Block      = { type: string; props: Record<string, unknown> };
+type Block      = { type: string; props: Record<string, unknown>; _id?: string };
 
 const BLOCK_SOURCE: Record<string, string> = {
   nav: "components/blocks/Nav.tsx", hero: "components/blocks/Hero.tsx",
@@ -39,7 +39,9 @@ interface Props {
 
 /* ═══════════════════════════════════════════════════ */
 export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, status }: Props) {
-  const [blocks, setBlocks]                   = useState<Block[]>(initialBlocks);
+  const [blocks, setBlocks]                   = useState<Block[]>(() =>
+    initialBlocks.map(b => b._id ? b : { ...b, _id: crypto.randomUUID() })
+  );
   const [publishedBlocks, setPublishedBlocks] = useState<Block[]>(initialBlocks);
   const [selectedIdx, setSelectedIdx]         = useState<number | null>(null);
   const [hoveredIdx, setHoveredIdx]           = useState<number | null>(null);
@@ -218,7 +220,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   }
 
   function duplicateBlock(idx: number) {
-    const clone = JSON.parse(JSON.stringify(blocks[idx])) as Block;
+    const clone = { ...JSON.parse(JSON.stringify(blocks[idx])) as Block, _id: crypto.randomUUID() };
     const next = [...blocks.slice(0, idx + 1), clone, ...blocks.slice(idx + 1)];
     setSelectedIdx(idx + 1);
     setDrawerOpen(true);
@@ -226,7 +228,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   }
 
   function addBlock(type: string) {
-    const next = [...blocks, { type, props: {} }];
+    const next = [...blocks, { type, props: {}, _id: crypto.randomUUID() }];
     setSelectedIdx(next.length - 1);
     setDrawerOpen(true);
     updateBlocks(next);
