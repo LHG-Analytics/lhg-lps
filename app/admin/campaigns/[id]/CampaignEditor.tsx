@@ -382,7 +382,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
           {/* ── DRAWER ──────────────────────────────── */}
           {drawerOpen && selectedBlock && (
             <div style={{
-              height: drawerCollapsed ? 44 : tab === "code" ? 580 : 420,
+              // visual: ~20vh compacto | código: fullscreen (restante após headers) | colapsado: só o cabeçalho
+              height: drawerCollapsed
+                ? 44
+                : tab === "code"
+                  ? "calc(100dvh - 88px)"   // 48px top header + 40px device toolbar
+                  : "clamp(160px, 22vh, 240px)",
               borderTop: "1px solid rgba(255,255,255,0.08)",
               display: "flex", flexDirection: "column", flexShrink: 0,
               background: "#0D0D12", transition: "height 0.22s cubic-bezier(0.4,0,0.2,1)",
@@ -441,9 +446,9 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
               </div>
 
               {/* Drawer content */}
-              <div style={{ flex: 1, overflow: "auto", display: drawerCollapsed ? "none" : "block" }}>
-                {tab === "visual" ? (
-                  <div style={{ padding: 16 }}>
+              {!drawerCollapsed && (
+                tab === "visual" ? (
+                  <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
                     <PropForm
                       data={selectedBlock.props}
                       path={[]}
@@ -451,16 +456,26 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                     />
                   </div>
                 ) : (
-                  <MonacoEditor
-                    height="100%"
-                    defaultLanguage="json"
-                    theme="vs-dark"
-                    value={JSON.stringify(selectedBlock, null, 2)}
-                    onChange={(v) => updateBlockJson(v ?? "")}
-                    options={{ fontSize: 12, minimap: { enabled: false }, wordWrap: "on", tabSize: 2, scrollBeyondLastLine: false }}
-                  />
-                )}
-              </div>
+                  /* Código: Monaco fullscreen, sem margens, altura = drawer - header (44px) */
+                  <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+                    <MonacoEditor
+                      height="calc(100dvh - 132px)"
+                      defaultLanguage="json"
+                      theme="vs-dark"
+                      value={JSON.stringify(selectedBlock, null, 2)}
+                      onChange={(v) => updateBlockJson(v ?? "")}
+                      options={{
+                        fontSize: 13,
+                        minimap: { enabled: false },
+                        wordWrap: "on",
+                        tabSize: 2,
+                        scrollBeyondLastLine: false,
+                        padding: { top: 12, bottom: 12 },
+                      }}
+                    />
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>
