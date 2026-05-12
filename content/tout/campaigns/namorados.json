@@ -65,12 +65,12 @@
       "currency": "BRL",
       "units": {
         "campinas": {
-          "suite-a": { "3h-18": { "premium":  60600, "regular":  55900 }, "3h-22": { "premium":  63600, "regular":  58900 }, "pernoite": { "premium": 102400, "regular":  94000 } },
-          "hidro":   { "3h-18": { "premium":  66400, "regular":  60400 }, "3h-22": { "premium":  69400, "regular":  63400 }, "pernoite": { "premium": 105000, "regular":  96000 } },
-          "glam":    { "3h-18": { "premium":  69000, "regular":  62400 }, "3h-22": { "premium":  72000, "regular":  65400 }, "pernoite": { "premium": 111500, "regular": 101000 } },
-          "relax":   { "3h-18": { "premium":  70300, "regular":  63400 }, "3h-22": { "premium":  73300, "regular":  66400 }, "pernoite": { "premium": 112800, "regular": 102000 } },
-          "sublime": { "3h-18": { "premium":  80700, "regular":  71400 }, "3h-22": { "premium":  83700, "regular":  74400 }, "pernoite": { "premium": 118000, "regular": 106000 } },
-          "club":    { "3h-18": { "premium": 121000, "regular": 102400 }, "3h-22": { "premium": 124000, "regular": 105400 }, "pernoite": { "premium": 164200, "regular": 141500 } }
+          "suite-a": { "3h-18": { "premium":  35600, "regular":  30900 }, "3h-22": { "premium":  38600, "regular":  33900 }, "pernoite": { "premium": 102400, "regular":  94000 } },
+          "hidro":   { "3h-18": { "premium":  41400, "regular":  35400 }, "3h-22": { "premium":  44400, "regular":  38400 }, "pernoite": { "premium": 105000, "regular":  96000 } },
+          "glam":    { "3h-18": { "premium":  44000, "regular":  37400 }, "3h-22": { "premium":  47000, "regular":  40400 }, "pernoite": { "premium": 111500, "regular": 101000 } },
+          "relax":   { "3h-18": { "premium":  45300, "regular":  38400 }, "3h-22": { "premium":  48300, "regular":  41400 }, "pernoite": { "premium": 112800, "regular": 102000 } },
+          "sublime": { "3h-18": { "premium":  55700, "regular":  46400 }, "3h-22": { "premium":  58700, "regular":  49400 }, "pernoite": { "premium": 118000, "regular": 106000 } },
+          "club":    { "3h-18": { "premium":  96000, "regular":  77400 }, "3h-22": { "premium":  99000, "regular":  80400 }, "pernoite": { "premium": 164200, "regular": 141500 } }
         }
       }
     }
