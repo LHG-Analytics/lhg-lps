@@ -29,6 +29,12 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
   }, []);
 
   return (
+    <>
+    {/* Scrollbar invisível como em dispositivo real */}
+    <style>{`
+      ::-webkit-scrollbar { display: none; }
+      html { scrollbar-width: none; -ms-overflow-style: none; }
+    `}</style>
     <div style={themeStyle(brand.theme)} data-brand={brand.id}>
       <BlockRenderer
         brand={brand}
@@ -42,5 +48,6 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
       <RevealManager />
       <EditorOverlay />
     </div>
+    </>
   );
 }
