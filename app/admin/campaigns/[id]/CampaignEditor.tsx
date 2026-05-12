@@ -459,14 +459,28 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 }}>✕</button>
               </div>
 
-              {/* Conteúdo — ocupa exatamente top:44 → bottom:0, sem gap */}
-              <div style={{
-                position: "absolute", top: 44, left: 0, right: 0, bottom: 0,
-                overflow: tab === "visual" ? "auto" : "hidden",
-              }}>
-                {tab === "code" ? (
+              {/* Visual */}
+              {tab === "visual" && (
+                <div style={{
+                  position: "absolute", top: 44, left: 0, right: 0, bottom: 0,
+                  overflow: "auto", padding: 16,
+                }}>
+                  <PropForm
+                    data={selectedBlock.props}
+                    path={[]}
+                    onChange={(path, val) => updateBlockProp(path, val)}
+                  />
+                </div>
+              )}
+
+              {/* Código: container absoluto garante posição; pixels explícitos garantem que Monaco renderiza */}
+              {tab === "code" && (
+                <div style={{
+                  position: "absolute", top: 44, left: 0, right: 0, bottom: 0,
+                  overflow: "hidden",
+                }}>
                   <MonacoEditor
-                    height="100%"
+                    height={drawerHeight - 44}
                     width="100%"
                     defaultLanguage="json"
                     theme="vs-dark"
@@ -479,16 +493,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                       padding: { top: 8, bottom: 8 },
                     }}
                   />
-                ) : (
-                  <div style={{ padding: 16 }}>
-                    <PropForm
-                      data={selectedBlock.props}
-                      path={[]}
-                      onChange={(path, val) => updateBlockProp(path, val)}
-                    />
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
