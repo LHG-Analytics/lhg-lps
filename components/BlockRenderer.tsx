@@ -18,28 +18,49 @@ type Props = BlockContext & {
   editorMode?: boolean;
 };
 
+type BlockWithMeta = Block & {
+  _id?: string;
+  _style?: { bg?: string; paddingTop?: number; paddingBottom?: number };
+};
+
 export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
   return (
     <>
-      {blocks.map((block, index) =>
-        editorMode ? (
-          <div
-            key={(block as {_id?:string})._id ?? `${block.type}-${index}`}
-            data-block-type={block.type}
-            data-block-index={index}
-            style={{ position: "relative" }}
-          >
-            <Render block={block} brand={brand} campaign={campaign} />
-          </div>
-        ) : (
-          <Render
-            key={(block as {_id?:string})._id ?? `${block.type}-${index}`}
-            block={block}
-            brand={brand}
-            campaign={campaign}
-          />
-        )
-      )}
+      {blocks.map((block, index) => {
+        const b = block as BlockWithMeta;
+        const key = b._id ?? `${block.type}-${index}`;
+        const s = b._style;
+        const wrapStyle: React.CSSProperties = {
+          ...(s?.bg ? { background: s.bg } : {}),
+          ...(s?.paddingTop  ? { paddingTop:  s.paddingTop  } : {}),
+          ...(s?.paddingBottom ? { paddingBottom: s.paddingBottom } : {}),
+        };
+
+        if (editorMode) {
+          return (
+            <div
+              key={key}
+              data-block-type={block.type}
+              data-block-index={index}
+              style={{ position: "relative", ...wrapStyle }}
+            >
+              <Render block={block} brand={brand} campaign={campaign} />
+            </div>
+          );
+        }
+
+        if (Object.keys(wrapStyle).length > 0) {
+          return (
+            <div key={key} style={wrapStyle}>
+              <Render block={block} brand={brand} campaign={campaign} />
+            </div>
+          );
+        }
+
+        return (
+          <Render key={key} block={block} brand={brand} campaign={campaign} />
+        );
+      })}
     </>
   );
 }

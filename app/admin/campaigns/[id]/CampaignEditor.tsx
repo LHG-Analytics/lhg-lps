@@ -14,9 +14,11 @@ import { ThemePanel, type Theme } from "./ThemePanel";
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
 /* ── tipos ─────────────────────────────────────────── */
-type EditorTab  = "visual" | "code";
-type SidebarTab = "blocks" | "theme";
-type Block      = { type: string; props: Record<string, unknown>; _id?: string };
+type EditorTab  = "visual" | "code" | "style";
+type SidebarTab = "blocks" | "theme" | "seo";
+type BlockStyle = { bg?: string; paddingTop?: number; paddingBottom?: number };
+type Meta       = { title?: string; description?: string };
+type Block      = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
 
 const BLOCK_SOURCE: Record<string, string> = {
   nav: "components/blocks/Nav.tsx", hero: "components/blocks/Hero.tsx",
@@ -74,11 +76,12 @@ interface Props {
   slug: string;
   initialBlocks: Block[];
   initialTheme: Record<string, string>;
+  initialMeta?: Meta;
   status: string;
 }
 
 /* ═══════════════════════════════════════════════════ */
-export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, status }: Props) {
+export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, initialMeta, status }: Props) {
   const [blocks, setBlocks]                   = useState<Block[]>(() =>
     initialBlocks.map((b, i) => b._id ? b : { ...b, _id: `blk-${b.type}-${i}` })
   );
@@ -96,6 +99,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [error, setError]                     = useState<string | null>(null);
   const [theme, setTheme]                     = useState<Theme>(initialTheme);
   const [themeSaving, setThemeSaving]         = useState(false);
+  const [meta, setMeta]                       = useState<Meta>(initialMeta ?? {});
+  const [metaSaving, setMetaSaving]           = useState(false);
   const [canUndo, setCanUndo]                 = useState(false);
   const [canRedo, setCanRedo]                 = useState(false);
   const [activeId, setActiveId]               = useState<string | null>(null);
@@ -225,6 +230,30 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   function updateTheme(t: Theme) {
     setTheme(t);
     sendThemeToPreview(t);
+  }
+
+  function updateBlockStyle(patch: Partial<BlockStyle>) {
+    if (selectedIdx === null) return;
+    const next = blocks.map((b, i) => {
+      if (i !== selectedIdx) return b;
+      const merged = { ...b._style, ...patch } as Record<string, unknown>;
+      Object.keys(merged).forEach((k) => merged[k] === undefined && delete merged[k]);
+      return { ...b, _style: Object.keys(merged).length > 0 ? merged as BlockStyle : undefined };
+    });
+    updateBlocks(next);
+  }
+
+  async function saveMeta(m: Meta) {
+    setMetaSaving(true);
+    try {
+      const res = await fetch(`/api/admin/campaigns/${campaignId}`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ meta: m }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao salvar SEO.");
+    } finally { setMetaSaving(false); }
   }
 
   /* ── drawer resize ──────────────────────────────── */
@@ -363,16 +392,16 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         <aside style={{ width: 220, borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", flexShrink: 0 }}>
 
           {/* Sidebar tab toggle */}
-          <div style={{ display: "flex", padding: "8px 8px 0", gap: 4 }}>
-            {(["blocks","theme"] as SidebarTab[]).map((t) => (
+          <div style={{ display: "flex", padding: "8px 8px 0", gap: 3 }}>
+            {(["blocks","theme","seo"] as SidebarTab[]).map((t) => (
               <button key={t} onClick={() => setSidebarTab(t)} style={{
-                flex: 1, padding: "6px 0", border: "none", borderRadius: 6,
+                flex: 1, padding: "5px 0", border: "none", borderRadius: 6,
                 background: sidebarTab === t ? "rgba(166,124,255,0.18)" : "transparent",
                 color: sidebarTab === t ? "#A67CFF" : "#55526A",
-                fontSize: 11, fontWeight: 700, cursor: "pointer",
-                textTransform: "uppercase", letterSpacing: "0.06em",
+                fontSize: 10, fontWeight: 700, cursor: "pointer",
+                textTransform: "uppercase", letterSpacing: "0.05em",
               }}>
-                {t === "blocks" ? `Blocos · ${blocks.length}` : "🎨 Tema"}
+                {t === "blocks" ? `Blocos` : t === "theme" ? "🎨 Tema" : "📋 SEO"}
               </button>
             ))}
           </div>
@@ -449,8 +478,51 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                 </div>
               </div>
             </>
-          ) : (
+          ) : sidebarTab === "theme" ? (
             <ThemePanel theme={theme} onChange={updateTheme} saving={themeSaving} onSave={saveTheme} />
+          ) : (
+            /* ── SEO panel ─────────────────────────── */
+            <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Título da página</label>
+                  <input
+                    type="text"
+                    value={meta.title ?? ""}
+                    onChange={(e) => setMeta({ ...meta, title: e.target.value })}
+                    style={fieldStyle}
+                    placeholder="Título SEO"
+                  />
+                  <div style={{ fontSize: 10, color: (meta.title?.length ?? 0) > 60 ? "#E05260" : "#3A3850", marginTop: 3, textAlign: "right" }}>
+                    {meta.title?.length ?? 0}/60
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Descrição</label>
+                  <textarea
+                    value={meta.description ?? ""}
+                    onChange={(e) => setMeta({ ...meta, description: e.target.value })}
+                    style={{ ...fieldStyle, resize: "vertical" }}
+                    rows={4}
+                    placeholder="Descrição para mecanismos de busca"
+                  />
+                  <div style={{ fontSize: 10, color: (meta.description?.length ?? 0) > 160 ? "#E05260" : "#3A3850", marginTop: 3, textAlign: "right" }}>
+                    {meta.description?.length ?? 0}/160
+                  </div>
+                </div>
+                <button
+                  onClick={() => saveMeta(meta)}
+                  disabled={metaSaving}
+                  style={{
+                    background: "#A67CFF", color: "#fff", border: "none", borderRadius: 6,
+                    padding: "8px 0", fontSize: 12, fontWeight: 700, cursor: metaSaving ? "wait" : "pointer",
+                    opacity: metaSaving ? 0.6 : 1,
+                  }}
+                >
+                  {metaSaving ? "Salvando…" : "Salvar SEO"}
+                </button>
+              </div>
+            </div>
           )}
         </aside>
 
@@ -533,12 +605,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                 )}
                 <div style={{ flex: 1 }} />
                 <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
-                  {(["visual","code"] as EditorTab[]).map((t) => (
+                  {(["visual","style","code"] as EditorTab[]).map((t) => (
                     <button key={t} onClick={() => setTab(t)} style={{
-                      padding: "4px 12px", borderRadius: 4, border: "none",
+                      padding: "4px 10px", borderRadius: 4, border: "none",
                       background: tab === t ? "#1E1E2A" : "transparent",
                       color: tab === t ? "#A67CFF" : "#55526A", fontSize: 11, fontWeight: 600, cursor: "pointer",
-                    }}>{t === "visual" ? "✦ Visual" : "</> Código"}</button>
+                    }}>{t === "visual" ? "✦ Visual" : t === "style" ? "🎨 Estilo" : "</> Código"}</button>
                   ))}
                 </div>
                 <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); }} style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 14, padding: "4px 6px" }}>✕</button>
@@ -552,6 +624,16 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                     path={[]}
                     brandId={brandId}
                     onChange={(path, val) => updateBlockProp(path, val)}
+                  />
+                </div>
+              )}
+
+              {/* Style tab */}
+              {tab === "style" && (
+                <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
+                  <BlockStylePanel
+                    style={selectedBlock._style}
+                    onChange={(patch) => updateBlockStyle(patch)}
                   />
                 </div>
               )}
@@ -616,6 +698,9 @@ function PropForm({
               <select value={String(val ?? "")} onChange={(e) => onChange(fullPath, e.target.value)} style={fieldStyle}>
                 {ENUM_OPTIONS[key].map((opt) => <option key={opt} value={opt}>{opt}</option>)}
               </select>
+
+            ) : typeof val === "string" && key.endsWith("Html") ? (
+              <RichTextField value={val} onChange={(v) => onChange(fullPath, v)} />
 
             ) : typeof val === "string" && val.length > 80 ? (
               <textarea value={val} onChange={(e) => onChange(fullPath, e.target.value)} style={fieldStyle} rows={3} />
@@ -750,6 +835,137 @@ function UploadBtn({ brandId, onUploaded }: { brandId: string; onUploaded: (path
         {uploading ? "…" : "↑"}
       </button>
     </>
+  );
+}
+
+/* ── BlockStylePanel ────────────────────────────────── */
+function BlockStylePanel({ style, onChange }: {
+  style?: BlockStyle;
+  onChange: (patch: Partial<BlockStyle>) => void;
+}) {
+  const s = style ?? {};
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      {/* Background */}
+      <div>
+        <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>Cor de fundo do bloco</label>
+        <div style={{ display: "flex", gap: 6, alignItems: "stretch" }}>
+          {/^#[0-9a-fA-F]{3,8}$/.test(s.bg ?? "") && (
+            <input type="color" value={s.bg} onChange={(e) => onChange({ ...s, bg: e.target.value })}
+              style={{ width: 34, padding: 2, border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, cursor: "pointer", background: "none", flexShrink: 0 }} />
+          )}
+          <input
+            type="text"
+            value={s.bg ?? ""}
+            placeholder="ex: #1A1A2E ou transparent"
+            onChange={(e) => onChange({ ...s, bg: e.target.value || undefined })}
+            style={{ ...fieldStyle, flex: 1 }}
+          />
+          {s.bg && (
+            <button onClick={() => onChange({ ...s, bg: undefined })}
+              style={{ background: "none", border: "1px solid rgba(224,82,96,0.3)", borderRadius: 6, color: "#E05260", cursor: "pointer", fontSize: 11, padding: "0 10px" }}>✕</button>
+          )}
+        </div>
+        <div style={{ fontSize: 10, color: "#3A3850", marginTop: 4 }}>Aplica-se como background do wrapper. Útil com espaçamento.</div>
+      </div>
+
+      {/* Spacing top */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+          <label style={{ fontSize: 10, color: "#8E8AA8", textTransform: "uppercase", letterSpacing: "0.07em" }}>Espaço acima</label>
+          <span style={{ fontSize: 12, color: "#A67CFF", fontWeight: 700, minWidth: 36, textAlign: "right" }}>{s.paddingTop ?? 0}px</span>
+        </div>
+        <input
+          type="range" min={0} max={200} step={4}
+          value={s.paddingTop ?? 0}
+          onChange={(e) => { const v = Number(e.target.value); onChange({ ...s, paddingTop: v || undefined }); }}
+          style={{ width: "100%", accentColor: "#A67CFF" }}
+        />
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#3A3850", marginTop: 2 }}>
+          <span>0</span><span>200</span>
+        </div>
+      </div>
+
+      {/* Spacing bottom */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+          <label style={{ fontSize: 10, color: "#8E8AA8", textTransform: "uppercase", letterSpacing: "0.07em" }}>Espaço abaixo</label>
+          <span style={{ fontSize: 12, color: "#A67CFF", fontWeight: 700, minWidth: 36, textAlign: "right" }}>{s.paddingBottom ?? 0}px</span>
+        </div>
+        <input
+          type="range" min={0} max={200} step={4}
+          value={s.paddingBottom ?? 0}
+          onChange={(e) => { const v = Number(e.target.value); onChange({ ...s, paddingBottom: v || undefined }); }}
+          style={{ width: "100%", accentColor: "#A67CFF" }}
+        />
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#3A3850", marginTop: 2 }}>
+          <span>0</span><span>200</span>
+        </div>
+      </div>
+
+      {(s.bg || s.paddingTop || s.paddingBottom) && (
+        <button
+          onClick={() => onChange({ bg: undefined, paddingTop: undefined, paddingBottom: undefined })}
+          style={{ background: "rgba(224,82,96,0.08)", border: "1px solid rgba(224,82,96,0.2)", borderRadius: 6, padding: "7px 0", color: "#E05260", cursor: "pointer", fontSize: 11, fontWeight: 600 }}
+        >
+          Resetar estilos deste bloco
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ── RichTextField ──────────────────────────────────── */
+function RichTextField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (ref.current && ref.current.innerHTML !== value) {
+      ref.current.innerHTML = value;
+    }
+  }, [value]);
+
+  function cmd(command: string, arg?: string) {
+    ref.current?.focus();
+    document.execCommand(command, false, arg);
+    if (ref.current) onChange(ref.current.innerHTML);
+  }
+
+  return (
+    <div style={{ border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, overflow: "hidden" }}>
+      <div style={{ display: "flex", gap: 1, padding: "3px 5px", borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#0A0A10" }}>
+        <RtBtn onClick={() => cmd("bold")} title="Negrito"><strong style={{ fontSize: 11 }}>B</strong></RtBtn>
+        <RtBtn onClick={() => cmd("italic")} title="Itálico"><em style={{ fontSize: 11 }}>I</em></RtBtn>
+        <RtBtn onClick={() => cmd("insertHTML", "<em></em>")} title="Inserir &lt;em&gt;">em</RtBtn>
+        <RtBtn onClick={() => cmd("insertHTML", "<strong></strong>")} title="Inserir &lt;strong&gt;">str</RtBtn>
+        <div style={{ width: 1, background: "rgba(255,255,255,0.08)", margin: "2px 2px" }} />
+        <RtBtn onClick={() => cmd("removeFormat")} title="Remover formatação" style={{ color: "#E05260" }}>✕ fmt</RtBtn>
+      </div>
+      <div
+        ref={ref}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={() => { if (ref.current) onChange(ref.current.innerHTML); }}
+        style={{ ...fieldStyle, borderRadius: 0, border: "none", minHeight: 38, outline: "none" }}
+      />
+    </div>
+  );
+}
+
+function RtBtn({ children, onClick, title, style }: {
+  children: React.ReactNode;
+  onClick: () => void;
+  title?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <button
+      onMouseDown={(e) => { e.preventDefault(); onClick(); }}
+      title={title}
+      style={{ background: "none", border: "none", cursor: "pointer", color: "#8E8AA8", fontSize: 11, padding: "2px 5px", borderRadius: 3, ...style }}
+    >
+      {children}
+    </button>
   );
 }
 

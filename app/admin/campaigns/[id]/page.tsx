@@ -11,7 +11,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("id, slug, brand_id, status, blocks")
+    .select("id, slug, brand_id, status, blocks, meta")
     .eq("id", id)
     .single();
 
@@ -40,6 +40,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       slug={campaign.slug}
       initialBlocks={initialBlocks}
       initialTheme={initialTheme}
+      initialMeta={(campaign.meta ?? {}) as { title?: string; description?: string }}
       status={campaign.status}
     />
   );
