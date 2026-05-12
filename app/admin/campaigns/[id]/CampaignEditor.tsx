@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { DeviceFrame, type Device } from "./DeviceFrame";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -41,6 +42,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
   const [hoveredIdx, setHoveredIdx]   = useState<number | null>(null);
   const [tab, setTab]         = useState<EditorTab>("visual");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [device, setDevice]   = useState<Device>("desktop");
   const [saving, setSaving]   = useState(false);
   const [saved, setSaved]     = useState(false);
   const [error, setError]     = useState<string | null>(null);
@@ -241,21 +243,44 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
         {/* ── RIGHT: PREVIEW + DRAWER ───────────────── */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
 
-          {/* iframe */}
-          <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-            <iframe
-              ref={iframeRef}
-              key={previewKey}
-              src={`/admin/preview/${brandId}/${slug}`}
-              style={{ width: "100%", height: "100%", border: "none" }}
-              title="Preview ao vivo"
-            />
+          {/* Device toolbar */}
+          <div style={{
+            height: 40, display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
+            borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0,
+          }}>
+            {(["desktop", "tablet", "mobile"] as Device[]).map((d) => (
+              <button key={d} onClick={() => setDevice(d)} style={{
+                display: "flex", alignItems: "center", gap: 5, padding: "4px 12px",
+                borderRadius: 6, border: "none", cursor: "pointer",
+                background: device === d ? "rgba(166,124,255,0.18)" : "transparent",
+                color: device === d ? "#A67CFF" : "#55526A",
+                fontSize: 11, fontWeight: 600, transition: "all 0.15s",
+              }}>
+                <span style={{ fontSize: 13 }}>
+                  {d === "desktop" ? "🖥" : d === "tablet" ? "⊡" : "📱"}
+                </span>
+                {d === "desktop" ? "Desktop" : d === "tablet" ? "Tablet" : "Mobile"}
+              </button>
+            ))}
+          </div>
+
+          {/* iframe wrapped in device frame */}
+          <div style={{ flex: 1, overflow: "hidden", position: "relative", display: "flex", flexDirection: "column" }}>
+            <DeviceFrame device={device}>
+              <iframe
+                ref={iframeRef}
+                key={previewKey}
+                src={`/admin/preview/${brandId}/${slug}`}
+                style={{ width: "100%", height: "100%", border: "none" }}
+                title="Preview ao vivo"
+              />
+            </DeviceFrame>
             {!drawerOpen && (
               <div style={{
                 position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)",
                 background: "rgba(13,13,18,0.9)", border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 20, padding: "6px 16px", fontSize: 11, color: "#8E8AA8",
-                pointerEvents: "none",
+                pointerEvents: "none", zIndex: 10,
               }}>
                 Clique em qualquer bloco para editar
               </div>
