@@ -29,19 +29,19 @@
         "id": "3h-18",
         "label": "3 horas · 18:00 – 21:00",
         "shortLabel": "3 horas",
-        "meta": "Buquê de rosas · Pacote gastronômico",
+        "meta": "Pacote gastronômico",
         "scope": "Todas as categorias",
         "scopeKey": "3h",
-        "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
+        "inclusos": "Jantar (1 couvert e 2 pratos principais)"
       },
       {
         "id": "3h-22",
         "label": "3 horas · 22:00 – 01:00",
         "shortLabel": "3 horas",
-        "meta": "Buquê de rosas · Pacote gastronômico",
+        "meta": "Pacote gastronômico",
         "scope": "Todas as categorias",
         "scopeKey": "3h",
-        "inclusos": "Buquê de rosas · Jantar (1 couvert e 2 pratos principais)"
+        "inclusos": "Jantar (1 couvert e 2 pratos principais)"
       },
       {
         "id": "pernoite",
@@ -208,7 +208,7 @@
         "items": [
           {
             "q": "Como funciona o formato de 3 horas?",
-            "a": "Você escolhe entre dois horários: 18h–21h ou 22h–01h. A reserva inclui buquê de rosas e jantar completo (1 couvert e 2 pratos principais)."
+            "a": "Você escolhe entre dois horários: 18h–21h ou 22h–01h. A reserva inclui jantar completo (1 couvert e 2 pratos principais)."
           },
           {
             "q": "O que está incluso no pernoite?",
