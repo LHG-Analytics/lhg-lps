@@ -480,14 +480,15 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 </div>
               )}
 
-              {/* Código: automaticLayout faz Monaco observar o container com ResizeObserver */}
+              {/* Código: wrapper com px explícito — height:100% falha em container inset-abs */}
               {tab === "code" && (
                 <div style={{
-                  position: "absolute", top: 44, left: 0, right: 0, bottom: 0,
+                  position: "absolute", top: 44, left: 0, right: 0,
+                  height: drawerHeight - 44,
                   overflow: "hidden",
                 }}>
                   <MonacoEditor
-                    height="100%"
+                    height={drawerHeight - 44}
                     width="100%"
                     defaultLanguage="json"
                     theme="vs-dark"
