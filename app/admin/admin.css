@@ -27,6 +27,10 @@
 .admin-body {
   background: var(--adm-bg);
   min-height: 100dvh;
+  color: var(--adm-ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 /* ── LOGIN ──────────────────────────────────────────────── */
