@@ -49,9 +49,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
   const [saving, setSaving]             = useState(false);
   const [saved, setSaved]               = useState(false);
   const [error, setError]               = useState<string | null>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dragRef   = useRef<{ startY: number; startH: number } | null>(null);
+  const iframeRef  = useRef<HTMLIFrameElement>(null);
+  const saveTimer  = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragRef    = useRef<{ startY: number; startH: number } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const monacoRef  = useRef<any>(null);
 
   const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] ?? null : null;
   const isDirty = JSON.stringify(blocks) !== JSON.stringify(publishedBlocks);
@@ -118,6 +120,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
     sendToPreview(next);
     scheduleAutoSave(next);
   }
+
+  // Monaco não relayout automaticamente quando o container redimensiona via drag
+  useEffect(() => {
+    monacoRef.current?.layout();
+  }, [drawerHeight]);
 
   function onDividerMouseDown(e: React.MouseEvent) {
     dragRef.current = { startY: e.clientY, startH: drawerHeight };
@@ -473,7 +480,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 </div>
               )}
 
-              {/* Código: container absoluto garante posição; pixels explícitos garantem que Monaco renderiza */}
+              {/* Código: Monaco com layout forçado via ref */}
               {tab === "code" && (
                 <div style={{
                   position: "absolute", top: 44, left: 0, right: 0, bottom: 0,
@@ -486,6 +493,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                     theme="vs-dark"
                     value={JSON.stringify(selectedBlock, null, 2)}
                     onChange={(v) => updateBlockJson(v ?? "")}
+                    onMount={(editor) => {
+                      monacoRef.current = editor;
+                      // Sem o setTimeout o Monaco calcula height antes do DOM estabilizar
+                      setTimeout(() => editor.layout(), 0);
+                    }}
                     options={{
                       fontSize: 13, minimap: { enabled: false },
                       wordWrap: "on", tabSize: 2,
