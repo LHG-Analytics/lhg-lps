@@ -1,68 +1,42 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
 
-type RouteEntry = {
-  brand: string;
-  campaign: string;
-  /** Prefixo de path que o CloudFront encaminha (ex: "/pt-BR/diadosnamorados2026").
-   *  Removido antes de reescrever para a rota interna. */
-  strip?: string;
-};
+export async function proxy(request: NextRequest) {
+  let response = NextResponse.next({ request });
 
-/**
- * Mapeamento domínio → brand/campaign interno.
- *
- * Cobre dois cenários sem alterar o código da LP:
- *
- * 1. CloudFront (Softo): domínio da marca aponta para a Vercel e o Host
- *    header é preservado. O proxy detecta o host e reescreve
- *    /pt-BR/<slug>/* → /<brand>/<campaign>/* internamente.
- *
- * 2. Subdomínio direto (fallback sem CloudFront): lps.<marca>.com.br
- *    com CNAME para a Vercel. Sem `strip`, a rota /namorados já chega
- *    limpa e o proxy só faz o rewrite brand/campaign.
- *
- * Para adicionar nova campanha: criar JSON em content/ e incluir as
- * entradas do domínio aqui — nenhum outro código muda.
- */
-const ROUTES: Record<string, RouteEntry> = {
-  // ── Lush ──────────────────────────────────────────────────────────────────
-  "lushmotel.com.br":         { brand: "lush", campaign: "namorados", strip: "/pt-BR/diadosnamorados2026" },
-  "www.lushmotel.com.br":     { brand: "lush", campaign: "namorados", strip: "/pt-BR/diadosnamorados2026" },
-  "lps.lushmotel.com.br":     { brand: "lush", campaign: "namorados" },
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (toSet) => {
+          toSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          response = NextResponse.next({ request });
+          toSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
 
-  // ── Andar de Cima ─────────────────────────────────────────────────────────
-  "andardecimasuites.com.br":     { brand: "andardecima", campaign: "namorados", strip: "/pt-BR/namorados2026" },
-  "www.andardecimasuites.com.br": { brand: "andardecima", campaign: "namorados", strip: "/pt-BR/namorados2026" },
-  "lps.andardecimasuites.com.br": { brand: "andardecima", campaign: "namorados" },
-};
+  const { data: { user } } = await supabase.auth.getUser();
+  const { pathname } = request.nextUrl;
 
-export function proxy(request: NextRequest) {
-  const host = (request.headers.get("host") ?? "").split(":")[0] ?? "";
-  const pathname = request.nextUrl.pathname;
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    if (!user) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+  }
 
-  const entry = ROUTES[host];
-  if (!entry) return NextResponse.next();
+  if (pathname === "/admin/login" && user) {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  }
 
-  const internalBase = `/${entry.brand}/${entry.campaign}`;
-
-  // Já na rota interna — evita loop de rewrite
-  if (pathname.startsWith(internalBase)) return NextResponse.next();
-
-  // Remove prefixo do CloudFront se necessário
-  const stripped =
-    entry.strip && pathname.startsWith(entry.strip)
-      ? pathname.slice(entry.strip.length) || "/"
-      : pathname;
-
-  const url = request.nextUrl.clone();
-  url.pathname =
-    stripped === "/" ? internalBase : `${internalBase}${stripped}`;
-
-  return NextResponse.rewrite(url);
+  return response;
 }
 
 export const proxyConfig = {
-  // Exclui arquivos estáticos do Next e assets de marca
-  matcher: ["/((?!_next/static|_next/image|favicon\\.ico|brands/).*)"],
+  matcher: ["/admin/:path*"],
 };
