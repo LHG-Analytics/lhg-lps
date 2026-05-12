@@ -480,25 +480,22 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 </div>
               )}
 
-              {/* Código: Monaco com layout forçado via ref */}
+              {/* Código: automaticLayout faz Monaco observar o container com ResizeObserver */}
               {tab === "code" && (
                 <div style={{
                   position: "absolute", top: 44, left: 0, right: 0, bottom: 0,
                   overflow: "hidden",
                 }}>
                   <MonacoEditor
-                    height={drawerHeight - 44}
+                    height="100%"
                     width="100%"
                     defaultLanguage="json"
                     theme="vs-dark"
                     value={JSON.stringify(selectedBlock, null, 2)}
                     onChange={(v) => updateBlockJson(v ?? "")}
-                    onMount={(editor) => {
-                      monacoRef.current = editor;
-                      // Sem o setTimeout o Monaco calcula height antes do DOM estabilizar
-                      setTimeout(() => editor.layout(), 0);
-                    }}
+                    onMount={(editor) => { monacoRef.current = editor; }}
                     options={{
+                      automaticLayout: true,
                       fontSize: 13, minimap: { enabled: false },
                       wordWrap: "on", tabSize: 2,
                       scrollBeyondLastLine: false,
