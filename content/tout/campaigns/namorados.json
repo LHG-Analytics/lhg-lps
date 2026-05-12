@@ -18,10 +18,10 @@
       "target": "2026-06-12T23:59:59-03:00"
     },
     "lots": [
-      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 25, "coupon": "NAMORADOS25", "from": "2026-05-05", "to": "2026-05-19" },
-      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADOS15", "from": "2026-05-20", "to": "2026-06-04" },
-      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADOS10", "from": "2026-06-05", "to": "2026-06-11" },
-      { "id": "pre-abre",   "name": "Primeiro lote — abre 05/05", "discountPct": 25, "coupon": "NAMORADOS25", "before": "2026-05-05" },
+      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 20, "coupon": "NAMORADOS20", "from": "2026-05-13", "to": "2026-05-22" },
+      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADOS15", "from": "2026-05-23", "to": "2026-05-31" },
+      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADOS10", "from": "2026-06-01", "to": "2026-06-05" },
+      { "id": "pre-abre",   "name": "Primeiro lote · abre 13/05", "discountPct": 20, "coupon": "NAMORADOS20", "before": "2026-05-13" },
       { "id": "encerrado",  "name": "Lote encerrado",             "discountPct": 0,  "after": "2026-06-11" }
     ],
     "periods": [
@@ -105,8 +105,8 @@
         "items": [
           {
             "icon": "heart",
-            "title": "Buquê de rosas na suíte",
-            "body": "O buquê já espera vocês dentro do quarto. Nada de improviso — a suíte recebe o casal como um cenário romântico e finalizado."
+            "title": "Buquê de rosas no pernoite",
+            "body": "No pernoite, o buquê já espera vocês dentro do quarto. A suíte recebe o casal como um cenário romântico e finalizado. Exclusivo para quem escolhe ficar a noite toda."
           },
           {
             "icon": "calendar",
@@ -121,7 +121,7 @@
           {
             "icon": "clock",
             "title": "Concierge 24h",
-            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera — vocês pedem, a gente resolve."
+            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera. Vocês pedem, a gente resolve."
           }
         ]
       }
@@ -207,7 +207,7 @@
         "items": [
           {
             "q": "Como funciona o formato de 3 horas?",
-            "a": "Você escolhe entre dois horários: 18h–21h ou 22h–01h. A reserva inclui jantar completo (1 couvert e 2 pratos principais)."
+            "a": "Você escolhe entre dois horários: 18h–21h ou 22h–01h. A reserva inclui jantar completo (1 couvert e 2 pratos principais). O buquê de rosas é exclusivo do pernoite."
           },
           {
             "q": "O que está incluso no pernoite?",
