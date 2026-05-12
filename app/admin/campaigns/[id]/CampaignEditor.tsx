@@ -14,6 +14,7 @@ import { DeployPanel, type DeployConfig } from "./DeployPanel";
 import { LotsPanel, type Lot } from "./LotsPanel";
 import { PricingPanel } from "./PricingPanel";
 import { MediaLibrary } from "./MediaLibrary";
+import { PeriodsPanel } from "./PeriodsPanel";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -122,6 +123,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [lots, setLots]                       = useState<Lot[]>(initialLots ?? []);
   const [pricingOpen, setPricingOpen]         = useState(false);
   const [mediaOpen, setMediaOpen]             = useState(false);
+  const [periodsOpen, setPeriodsOpen]         = useState(false);
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -454,6 +456,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
             title="Biblioteca de mídia"
             style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
           >🖼</button>
+          <button
+            onClick={() => setPeriodsOpen(true)}
+            title="Períodos & Datas"
+            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
+          >🗓</button>
           <button
             onClick={() => setDeployOpen(true)}
             title="Configurar deploy (subdomínio / subdiretório)"
@@ -835,6 +842,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         open={mediaOpen}
         onClose={() => setMediaOpen(false)}
         brandId={brandId}
+      />
+
+      <PeriodsPanel
+        open={periodsOpen}
+        onClose={() => setPeriodsOpen(false)}
+        campaignId={campaignId}
       />
 
       <DeployPanel

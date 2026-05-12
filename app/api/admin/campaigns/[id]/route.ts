@@ -2,9 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getUserRole } from "@/lib/admin-role";
+import { logAudit } from "@/lib/audit";
 
-// Validação estrutural leve — garante que blocks é array de {type,props}
-// sem rejeitar blocos em edição parcial. Protege contra corrupção de dados.
 const CmsBlockSchema = z.array(
   z.object({ type: z.string(), props: z.record(z.string(), z.unknown()) }).passthrough()
 );
@@ -21,7 +21,15 @@ export async function PATCH(
 
   const body = await request.json() as Record<string, unknown>;
 
-  // Valida blocks se presentes — rejeita se estrutura está corrompida
+  // Publicar é privilégio de admin
+  if (body.status === "published") {
+    const role = await getUserRole(supabase, user.id);
+    if (role !== "admin") {
+      return new NextResponse("Apenas admins podem publicar campanhas.", { status: 403 });
+    }
+  }
+
+  // Validação estrutural dos blocks
   if (body.blocks !== undefined) {
     const result = CmsBlockSchema.safeParse(body.blocks);
     if (!result.success) {
@@ -30,7 +38,6 @@ export async function PATCH(
     }
   }
 
-  // Busca brand_id e slug para revalidar a rota de produção ao publicar
   const { data: campaign } = await supabase
     .from("campaigns")
     .select("brand_id, slug")
@@ -44,7 +51,15 @@ export async function PATCH(
 
   if (error) return new NextResponse(error.message, { status: 500 });
 
-  // Ao publicar, invalida o cache ISR da LP imediatamente
+  const action = body.status === "published" ? "publish" : "save_draft";
+  void logAudit(supabase, user.id, user.email, {
+    action,
+    entityType: "campaign",
+    entityId:   id,
+    entityLabel: campaign?.slug,
+    details: { status: body.status, hasBlocks: body.blocks !== undefined },
+  });
+
   if (body.status === "published" && campaign) {
     revalidatePath(`/${campaign.brand_id}/${campaign.slug}`);
   }

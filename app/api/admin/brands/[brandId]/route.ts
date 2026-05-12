@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
+import { getUserRole } from "@/lib/admin-role";
+import { logAudit } from "@/lib/audit";
 
 type Params = Promise<{ brandId: string }>;
 
@@ -31,6 +33,12 @@ export async function PATCH(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
+  // Editar marca é privilégio de admin
+  const role = await getUserRole(supabase, user.id);
+  if (role !== "admin") {
+    return new NextResponse("Apenas admins podem editar marcas.", { status: 403 });
+  }
+
   const body = await request.json() as Record<string, unknown>;
   const allowed = ["name", "domain", "favicon", "logo", "fonts", "theme", "booking", "concierge"];
   const patch = Object.fromEntries(
@@ -42,5 +50,11 @@ export async function PATCH(
 
   const { error } = await supabase.from("brands").update(patch).eq("id", brandId);
   if (error) return new NextResponse(error.message, { status: 500 });
+
+  void logAudit(supabase, user.id, user.email, {
+    action: "update_brand", entityType: "brand",
+    entityId: brandId, details: { fields: Object.keys(patch) },
+  });
+
   return NextResponse.json({ ok: true });
 }
