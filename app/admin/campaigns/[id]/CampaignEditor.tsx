@@ -480,30 +480,35 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 </div>
               )}
 
-              {/* Código: wrapper com px explícito — height:100% falha em container inset-abs */}
               {tab === "code" && (
-                <div style={{
-                  position: "absolute", top: 44, left: 0, right: 0,
-                  height: drawerHeight - 44,
+                <>
+                <style>{`.lhg-code section { padding-top: 0 !important; padding-bottom: 10px !important; }`}</style>
+                <div className="lhg-code" style={{
+                  position: "absolute", left: 0, right: 0, top: 0,
+                  height: drawerHeight,
                   overflow: "hidden",
                 }}>
                   <MonacoEditor
-                    height={drawerHeight - 44}
+                    height={drawerHeight}
                     width="100%"
                     defaultLanguage="json"
                     theme="vs-dark"
                     value={JSON.stringify(selectedBlock, null, 2)}
                     onChange={(v) => updateBlockJson(v ?? "")}
-                    onMount={(editor) => { monacoRef.current = editor; }}
+                    onMount={(editor) => {
+                      monacoRef.current = editor;
+                      requestAnimationFrame(() => editor.layout());
+                    }}
                     options={{
                       automaticLayout: true,
                       fontSize: 13, minimap: { enabled: false },
                       wordWrap: "on", tabSize: 2,
                       scrollBeyondLastLine: false,
-                      padding: { top: 8, bottom: 8 },
+                      padding: { top: 0, bottom: 10 },
                     }}
                   />
                 </div>
+                </>
               )}
             </div>
           )}
