@@ -458,32 +458,35 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 }}>✕</button>
               </div>
 
-              {/* Conteúdo — ocupa exatamente o espaço restante do drawer */}
-              <div style={{ flex: 1, minHeight: 0, overflow: tab === "visual" ? "auto" : "hidden" }}>
-                {tab === "visual" ? (
-                  <div style={{ padding: 16 }}>
-                    <PropForm
-                      data={selectedBlock.props}
-                      path={[]}
-                      onChange={(path, val) => updateBlockProp(path, val)}
-                    />
-                  </div>
-                ) : (
-                  <MonacoEditor
-                    height={drawerHeight - 44}
-                    defaultLanguage="json"
-                    theme="vs-dark"
-                    value={JSON.stringify(selectedBlock, null, 2)}
-                    onChange={(v) => updateBlockJson(v ?? "")}
-                    options={{
-                      fontSize: 13, minimap: { enabled: false },
-                      wordWrap: "on", tabSize: 2,
-                      scrollBeyondLastLine: false,
-                      padding: { top: 10, bottom: 10 },
-                    }}
+              {/* Código: Monaco direto no flex column, sem wrapper intermediário */}
+              {tab === "code" && (
+                <MonacoEditor
+                  height={drawerHeight - 44}
+                  width="100%"
+                  defaultLanguage="json"
+                  theme="vs-dark"
+                  value={JSON.stringify(selectedBlock, null, 2)}
+                  onChange={(v) => updateBlockJson(v ?? "")}
+                  options={{
+                    fontSize: 13, minimap: { enabled: false },
+                    wordWrap: "on", tabSize: 2,
+                    scrollBeyondLastLine: false,
+                    padding: { top: 0, bottom: 0 },
+                    lineNumbers: "on",
+                  }}
+                />
+              )}
+
+              {/* Visual: scroll interno */}
+              {tab === "visual" && (
+                <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+                  <PropForm
+                    data={selectedBlock.props}
+                    path={[]}
+                    onChange={(path, val) => updateBlockProp(path, val)}
                   />
-                )}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
