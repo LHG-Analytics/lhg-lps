@@ -11,6 +11,7 @@ import { DeviceFrame, type Device } from "./DeviceFrame";
 import { SortableBlockItem, BLOCK_ICON } from "./SortableBlockItem";
 import { ThemePanel, type Theme } from "./ThemePanel";
 import { DeployPanel, type DeployConfig } from "./DeployPanel";
+import { LotsPanel, type Lot } from "./LotsPanel";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -18,7 +19,8 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false 
 type EditorTab  = "visual" | "code" | "style";
 type SidebarTab = "blocks" | "theme" | "seo";
 type BlockStyle = { bg?: string; paddingTop?: number; paddingBottom?: number };
-type Meta       = { title?: string; description?: string };
+type Analytics  = { ga4?: string; metaPixel?: string; gtm?: string; tiktokPixel?: string };
+type Meta       = { title?: string; description?: string; analytics?: Analytics };
 type Block      = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
 type Version    = { id: string; ts: number; label: string; blocks: Block[] };
 
@@ -80,11 +82,12 @@ interface Props {
   initialTheme: Record<string, string>;
   initialMeta?: Meta;
   initialDeploy?: DeployConfig;
+  initialLots?: Lot[];
   status: string;
 }
 
 /* ═══════════════════════════════════════════════════ */
-export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, status }: Props) {
+export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, initialLots, status }: Props) {
   const [blocks, setBlocks]                   = useState<Block[]>(() =>
     initialBlocks.map((b, i) => b._id ? b : { ...b, _id: `blk-${b.type}-${i}` })
   );
@@ -113,6 +116,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [dupModal, setDupModal]               = useState({ open: false, slug: `${slug}-copia`, saving: false, error: "" });
   const [deployOpen, setDeployOpen]           = useState(false);
   const [deploy, setDeploy]                   = useState<DeployConfig>(initialDeploy ?? { mode: null, domain: "", basePath: "" });
+  const [lotsOpen, setLotsOpen]               = useState(false);
+  const [lots, setLots]                       = useState<Lot[]>(initialLots ?? []);
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -431,6 +436,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
             style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
           >⎘</button>
           <button
+            onClick={() => setLotsOpen(true)}
+            title="Lotes & Cupons"
+            style={{ ...undoRedoBtn(true), color: lots.length > 0 ? "#F0A84A" : "#55526A", fontSize: 13 }}
+          >🏷</button>
+          <button
             onClick={() => setDeployOpen(true)}
             title="Configurar deploy (subdomínio / subdiretório)"
             style={{ ...undoRedoBtn(true), color: deploy.mode ? "#A67CFF" : "#55526A", fontSize: 13 }}
@@ -554,9 +564,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           ) : sidebarTab === "theme" ? (
             <ThemePanel theme={theme} onChange={updateTheme} saving={themeSaving} onSave={saveTheme} />
           ) : (
-            /* ── SEO panel ─────────────────────────── */
+            /* ── SEO + Analytics panel ──────────────── */
             <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+                {/* SEO básico */}
+                <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#55526A" }}>SEO</div>
                 <div>
                   <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Título da página</label>
                   <input
@@ -576,13 +589,46 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                     value={meta.description ?? ""}
                     onChange={(e) => setMeta({ ...meta, description: e.target.value })}
                     style={{ ...fieldStyle, resize: "vertical" }}
-                    rows={4}
+                    rows={3}
                     placeholder="Descrição para mecanismos de busca"
                   />
                   <div style={{ fontSize: 10, color: (meta.description?.length ?? 0) > 160 ? "#E05260" : "#3A3850", marginTop: 3, textAlign: "right" }}>
                     {meta.description?.length ?? 0}/160
                   </div>
                 </div>
+
+                {/* Analytics */}
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 12, marginTop: 2 }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#55526A", marginBottom: 10 }}>Analytics</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+                    {(
+                      [
+                        { key: "ga4",         label: "Google Analytics 4", placeholder: "G-XXXXXXXXXX" },
+                        { key: "gtm",         label: "Google Tag Manager", placeholder: "GTM-XXXXXXX" },
+                        { key: "metaPixel",   label: "Meta Pixel (Facebook)", placeholder: "1234567890" },
+                        { key: "tiktokPixel", label: "TikTok Pixel", placeholder: "CXXXXXXXXXXXXXXXX" },
+                      ] as const
+                    ).map(({ key, label, placeholder }) => (
+                      <div key={key}>
+                        <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</label>
+                        <input
+                          type="text"
+                          value={meta.analytics?.[key] ?? ""}
+                          onChange={(e) => setMeta({
+                            ...meta,
+                            analytics: { ...meta.analytics, [key]: e.target.value || undefined },
+                          })}
+                          style={{ ...fieldStyle, fontSize: 12, fontFamily: "monospace" }}
+                          placeholder={placeholder}
+                        />
+                      </div>
+                    ))}
+                    <div style={{ fontSize: 10, color: "#3A3850", lineHeight: 1.5 }}>
+                      Deixe em branco para herdar as configurações globais do projeto.
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   onClick={() => saveMeta(meta)}
                   disabled={metaSaving}
@@ -592,7 +638,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                     opacity: metaSaving ? 0.6 : 1,
                   }}
                 >
-                  {metaSaving ? "Salvando…" : "Salvar SEO"}
+                  {metaSaving ? "Salvando…" : "Salvar SEO & Analytics"}
                 </button>
               </div>
             </div>
@@ -754,6 +800,14 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         onChange={(s) => setDupModal((m) => ({ ...m, slug: s }))}
         onConfirm={duplicateCampaign}
         onClose={() => setDupModal((m) => ({ ...m, open: false, error: "" }))}
+      />
+
+      <LotsPanel
+        open={lotsOpen}
+        onClose={() => setLotsOpen(false)}
+        campaignId={campaignId}
+        initialLots={lots}
+        onSaved={(l) => setLots(l)}
       />
 
       <DeployPanel

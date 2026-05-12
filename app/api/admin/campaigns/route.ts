@@ -6,22 +6,65 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
-  const { sourceId, slug } = await request.json() as { sourceId: string; slug: string };
-  if (!slug?.trim()) return new NextResponse("Slug obrigatório", { status: 400 });
+  const body = await request.json() as {
+    /* duplicar campanha existente */
+    sourceId?: string;
+    slug?: string;
+    /* criar nova campanha */
+    brandId?: string;
+    lang?: string;
+    meta?: { title?: string; description?: string };
+    blocks?: unknown[];
+  };
 
-  const { data: source, error: fetchErr } = await supabase
-    .from("campaigns")
-    .select("brand_id, lang, meta, blocks, campaign_data, status")
-    .eq("id", sourceId)
-    .single();
+  if (!body.slug?.trim()) return new NextResponse("Slug obrigatório", { status: 400 });
+  const slug = body.slug.trim();
 
-  if (fetchErr || !source) return new NextResponse("Campanha origem não encontrada", { status: 404 });
+  /* ── duplicar ────────────────────────────────── */
+  if (body.sourceId) {
+    const { data: source, error: fetchErr } = await supabase
+      .from("campaigns")
+      .select("brand_id, lang, meta, blocks, campaign_data")
+      .eq("id", body.sourceId)
+      .single();
+
+    if (fetchErr || !source) return new NextResponse("Campanha origem não encontrada", { status: 404 });
+
+    const { data: existing } = await supabase
+      .from("campaigns")
+      .select("id")
+      .eq("brand_id", source.brand_id)
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (existing) return new NextResponse("Slug já existe para esta marca", { status: 409 });
+
+    const { data: created, error: createErr } = await supabase
+      .from("campaigns")
+      .insert({
+        brand_id: source.brand_id,
+        slug,
+        lang: source.lang,
+        meta: source.meta,
+        blocks: source.blocks,
+        campaign_data: source.campaign_data,
+        status: "draft",
+      })
+      .select("id")
+      .single();
+
+    if (createErr) return new NextResponse(createErr.message, { status: 500 });
+    return NextResponse.json({ id: created.id });
+  }
+
+  /* ── criar do zero ───────────────────────────── */
+  if (!body.brandId) return new NextResponse("brandId obrigatório para nova campanha", { status: 400 });
 
   const { data: existing } = await supabase
     .from("campaigns")
     .select("id")
-    .eq("brand_id", source.brand_id)
-    .eq("slug", slug.trim())
+    .eq("brand_id", body.brandId)
+    .eq("slug", slug)
     .maybeSingle();
 
   if (existing) return new NextResponse("Slug já existe para esta marca", { status: 409 });
@@ -29,18 +72,16 @@ export async function POST(request: NextRequest) {
   const { data: created, error: createErr } = await supabase
     .from("campaigns")
     .insert({
-      brand_id: source.brand_id,
-      slug: slug.trim(),
-      lang: source.lang,
-      meta: source.meta,
-      blocks: source.blocks,
-      campaign_data: source.campaign_data,
+      brand_id: body.brandId,
+      slug,
+      lang: body.lang ?? "pt-BR",
+      meta: body.meta ?? {},
+      blocks: body.blocks ?? [],
       status: "draft",
     })
     .select("id")
     .single();
 
   if (createErr) return new NextResponse(createErr.message, { status: 500 });
-
   return NextResponse.json({ id: created.id });
 }

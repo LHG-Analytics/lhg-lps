@@ -5,6 +5,7 @@ import { themeStyle } from "@/lib/theme";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
+import { AnalyticsScripts, type Analytics } from "@/components/AnalyticsScripts";
 import { createClient as createSupabasePublic } from "@supabase/supabase-js";
 
 // Revalida a cada 60 s — após publicar no CMS, a LP reflete em até 1 minuto
@@ -40,6 +41,8 @@ export default async function CampaignPage({ params }: { params: Params }) {
   const data = await safeLoad(brandId, campaignSlug);
   if (!data) notFound();
 
+  const analytics = (data.campaign.meta as { analytics?: Analytics }).analytics;
+
   return (
     <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
       <BlockRenderer
@@ -54,6 +57,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
         />
       ) : null}
       <RevealManager />
+      <AnalyticsScripts analytics={analytics} id={`${brandId}-${campaignSlug}`} />
     </div>
   );
 }
