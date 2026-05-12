@@ -14,19 +14,27 @@ interface Props {
 }
 
 export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
-  const [blocks, setBlocks] = useState<Block[]>(() => [...initialBlocks]);
+  const [blocks, setBlocks]           = useState<Block[]>(() => [...initialBlocks]);
+  const [themeOverride, setThemeOverride] = useState<Record<string, string> | null>(null);
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.data?.type === "update-blocks" && Array.isArray(e.data.blocks)) {
         setBlocks(e.data.blocks as Block[]);
       }
+      if (e.data?.type === "update-theme" && e.data.theme) {
+        setThemeOverride(e.data.theme as Record<string, string>);
+      }
     }
     window.addEventListener("message", onMessage);
-    // Sinaliza ao editor que o iframe está pronto
     window.parent?.postMessage({ type: "preview-ready" }, "*");
     return () => window.removeEventListener("message", onMessage);
   }, []);
+
+  // Mescla o tema original com overrides do editor e passa pelo mapeamento correto de CSS vars
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const effectiveTheme = themeOverride ? { ...brand.theme, ...(themeOverride as any) } : brand.theme;
+  const mergedStyle = themeStyle(effectiveTheme);
 
   return (
     <>
@@ -35,7 +43,7 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
       ::-webkit-scrollbar { display: none; }
       html { scrollbar-width: none; -ms-overflow-style: none; }
     `}</style>
-    <div style={themeStyle(brand.theme)} data-brand={brand.id}>
+    <div style={mergedStyle} data-brand={brand.id}>
       <BlockRenderer
         brand={brand}
         campaign={{ ...campaign, blocks }}

@@ -19,12 +19,19 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
 
   // Usa os blocks do Supabase se já foram editados, senão carrega do JSON
   let initialBlocks = (campaign.blocks ?? []) as { type: string; props: Record<string, unknown> }[];
+  let initialTheme: Record<string, string> = {};
   if (initialBlocks.length === 0) {
     try {
       const lp = await getCampaign(campaign.brand_id, campaign.slug);
       initialBlocks = lp.blocks as typeof initialBlocks;
     } catch { /* sem fallback */ }
   }
+  try {
+    const brand = await getBrand(campaign.brand_id);
+    initialTheme = Object.fromEntries(
+      Object.entries(brand.theme).map(([k, v]) => [k, String(v)])
+    );
+  } catch { /* sem fallback */ }
 
   return (
     <CampaignEditor
@@ -32,6 +39,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       brandId={campaign.brand_id}
       slug={campaign.slug}
       initialBlocks={initialBlocks}
+      initialTheme={initialTheme}
       status={campaign.status}
     />
   );
