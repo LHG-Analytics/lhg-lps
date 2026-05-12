@@ -10,6 +10,7 @@ import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-ki
 import { DeviceFrame, type Device } from "./DeviceFrame";
 import { SortableBlockItem, BLOCK_ICON } from "./SortableBlockItem";
 import { ThemePanel, type Theme } from "./ThemePanel";
+import { DeployPanel, type DeployConfig } from "./DeployPanel";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -78,11 +79,12 @@ interface Props {
   initialBlocks: Block[];
   initialTheme: Record<string, string>;
   initialMeta?: Meta;
+  initialDeploy?: DeployConfig;
   status: string;
 }
 
 /* ═══════════════════════════════════════════════════ */
-export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, initialMeta, status }: Props) {
+export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, status }: Props) {
   const [blocks, setBlocks]                   = useState<Block[]>(() =>
     initialBlocks.map((b, i) => b._id ? b : { ...b, _id: `blk-${b.type}-${i}` })
   );
@@ -109,6 +111,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [versionsOpen, setVersionsOpen]       = useState(false);
   const [versions, setVersions]               = useState<Version[]>([]);
   const [dupModal, setDupModal]               = useState({ open: false, slug: `${slug}-copia`, saving: false, error: "" });
+  const [deployOpen, setDeployOpen]           = useState(false);
+  const [deploy, setDeploy]                   = useState<DeployConfig>(initialDeploy ?? { mode: null, domain: "", basePath: "" });
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -426,6 +430,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
             title="Duplicar campanha"
             style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
           >⎘</button>
+          <button
+            onClick={() => setDeployOpen(true)}
+            title="Configurar deploy (subdomínio / subdiretório)"
+            style={{ ...undoRedoBtn(true), color: deploy.mode ? "#A67CFF" : "#55526A", fontSize: 13 }}
+          >🌐</button>
         </div>
 
         <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)" }} />
@@ -745,6 +754,14 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         onChange={(s) => setDupModal((m) => ({ ...m, slug: s }))}
         onConfirm={duplicateCampaign}
         onClose={() => setDupModal((m) => ({ ...m, open: false, error: "" }))}
+      />
+
+      <DeployPanel
+        open={deployOpen}
+        onClose={() => setDeployOpen(false)}
+        campaignId={campaignId}
+        initial={deploy}
+        onSaved={(cfg) => setDeploy(cfg)}
       />
     </div>
   );

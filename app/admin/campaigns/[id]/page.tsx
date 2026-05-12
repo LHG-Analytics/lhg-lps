@@ -11,7 +11,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("id, slug, brand_id, status, blocks, meta")
+    .select("id, slug, brand_id, status, blocks, meta, custom_domain, base_path")
     .eq("id", id)
     .single();
 
@@ -41,6 +41,11 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
       initialBlocks={initialBlocks}
       initialTheme={initialTheme}
       initialMeta={(campaign.meta ?? {}) as { title?: string; description?: string }}
+      initialDeploy={{
+        mode: campaign.custom_domain ? "subdomain" : campaign.base_path ? "subdirectory" : null,
+        domain:   (campaign.custom_domain as string | null) ?? "",
+        basePath: (campaign.base_path    as string | null) ?? "",
+      }}
       status={campaign.status}
     />
   );
