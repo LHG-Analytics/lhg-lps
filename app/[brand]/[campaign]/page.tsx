@@ -5,6 +5,10 @@ import { themeStyle } from "@/lib/theme";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
+import { createClient as createSupabasePublic } from "@supabase/supabase-js";
+
+// Revalida a cada 60 s — após publicar no CMS, a LP reflete em até 1 minuto
+export const revalidate = 60;
 
 type Params = Promise<{ brand: string; campaign: string }>;
 
@@ -56,10 +60,38 @@ export default async function CampaignPage({ params }: { params: Params }) {
 
 async function safeLoad(brandId: string, campaignSlug: string) {
   try {
-    const [brand, campaign] = await Promise.all([
+    const [brand, campaignFromFile] = await Promise.all([
       getBrand(brandId),
       getCampaign(brandId, campaignSlug),
     ]);
+
+    // Tenta sobrescrever com dados publicados do CMS (Supabase anon key + RLS)
+    let campaign = campaignFromFile;
+    try {
+      const supabase = createSupabasePublic(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+      const { data: row } = await supabase
+        .from("campaigns")
+        .select("blocks, meta")
+        .eq("brand_id", brandId)
+        .eq("slug", campaignSlug)
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (row?.blocks && Array.isArray(row.blocks) && row.blocks.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        campaign = { ...campaign, blocks: row.blocks as any };
+      }
+      if (row?.meta) {
+        campaign = {
+          ...campaign,
+          meta: { ...campaign.meta, ...row.meta as { title?: string; description?: string } },
+        };
+      }
+    } catch { /* Supabase indisponível → mantém JSON */ }
+
     return { brand, campaign };
   } catch {
     return null;
