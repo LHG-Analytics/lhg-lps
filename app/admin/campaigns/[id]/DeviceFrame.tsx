@@ -7,6 +7,7 @@ export { type Device };
 
 interface Props {
   device: Device;
+  zoom?: number;
   children: React.ReactNode;
 }
 
@@ -17,28 +18,28 @@ const DEVICE_DIMS = {
   mobile:  { w: 393,  h: 852 },
 };
 
-export function DeviceFrame({ device, children }: Props) {
+export function DeviceFrame({ device, zoom = 1, children }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
 
-  // Calcula o scale para caber no container
   useEffect(() => {
     function compute() {
       const el = containerRef.current;
       if (!el) return;
       const { w, h } = DEVICE_DIMS[device];
-      // Margem extra para a moldura
       const frameW = device === "desktop" ? w + 40  : device === "tablet" ? w + 56 : w + 28;
       const frameH = device === "desktop" ? h + 130 : device === "tablet" ? h + 80 : h + 90;
       const scaleW = (el.clientWidth  - 40) / frameW;
       const scaleH = (el.clientHeight - 40) / frameH;
-      setScale(Math.min(scaleW, scaleH, 1));
+      // base = cabe no container; zoom é multiplicador do usuário
+      const base = Math.min(scaleW, scaleH, 1);
+      setScale(base * zoom);
     }
     compute();
     const ro = new ResizeObserver(compute);
     if (containerRef.current) ro.observe(containerRef.current);
     return () => ro.disconnect();
-  }, [device]);
+  }, [device, zoom]);
 
   const { w, h } = DEVICE_DIMS[device];
 

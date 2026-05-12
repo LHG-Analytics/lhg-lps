@@ -42,8 +42,10 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
   const [selectedIdx, setSelectedIdx]   = useState<number | null>(null);
   const [hoveredIdx, setHoveredIdx]     = useState<number | null>(null);
   const [tab, setTab]                   = useState<EditorTab>("visual");
-  const [drawerOpen, setDrawerOpen]     = useState(false);
+  const [drawerOpen, setDrawerOpen]       = useState(false);
+  const [drawerCollapsed, setDrawerCollapsed] = useState(false);
   const [device, setDevice]             = useState<Device>("desktop");
+  const [zoom, setZoom]                 = useState(1);
   const [saving, setSaving]             = useState(false);
   const [saved, setSaved]               = useState(false);
   const [error, setError]               = useState<string | null>(null);
@@ -282,30 +284,81 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
         {/* ── RIGHT: PREVIEW + DRAWER ───────────────── */}
         <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
 
-          {/* Device toolbar */}
+          {/* Device + zoom toolbar */}
           <div style={{
-            height: 40, display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
+            height: 40, display: "flex", alignItems: "center", gap: 4, padding: "0 12px",
             borderBottom: "1px solid rgba(255,255,255,0.06)", flexShrink: 0,
           }}>
-            {(["desktop", "tablet", "mobile"] as Device[]).map((d) => (
-              <button key={d} onClick={() => setDevice(d)} style={{
-                display: "flex", alignItems: "center", gap: 5, padding: "4px 12px",
-                borderRadius: 6, border: "none", cursor: "pointer",
-                background: device === d ? "rgba(166,124,255,0.18)" : "transparent",
-                color: device === d ? "#A67CFF" : "#55526A",
-                fontSize: 11, fontWeight: 600, transition: "all 0.15s",
-              }}>
-                <span style={{ fontSize: 13 }}>
-                  {d === "desktop" ? "🖥" : d === "tablet" ? "⊡" : "📱"}
-                </span>
-                {d === "desktop" ? "Desktop" : d === "tablet" ? "Tablet" : "Mobile"}
+            {/* Device toggles */}
+            <div style={{ display: "flex", gap: 2 }}>
+              {(["desktop", "tablet", "mobile"] as Device[]).map((d) => (
+                <button key={d} onClick={() => setDevice(d)} title={d === "desktop" ? "Desktop (1280px)" : d === "tablet" ? "Tablet (820px)" : "Mobile (393px)"} style={{
+                  display: "flex", alignItems: "center", gap: 4, padding: "4px 10px",
+                  borderRadius: 6, border: "none", cursor: "pointer",
+                  background: device === d ? "rgba(166,124,255,0.18)" : "transparent",
+                  color: device === d ? "#A67CFF" : "#55526A",
+                  fontSize: 11, fontWeight: 600, transition: "all 0.15s",
+                }}>
+                  <span style={{ fontSize: 12 }}>
+                    {d === "desktop" ? "🖥" : d === "tablet" ? "⊡" : "📱"}
+                  </span>
+                  {d === "desktop" ? "Desktop" : d === "tablet" ? "Tablet" : "Mobile"}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)", margin: "0 4px" }} />
+
+            {/* Zoom controls */}
+            <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <button
+                onClick={() => setZoom((z) => Math.max(0.25, parseFloat((z - 0.25).toFixed(2))))}
+                disabled={zoom <= 0.25}
+                style={{ background: "none", border: "none", color: zoom <= 0.25 ? "#2A2838" : "#55526A", cursor: zoom <= 0.25 ? "default" : "pointer", fontSize: 14, padding: "2px 6px", lineHeight: 1 }}
+              >−</button>
+              <button
+                onClick={() => setZoom(1)}
+                title="Resetar zoom"
+                style={{
+                  background: zoom !== 1 ? "rgba(166,124,255,0.12)" : "transparent",
+                  border: "none", borderRadius: 4, padding: "3px 8px",
+                  color: zoom !== 1 ? "#A67CFF" : "#55526A",
+                  fontSize: 11, fontWeight: 600, cursor: "pointer", minWidth: 44,
+                }}
+              >
+                {Math.round(zoom * 100)}%
               </button>
-            ))}
+              <button
+                onClick={() => setZoom((z) => Math.min(2, parseFloat((z + 0.25).toFixed(2))))}
+                disabled={zoom >= 2}
+                style={{ background: "none", border: "none", color: zoom >= 2 ? "#2A2838" : "#55526A", cursor: zoom >= 2 ? "default" : "pointer", fontSize: 14, padding: "2px 6px", lineHeight: 1 }}
+              >+</button>
+            </div>
+
+            <div style={{ flex: 1 }} />
+
+            {/* Abrir em nova aba */}
+            <a
+              href={`/admin/preview/${brandId}/${slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Abrir preview em nova aba"
+              style={{
+                display: "flex", alignItems: "center", gap: 5, padding: "4px 10px",
+                borderRadius: 6, border: "1px solid rgba(255,255,255,0.08)",
+                color: "#55526A", fontSize: 11, fontWeight: 600,
+                textDecoration: "none", transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "#F0EEF8"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "#55526A"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; }}
+            >
+              <span style={{ fontSize: 11 }}>↗</span> Nova aba
+            </a>
           </div>
 
           {/* iframe wrapped in device frame */}
           <div style={{ flex: 1, overflow: "hidden", position: "relative", display: "flex", flexDirection: "column" }}>
-            <DeviceFrame device={device}>
+            <DeviceFrame device={device} zoom={zoom}>
               <iframe
                 ref={iframeRef}
                 src={`/admin/preview/${brandId}/${slug}`}
@@ -329,19 +382,21 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
           {/* ── DRAWER ──────────────────────────────── */}
           {drawerOpen && selectedBlock && (
             <div style={{
-              height: tab === "code" ? 580 : 420,
+              height: drawerCollapsed ? 44 : tab === "code" ? 580 : 420,
               borderTop: "1px solid rgba(255,255,255,0.08)",
               display: "flex", flexDirection: "column", flexShrink: 0,
-              background: "#0D0D12", transition: "height 0.2s ease",
+              background: "#0D0D12", transition: "height 0.22s cubic-bezier(0.4,0,0.2,1)",
+              overflow: "hidden",
             }}>
               {/* Drawer header */}
               <div style={{
                 height: 44, display: "flex", alignItems: "center",
-                padding: "0 16px", gap: 12, borderBottom: "1px solid rgba(255,255,255,0.06)",
-                flexShrink: 0,
-              }}>
-                <span style={{ fontSize: 16 }}>{BLOCK_ICON[selectedBlock.type] ?? "📦"}</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#F0EEF8" }}>{selectedBlock.type}</span>
+                padding: "0 12px", gap: 10, flexShrink: 0,
+                borderBottom: drawerCollapsed ? "none" : "1px solid rgba(255,255,255,0.06)",
+                cursor: drawerCollapsed ? "pointer" : "default",
+              }} onClick={() => drawerCollapsed && setDrawerCollapsed(false)}>
+                <span style={{ fontSize: 15 }}>{BLOCK_ICON[selectedBlock.type] ?? "📦"}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "#F0EEF8" }}>{selectedBlock.type}</span>
 
                 {/* File badge */}
                 {BLOCK_SOURCE[selectedBlock.type] && (
@@ -355,27 +410,38 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
 
                 <div style={{ flex: 1 }} />
 
-                {/* Tab switcher */}
-                <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
-                  {(["visual", "code"] as EditorTab[]).map((t) => (
-                    <button key={t} onClick={() => setTab(t)} style={{
-                      padding: "4px 12px", borderRadius: 4, border: "none",
-                      background: tab === t ? "#1E1E2A" : "transparent",
-                      color: tab === t ? "#A67CFF" : "#55526A",
-                      fontSize: 11, fontWeight: 600, cursor: "pointer",
-                    }}>
-                      {t === "visual" ? "✦ Visual" : "</> Código"}
-                    </button>
-                  ))}
-                </div>
+                {/* Tab switcher — escondido quando colapsado */}
+                {!drawerCollapsed && (
+                  <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
+                    {(["visual", "code"] as EditorTab[]).map((t) => (
+                      <button key={t} onClick={() => setTab(t)} style={{
+                        padding: "4px 12px", borderRadius: 4, border: "none",
+                        background: tab === t ? "#1E1E2A" : "transparent",
+                        color: tab === t ? "#A67CFF" : "#55526A",
+                        fontSize: 11, fontWeight: 600, cursor: "pointer",
+                      }}>
+                        {t === "visual" ? "✦ Visual" : "</> Código"}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-                <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); }} style={{
-                  background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 16, padding: 4,
+                {/* Colapsar / expandir */}
+                <button
+                  onClick={(e) => { e.stopPropagation(); setDrawerCollapsed((c) => !c); }}
+                  title={drawerCollapsed ? "Expandir painel" : "Recolher painel"}
+                  style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 12, padding: "4px 6px", lineHeight: 1 }}
+                >
+                  {drawerCollapsed ? "▲" : "▼"}
+                </button>
+
+                <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); setDrawerCollapsed(false); }} style={{
+                  background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 14, padding: "4px 6px",
                 }}>✕</button>
               </div>
 
               {/* Drawer content */}
-              <div style={{ flex: 1, overflow: "auto" }}>
+              <div style={{ flex: 1, overflow: "auto", display: drawerCollapsed ? "none" : "block" }}>
                 {tab === "visual" ? (
                   <div style={{ padding: 16 }}>
                     <PropForm
