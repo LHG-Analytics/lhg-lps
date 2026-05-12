@@ -7,7 +7,8 @@
  *
  * Em dev local (sem basePath) é no-op.
  */
-export function asset(path: string): string {
+export function asset(path: string | undefined | null): string {
+  if (!path) return "";
   const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   if (!base) return path;
   if (!path.startsWith("/")) return path;

@@ -27,6 +27,46 @@ const BLOCK_SOURCE: Record<string, string> = {
 
 const MEDIA_KEY = /image|img|src|video|poster|photo|thumb|media|bg/i;
 
+/* Props mínimas para cada tipo — evita crash quando props: {} é enviado ao preview */
+const BLOCK_DEFAULTS: Record<string, Record<string, unknown>> = {
+  nav: { tag: "Nova campanha" },
+  hero: {
+    video: "", eyebrow: "Edição limitada", headlineFull: "Seu título aqui",
+    headlineEmphasis: "título", typewriter: false, subtitle: "Subtítulo da campanha.",
+    primaryCta: { label: "Saiba mais", href: "#" }, meta: [],
+  },
+  benefits: {
+    eyebrow: "Benefícios", headlineFull: "Por que escolher", headlineEmphasis: "escolher", items: [],
+  },
+  unitPicker: {
+    id: "unit-picker", eyebrow: "Escolha sua unidade", headline: "Reserve agora", subtitle: "",
+    units: [],
+    wizardSteps: [{ n: 1, label: "Período" }, { n: 2, label: "Data" }, { n: 3, label: "Suíte" }, { n: 4, label: "Resumo" }],
+    stepCopy: {
+      period: { title: "Escolha o período", hint: "" },
+      date: { title: "Escolha a data", hint: "", smallHint: "", couponHint: "" },
+      category: { title: "Escolha a suíte", hint: "", hint3hIpiranga: "", hint3hLapa: "", hintAllPernoite: "" },
+      summary: { title: "Resumo", hint: "", labels: { unit: "Unidade", period: "Período", date: "Data", category: "Suíte", inclusos: "Inclusos", lot: "Lote", price: "Valor" }, couponLine: "", lotLineNoCoupon: "" },
+    },
+    openCtaLabel: "Reservar", confirmCtaLabel: "Confirmar",
+  },
+  offer: {
+    eyebrow: "Oferta especial", headlineFull: "Título da oferta", headlineHtml: "Título da <em>oferta</em>",
+    subtitle: "Subtítulo", countdownTo: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    ctas: [{ label: "Reservar agora", href: "#", variant: "gold" }], note: "",
+  },
+  faq: {
+    eyebrow: "FAQ", headlineFull: "Perguntas frequentes", headlineEmphasis: "frequentes",
+    intro: "", items: [{ q: "Pergunta?", a: "Resposta." }],
+  },
+  footer: {
+    tagline: "Tagline da marca.", columns: [],
+    copyright: `© ${new Date().getFullYear()} Lush Hotel Group. Todos os direitos reservados.`,
+    ageNotice: "Proibido para menores de 18 anos.",
+  },
+  stickyCta: { ctas: [{ label: "Reservar", href: "#", variant: "gold" }] },
+};
+
 /* ── props ─────────────────────────────────────────── */
 interface Props {
   campaignId: string;
@@ -229,7 +269,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   }
 
   function addBlock(type: string) {
-    const next = [...blocks, { type, props: {}, _id: crypto.randomUUID() }];
+    const next = [...blocks, { type, props: BLOCK_DEFAULTS[type] ?? {}, _id: crypto.randomUUID() }];
     setSelectedIdx(next.length - 1);
     setDrawerOpen(true);
     updateBlocks(next);
@@ -543,6 +583,17 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
 }
 
 /* ── PropForm ───────────────────────────────────────── */
+const ENUM_OPTIONS: Record<string, string[]> = {
+  variant:  ["gold", "emerald", "red", "ghost"],
+  icon:     ["heart", "calendar", "champagne", "clock"],
+  tier:     ["regular", "premium"],
+  scopeKey: ["3h", "all"],
+};
+
+function labelify(key: string) {
+  return key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim();
+}
+
 function PropForm({
   data, path, brandId, onChange,
 }: {
@@ -552,37 +603,108 @@ function PropForm({
   onChange: (path: string[], val: unknown) => void;
 }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {Object.entries(data).map(([key, val]) => {
         const fullPath = [...path, key];
         return (
           <div key={key}>
-            <label style={{ fontSize: 11, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>{key}</label>
-            {typeof val === "string" && val.length > 80 ? (
+            <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+              {labelify(key)}
+            </label>
+
+            {ENUM_OPTIONS[key] ? (
+              <select value={String(val ?? "")} onChange={(e) => onChange(fullPath, e.target.value)} style={fieldStyle}>
+                {ENUM_OPTIONS[key].map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+              </select>
+
+            ) : typeof val === "string" && val.length > 80 ? (
               <textarea value={val} onChange={(e) => onChange(fullPath, e.target.value)} style={fieldStyle} rows={3} />
+
             ) : typeof val === "string" ? (
-              <div style={{ display: "flex", gap: 6 }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "stretch" }}>
+                {/^#[0-9a-fA-F]{3,8}$/.test(val) && (
+                  <input type="color" value={val} onChange={(e) => onChange(fullPath, e.target.value)}
+                    style={{ width: 34, padding: 2, border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, cursor: "pointer", background: "none", flexShrink: 0 }} />
+                )}
                 <input type="text" value={val} onChange={(e) => onChange(fullPath, e.target.value)} style={{ ...fieldStyle, flex: 1 }} />
                 {MEDIA_KEY.test(key) && (
                   <UploadBtn brandId={brandId} onUploaded={(p) => onChange(fullPath, p)} />
                 )}
               </div>
+
             ) : typeof val === "number" ? (
               <input type="number" value={val} onChange={(e) => onChange(fullPath, Number(e.target.value))} style={fieldStyle} />
+
             ) : typeof val === "boolean" ? (
-              <input type="checkbox" checked={val} onChange={(e) => onChange(fullPath, e.target.checked)} />
+              <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
+                <input type="checkbox" checked={val} onChange={(e) => onChange(fullPath, e.target.checked)}
+                  style={{ width: 15, height: 15, accentColor: "#A67CFF", cursor: "pointer" }} />
+                <span style={{ fontSize: 12, color: val ? "#A67CFF" : "#55526A" }}>{val ? "Ativado" : "Desativado"}</span>
+              </label>
+
             ) : Array.isArray(val) ? (
-              <div style={{ fontSize: 11, color: "#55526A", padding: "6px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 6 }}>
-                Array · {val.length} itens — edite via Código
-              </div>
+              <ArrayField value={val} path={fullPath} brandId={brandId} onChange={onChange} />
+
             ) : typeof val === "object" && val !== null ? (
-              <div style={{ paddingLeft: 12, borderLeft: "2px solid rgba(255,255,255,0.06)" }}>
+              <div style={{ paddingLeft: 10, borderLeft: "2px solid rgba(255,255,255,0.07)", marginTop: 2 }}>
                 <PropForm data={val as Record<string, unknown>} path={fullPath} brandId={brandId} onChange={onChange} />
               </div>
             ) : null}
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/* ── ArrayField ─────────────────────────────────────── */
+function ArrayField({ value, path, brandId, onChange }: {
+  value: unknown[];
+  path: string[];
+  brandId: string;
+  onChange: (path: string[], val: unknown) => void;
+}) {
+  function updateItem(i: number, updated: unknown) {
+    const next = [...value];
+    next[i] = updated;
+    onChange(path, next);
+  }
+  function removeItem(i: number) {
+    onChange(path, value.filter((_, j) => j !== i));
+  }
+  function addItem() {
+    const first = value[0];
+    const blank: unknown =
+      typeof first === "object" && first !== null
+        ? Object.fromEntries(
+            Object.entries(first as Record<string, unknown>).map(([k, v]) => [
+              k, typeof v === "boolean" ? false : typeof v === "number" ? 0 : "",
+            ])
+          )
+        : typeof first === "string" ? "" : {};
+    onChange(path, [...value, blank]);
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+      {value.map((item, i) => (
+        <div key={i} style={{ position: "relative", padding: "8px 10px", background: "rgba(255,255,255,0.03)", borderRadius: 6, border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: typeof item === "object" ? 6 : 0 }}>
+            <span style={{ fontSize: 9, color: "#3A3850", fontWeight: 700, letterSpacing: "0.1em" }}>#{i + 1}</span>
+            <button onClick={() => removeItem(i)} style={{ background: "none", border: "none", color: "#E05260", cursor: "pointer", fontSize: 10, padding: "1px 3px", lineHeight: 1 }}>✕</button>
+          </div>
+          {typeof item === "string" ? (
+            <input type="text" value={item} onChange={(e) => updateItem(i, e.target.value)}
+              style={{ ...fieldStyle, width: "100%", marginTop: typeof item === "object" ? 0 : -2 }} />
+          ) : typeof item === "object" && item !== null ? (
+            <PropForm data={item as Record<string, unknown>} path={[...path, String(i)]} brandId={brandId} onChange={onChange} />
+          ) : null}
+        </div>
+      ))}
+      <button onClick={addItem}
+        style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: 6, padding: "5px 0", color: "#55526A", cursor: "pointer", fontSize: 11, textAlign: "center" }}>
+        + Adicionar
+      </button>
     </div>
   );
 }
