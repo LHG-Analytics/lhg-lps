@@ -37,14 +37,13 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
   }, []);
 
   // React sobrescreve className no re-render, removendo .in adicionado pelo RevealManager.
-  // Após cada atualização de blocks, re-aplica .in em todos os elementos visíveis no viewport.
+  // No preview/editor, forçamos .in em TODOS os elementos após qualquer atualização de blocks
+  // para garantir que o conteúdo sempre apareça — inclusive elementos abaixo do fold que já
+  // foram revelados e estão com io.unobserve (não seriam re-observados pelo IntersectionObserver).
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
       document.querySelectorAll<HTMLElement>(".fade-up, .reveal").forEach((el) => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight && r.bottom > 0) {
-          el.classList.add("in");
-        }
+        el.classList.add("in");
       });
     });
     return () => cancelAnimationFrame(raf);

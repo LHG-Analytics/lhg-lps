@@ -423,6 +423,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                 src={`/admin/preview/${brandId}/${slug}`}
                 style={{ width: "100%", height: "100%", border: "none" }}
                 title="Preview ao vivo"
+                allow="autoplay"
                 onLoad={() => { sendToPreview(blocks); sendThemeToPreview(theme); }}
               />
             </DeviceFrame>
