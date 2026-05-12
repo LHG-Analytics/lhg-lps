@@ -11,6 +11,7 @@
     "validate": "tsx scripts/validate-content.ts"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.105.4",
     "framer-motion": "^12.38.0",

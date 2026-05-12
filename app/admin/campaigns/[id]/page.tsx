@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
+import { CampaignEditor } from "./CampaignEditor";
 
 export default async function CampaignPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -9,18 +10,25 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("*")
+    .select("id, slug, brand_id, status, campaign_data, blocks")
     .eq("id", id)
     .single();
 
+  if (!campaign) notFound();
+
+  const initialJson = JSON.stringify(
+    { ...(campaign.campaign_data ?? {}), blocks: campaign.blocks ?? [] },
+    null,
+    2
+  );
+
   return (
-    <div className="admin-shell">
-      <main className="admin-main">
-        <header className="admin-header">
-          <h1>{campaign?.slug ?? id}</h1>
-        </header>
-        <p style={{ color: "var(--adm-ink-mut)" }}>Editor de campanha em construção.</p>
-      </main>
-    </div>
+    <CampaignEditor
+      campaignId={campaign.id}
+      brandId={campaign.brand_id}
+      slug={campaign.slug}
+      initialJson={initialJson}
+      status={campaign.status}
+    />
   );
 }
