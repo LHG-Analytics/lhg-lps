@@ -54,7 +54,7 @@ export function DeviceFrame({ device, zoom = 1, children }: Props) {
         overflow: "hidden", position: "relative",
       }}
     >
-      <div style={{ transform: `scale(${scale})`, transformOrigin: "center center", transition: "transform 0.3s" }}>
+      <div style={{ transform: `scale(${scale}) translateZ(0)`, transformOrigin: "center center", transition: "transform 0.3s", willChange: "transform" }}>
         {device === "desktop" && <IMacFrame w={w} h={h}>{children}</IMacFrame>}
         {device === "tablet"  && <IPadFrame w={w} h={h}>{children}</IPadFrame>}
         {device === "mobile"  && <IPhoneFrame w={w} h={h}>{children}</IPhoneFrame>}

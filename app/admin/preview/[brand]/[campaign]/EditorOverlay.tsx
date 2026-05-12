@@ -36,8 +36,7 @@ export function EditorOverlay() {
     function onClick(e: MouseEvent) {
       const el = (e.target as HTMLElement).closest("[data-block-type]");
       if (!el) return;
-      e.preventDefault();
-      e.stopPropagation();
+      // Não bloqueia o evento — botões e cards internos (UnitPicker, etc.) precisam funcionar
       selected?.classList.remove("editor-selected");
       selected = el;
       el.classList.add("editor-selected");
