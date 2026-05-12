@@ -1,16 +1,17 @@
 "use client";
-import { useRef } from "react";
 import { motion } from "framer-motion";
 
+export interface MarqueeImage {
+  src: string;
+  logo?: boolean; // true = contain + padding, false/undefined = cover
+}
+
 interface Props {
-  images: string[];
+  images: MarqueeImage[];
 }
 
 export function ThreeDMarquee({ images }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  // Divide em 4 colunas ciclicamente
-  const cols: string[][] = [[], [], [], []];
+  const cols: MarqueeImage[][] = [[], [], [], []];
   images.forEach((img, i) => cols[i % 4]!.push(img));
 
   return (
@@ -39,7 +40,6 @@ export function ThreeDMarquee({ images }: Props) {
         ))}
       </div>
 
-      {/* overlay gradiente para legibilidade do card */}
       <div
         style={{
           position: "absolute",
@@ -52,8 +52,7 @@ export function ThreeDMarquee({ images }: Props) {
   );
 }
 
-function MarqueeCol({ images, reverse }: { images: string[]; reverse: boolean }) {
-  // Triplica para loop contínuo
+function MarqueeCol({ images, reverse }: { images: MarqueeImage[]; reverse: boolean }) {
   const list = [...images, ...images, ...images];
   const totalH = list.length * (180 + 12);
 
@@ -64,7 +63,7 @@ function MarqueeCol({ images, reverse }: { images: string[]; reverse: boolean })
         animate={{ y: reverse ? [0, -totalH / 3] : [-totalH / 3, 0] }}
         transition={{ duration: 18, ease: "linear", repeat: Infinity }}
       >
-        {list.map((src, i) => (
+        {list.map((item, i) => (
           <div
             key={i}
             style={{
@@ -73,13 +72,22 @@ function MarqueeCol({ images, reverse }: { images: string[]; reverse: boolean })
               borderRadius: 12,
               overflow: "hidden",
               border: "1px solid rgba(255,255,255,0.07)",
+              background: item.logo ? "#16161F" : undefined,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: item.logo ? "24px 20px" : undefined,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={src}
+              src={item.src}
               alt=""
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: item.logo ? "contain" : "cover",
+              }}
               loading="lazy"
             />
           </div>

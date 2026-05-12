@@ -2,21 +2,21 @@
 import { useState } from "react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { ThreeDMarquee } from "../_components/ThreeDMarquee";
+import { ThreeDMarquee, type MarqueeImage } from "../_components/ThreeDMarquee";
 
-const MARQUEE_IMAGES = [
-  "/brands/lush/units/fachada-ipiranga.png",
-  "/brands/lush/units/fachada-lapa.png",
-  "/brands/andardecima/units/fachada-adc.png",
-  "/brands/tout/units/fachada-tout.jpg",
-  "/brands/tout/units/fachada-tout.jpg",
-  "/brands/lush/units/fachada-lapa.png",
-  "/brands/andardecima/units/fachada-adc.png",
-  "/brands/lush/units/fachada-ipiranga.png",
-  "/brands/andardecima/units/fachada-adc.png",
-  "/brands/lush/units/fachada-ipiranga.png",
-  "/brands/tout/units/fachada-tout.jpg",
-  "/brands/lush/units/fachada-lapa.png",
+const MARQUEE_IMAGES: MarqueeImage[] = [
+  { src: "/brands/lush/units/fachada-ipiranga.png" },
+  { src: "/brands/lush/units/fachada-lapa.png" },
+  { src: "/brands/andardecima/units/fachada-adc.png" },
+  { src: "/brands/tout/units/fachada-tout.jpg" },
+  { src: "/brands/lush/logo-lush.png", logo: true },
+  { src: "/brands/andardecima/units/svg-adc.png", logo: true },
+  { src: "/brands/tout/units/svg-tout.png", logo: true },
+  { src: "/brands/lush/units/fachada-lapa.png" },
+  { src: "/brands/andardecima/units/fachada-adc.png" },
+  { src: "/brands/tout/units/fachada-tout.jpg" },
+  { src: "/brands/lush/units/fachada-ipiranga.png" },
+  { src: "/brands/lhg/logos/logo-white.png", logo: true },
 ];
 
 export default function LoginPage() {
