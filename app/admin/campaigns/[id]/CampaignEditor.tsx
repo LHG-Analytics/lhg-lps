@@ -43,7 +43,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
   const [hoveredIdx, setHoveredIdx]     = useState<number | null>(null);
   const [tab, setTab]                   = useState<EditorTab>("visual");
   const [drawerOpen, setDrawerOpen]       = useState(false);
-  const [drawerCollapsed, setDrawerCollapsed] = useState(false);
+  const [drawerHeight, setDrawerHeight]   = useState(220);
   const [device, setDevice]             = useState<Device>("desktop");
   const [zoom, setZoom]                 = useState(1);
   const [saving, setSaving]             = useState(false);
@@ -51,6 +51,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
   const [error, setError]               = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dragRef   = useRef<{ startY: number; startH: number } | null>(null);
 
   const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] ?? null : null;
   const isDirty = JSON.stringify(blocks) !== JSON.stringify(publishedBlocks);
@@ -116,6 +117,22 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
     setBlocks(next);
     sendToPreview(next);
     scheduleAutoSave(next);
+  }
+
+  function onDividerMouseDown(e: React.MouseEvent) {
+    dragRef.current = { startY: e.clientY, startH: drawerHeight };
+    const onMove = (ev: MouseEvent) => {
+      if (!dragRef.current) return;
+      const delta = dragRef.current.startY - ev.clientY; // arrastar pra cima → maior
+      setDrawerHeight(Math.max(80, Math.min(window.innerHeight - 160, dragRef.current.startH + delta)));
+    };
+    const onUp = () => {
+      dragRef.current = null;
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
   }
 
   function discardChanges() {
@@ -380,30 +397,41 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
           </div>
 
           {/* ── DRAWER ──────────────────────────────── */}
+          {/* ── DIVIDER arrastável ──────────────────── */}
+          {drawerOpen && selectedBlock && (
+            <div
+              onMouseDown={onDividerMouseDown}
+              style={{
+                height: 10, flexShrink: 0, cursor: "ns-resize",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                borderTop: "1px solid rgba(255,255,255,0.08)",
+                background: "rgba(255,255,255,0.02)",
+                userSelect: "none",
+              }}
+            >
+              <div style={{ display: "flex", gap: 3 }}>
+                {[0, 1, 2].map((i) => (
+                  <div key={i} style={{ width: 3, height: 3, borderRadius: "50%", background: "rgba(255,255,255,0.2)" }} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── DRAWER ──────────────────────────────── */}
           {drawerOpen && selectedBlock && (
             <div style={{
-              // visual: ~20vh compacto | código: fullscreen (restante após headers) | colapsado: só o cabeçalho
-              height: drawerCollapsed
-                ? 44
-                : tab === "code"
-                  ? "calc(100dvh - 88px)"   // 48px top header + 40px device toolbar
-                  : "clamp(160px, 22vh, 240px)",
-              borderTop: "1px solid rgba(255,255,255,0.08)",
+              height: drawerHeight,
               display: "flex", flexDirection: "column", flexShrink: 0,
-              background: "#0D0D12", transition: "height 0.22s cubic-bezier(0.4,0,0.2,1)",
-              overflow: "hidden",
+              background: "#0D0D12", overflow: "hidden",
             }}>
-              {/* Drawer header */}
+              {/* Header */}
               <div style={{
                 height: 44, display: "flex", alignItems: "center",
                 padding: "0 12px", gap: 10, flexShrink: 0,
-                borderBottom: drawerCollapsed ? "none" : "1px solid rgba(255,255,255,0.06)",
-                cursor: drawerCollapsed ? "pointer" : "default",
-              }} onClick={() => drawerCollapsed && setDrawerCollapsed(false)}>
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+              }}>
                 <span style={{ fontSize: 15 }}>{BLOCK_ICON[selectedBlock.type] ?? "📦"}</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#F0EEF8" }}>{selectedBlock.type}</span>
-
-                {/* File badge */}
                 {BLOCK_SOURCE[selectedBlock.type] && (
                   <span style={{
                     fontSize: 10, color: "#55526A", fontFamily: "monospace",
@@ -412,43 +440,28 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                     {BLOCK_SOURCE[selectedBlock.type]!.file}
                   </span>
                 )}
-
                 <div style={{ flex: 1 }} />
-
-                {/* Tab switcher — escondido quando colapsado */}
-                {!drawerCollapsed && (
-                  <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
-                    {(["visual", "code"] as EditorTab[]).map((t) => (
-                      <button key={t} onClick={() => setTab(t)} style={{
-                        padding: "4px 12px", borderRadius: 4, border: "none",
-                        background: tab === t ? "#1E1E2A" : "transparent",
-                        color: tab === t ? "#A67CFF" : "#55526A",
-                        fontSize: 11, fontWeight: 600, cursor: "pointer",
-                      }}>
-                        {t === "visual" ? "✦ Visual" : "</> Código"}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Colapsar / expandir */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); setDrawerCollapsed((c) => !c); }}
-                  title={drawerCollapsed ? "Expandir painel" : "Recolher painel"}
-                  style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 12, padding: "4px 6px", lineHeight: 1 }}
-                >
-                  {drawerCollapsed ? "▲" : "▼"}
-                </button>
-
-                <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); setDrawerCollapsed(false); }} style={{
+                <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
+                  {(["visual", "code"] as EditorTab[]).map((t) => (
+                    <button key={t} onClick={() => setTab(t)} style={{
+                      padding: "4px 12px", borderRadius: 4, border: "none",
+                      background: tab === t ? "#1E1E2A" : "transparent",
+                      color: tab === t ? "#A67CFF" : "#55526A",
+                      fontSize: 11, fontWeight: 600, cursor: "pointer",
+                    }}>
+                      {t === "visual" ? "✦ Visual" : "</> Código"}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); }} style={{
                   background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 14, padding: "4px 6px",
                 }}>✕</button>
               </div>
 
-              {/* Drawer content */}
-              {!drawerCollapsed && (
-                tab === "visual" ? (
-                  <div style={{ flex: 1, overflow: "auto", padding: 16 }}>
+              {/* Conteúdo — ocupa exatamente o espaço restante do drawer */}
+              <div style={{ flex: 1, minHeight: 0, overflow: tab === "visual" ? "auto" : "hidden" }}>
+                {tab === "visual" ? (
+                  <div style={{ padding: 16 }}>
                     <PropForm
                       data={selectedBlock.props}
                       path={[]}
@@ -456,26 +469,21 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                     />
                   </div>
                 ) : (
-                  /* Código: Monaco fullscreen, sem margens, altura = drawer - header (44px) */
-                  <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
-                    <MonacoEditor
-                      height="calc(100dvh - 132px)"
-                      defaultLanguage="json"
-                      theme="vs-dark"
-                      value={JSON.stringify(selectedBlock, null, 2)}
-                      onChange={(v) => updateBlockJson(v ?? "")}
-                      options={{
-                        fontSize: 13,
-                        minimap: { enabled: false },
-                        wordWrap: "on",
-                        tabSize: 2,
-                        scrollBeyondLastLine: false,
-                        padding: { top: 12, bottom: 12 },
-                      }}
-                    />
-                  </div>
-                )
-              )}
+                  <MonacoEditor
+                    height={drawerHeight - 44}
+                    defaultLanguage="json"
+                    theme="vs-dark"
+                    value={JSON.stringify(selectedBlock, null, 2)}
+                    onChange={(v) => updateBlockJson(v ?? "")}
+                    options={{
+                      fontSize: 13, minimap: { enabled: false },
+                      wordWrap: "on", tabSize: 2,
+                      scrollBeyondLastLine: false,
+                      padding: { top: 10, bottom: 10 },
+                    }}
+                  />
+                )}
+              </div>
             </div>
           )}
         </div>
