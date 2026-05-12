@@ -436,7 +436,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
                 position: "absolute", top: 0, left: 0, right: 0, height: 44,
                 display: "flex", alignItems: "center", padding: "0 12px", gap: 10,
                 borderBottom: "1px solid rgba(255,255,255,0.06)",
-                background: "#0D0D12", zIndex: 1,
+                background: "#0D0D12", zIndex: 10,
               }}>
                 <span style={{ fontSize: 15 }}>{BLOCK_ICON[selectedBlock.type] ?? "📦"}</span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: "#F0EEF8" }}>{selectedBlock.type}</span>
