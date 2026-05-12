@@ -36,6 +36,20 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
+  // React sobrescreve className no re-render, removendo .in adicionado pelo RevealManager.
+  // Após cada atualização de blocks, re-aplica .in em todos os elementos visíveis no viewport.
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      document.querySelectorAll<HTMLElement>(".fade-up, .reveal").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) {
+          el.classList.add("in");
+        }
+      });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [blocks]);
+
   // Mescla o tema original com overrides do editor e passa pelo mapeamento correto de CSS vars
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const effectiveTheme = themeOverride ? { ...brand.theme, ...(themeOverride as any) } : brand.theme;
