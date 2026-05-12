@@ -9,14 +9,14 @@ const MARQUEE_IMAGES = [
   "/brands/lush/units/fachada-lapa.png",
   "/brands/andardecima/units/fachada-adc.png",
   "/brands/tout/units/fachada-tout.jpg",
-  "/brands/lush/logo-lush.png",
-  "/brands/andardecima/units/svg-adc.png",
-  "/brands/tout/units/svg-tout.png",
-  "/brands/lush/units/fachada-ipiranga.png",
   "/brands/tout/units/fachada-tout.jpg",
   "/brands/lush/units/fachada-lapa.png",
   "/brands/andardecima/units/fachada-adc.png",
-  "/brands/lush/logo-lush.png",
+  "/brands/lush/units/fachada-ipiranga.png",
+  "/brands/andardecima/units/fachada-adc.png",
+  "/brands/lush/units/fachada-ipiranga.png",
+  "/brands/tout/units/fachada-tout.jpg",
+  "/brands/lush/units/fachada-lapa.png",
 ];
 
 export default function LoginPage() {
