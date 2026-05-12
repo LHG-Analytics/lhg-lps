@@ -15,6 +15,8 @@ interface VercelDomain {
   cnames?: string[];
 }
 
+type CfStatus = "idle" | "ok" | "already" | "no_token" | "error";
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -40,9 +42,11 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
   const [basePath, setBasePath]   = useState(initial.basePath);
   const [saving, setSaving]       = useState(false);
   const [error, setError]         = useState("");
-  const [vercelAdding, setVercelAdding] = useState(false);
+  const [configuring, setConfiguring]   = useState(false);
   const [vercelDomain, setVercelDomain] = useState<VercelDomain | null>(null);
   const [vercelError, setVercelError]   = useState("");
+  const [cfStatus, setCfStatus]         = useState<CfStatus>("idle");
+  const [cfError, setCfError]           = useState("");
 
   if (!open) return null;
 
@@ -73,9 +77,14 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
     }
   }
 
-  async function addToVercel() {
+  async function configure() {
     if (!domain.trim()) return;
-    setVercelAdding(true); setVercelError(""); setVercelDomain(null);
+    setConfiguring(true);
+    setVercelError(""); setVercelDomain(null);
+    setCfStatus("idle"); setCfError("");
+
+    // 1. Adiciona domínio no Vercel
+    let cnameTarget = "cname.vercel-dns.com";
     try {
       const res = await fetch("/api/admin/vercel/domains", {
         method: "POST",
@@ -83,17 +92,38 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
         body: JSON.stringify({ domain: domain.trim() }),
       });
       const data = await res.json() as Record<string, unknown>;
-      if (!res.ok) throw new Error(String(data) ?? "Erro");
+      if (!res.ok) throw new Error(String((data as Record<string, unknown>).error ?? data) ?? "Erro Vercel");
+      const cnames = Array.isArray(data.cnames) ? data.cnames as string[] : [];
+      cnameTarget = cnames[0] ?? "cname.vercel-dns.com";
       setVercelDomain({
         name:     String(data.name ?? domain),
         verified: Boolean(data.verified),
-        cnames:   Array.isArray(data.cnames) ? data.cnames as string[] : ["cname.vercel-dns.com"],
+        cnames:   [cnameTarget],
       });
     } catch (e) {
       setVercelError(e instanceof Error ? e.message : "Erro na API Vercel.");
-    } finally {
-      setVercelAdding(false);
+      setConfiguring(false);
+      return;
     }
+
+    // 2. Cria CNAME no Cloudflare (falha graciosamente se sem token)
+    try {
+      const res = await fetch("/api/admin/cloudflare/dns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ domain: domain.trim(), target: cnameTarget }),
+      });
+      if (res.status === 503) { setCfStatus("no_token"); }
+      else if (!res.ok) { setCfError(await res.text()); setCfStatus("error"); }
+      else {
+        const data = await res.json() as { alreadyExists?: boolean };
+        setCfStatus(data.alreadyExists ? "already" : "ok");
+      }
+    } catch {
+      setCfStatus("error"); setCfError("Erro de rede ao contactar Cloudflare.");
+    }
+
+    setConfiguring(false);
   }
 
   // Extrai o label do CNAME (parte antes do primeiro ponto do domínio)
@@ -149,50 +179,72 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
                 <input
                   type="text"
                   value={domain}
-                  onChange={(e) => setDomain(e.target.value)}
+                  onChange={(e) => { setDomain(e.target.value); setVercelDomain(null); setCfStatus("idle"); }}
                   placeholder="ex: namorados2026.lushmotel.com.br"
                   style={{ ...fld, flex: 1 }}
                 />
                 <button
-                  onClick={addToVercel}
-                  disabled={vercelAdding || !domain.trim()}
+                  onClick={configure}
+                  disabled={configuring || !domain.trim()}
                   style={{
                     background: "#A67CFF", color: "#fff", border: "none", borderRadius: 6,
                     padding: "0 14px", fontSize: 12, fontWeight: 700,
-                    cursor: vercelAdding || !domain.trim() ? "default" : "pointer",
-                    opacity: vercelAdding || !domain.trim() ? 0.5 : 1, whiteSpace: "nowrap",
+                    cursor: configuring || !domain.trim() ? "default" : "pointer",
+                    opacity: configuring || !domain.trim() ? 0.5 : 1, whiteSpace: "nowrap",
                   }}
                 >
-                  {vercelAdding ? "…" : "Adicionar no Vercel"}
+                  {configuring ? "Configurando…" : "Configurar"}
                 </button>
               </div>
-              {vercelError && <div style={{ fontSize: 11, color: "#E05260", marginTop: 5 }}>{vercelError}</div>}
+              {vercelError && <div style={{ fontSize: 11, color: "#E05260", marginTop: 5 }}>⚠ Vercel: {vercelError}</div>}
               <div style={{ fontSize: 11, color: "#3A3850", marginTop: 5 }}>
-                Clique em "Adicionar no Vercel" para registrar o domínio. Depois configure o DNS abaixo.
+                Registra o domínio no Vercel e cria o CNAME no Cloudflare automaticamente.
               </div>
             </div>
 
-            {/* DNS guide — aparece após adicionar ao Vercel */}
+            {/* Resultado combinado Vercel + Cloudflare */}
             {vercelDomain && (
-              <div style={{ ...card, borderColor: "rgba(46,184,122,0.25)" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#2EB87A", marginBottom: 10 }}>
-                  {vercelDomain.verified ? "✓ Domínio verificado" : "⏳ Domínio adicionado — configure o DNS"}
-                </div>
-                <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.07em" }}>
-                  Registro DNS a criar no seu provedor
-                </div>
-                <div style={{ display: "grid", gridTemplateColumns: "60px 1fr 1fr", gap: "4px 8px", fontFamily: "monospace", fontSize: 11 }}>
-                  <span style={{ color: "#55526A" }}>TIPO</span>
-                  <span style={{ color: "#55526A" }}>NOME</span>
-                  <span style={{ color: "#55526A" }}>DESTINO</span>
-                  <span style={{ color: "#A67CFF", fontWeight: 700 }}>CNAME</span>
-                  <span style={{ color: "#F0EEF8" }}>{cnameName}</span>
-                  <span style={{ color: "#F0EEF8" }}>{cnameValue}</span>
-                </div>
-                <div style={{ fontSize: 10, color: "#55526A", marginTop: 10, lineHeight: 1.5 }}>
-                  Após criar o registro CNAME, aguarde até 48h para propagação do DNS.
-                  O status pode ser verificado em <strong style={{ color: "#8E8AA8" }}>Vercel → Project → Domains</strong>.
-                </div>
+              <div style={{ ...card, borderColor: "rgba(46,184,122,0.25)", display: "flex", flexDirection: "column", gap: 10 }}>
+
+                {/* Status Vercel */}
+                <StatusRow
+                  icon="▲"
+                  label="Vercel"
+                  status={vercelDomain.verified ? "ok" : "pending"}
+                  okText="Domínio verificado"
+                  pendingText="Domínio registrado"
+                />
+
+                {/* Status Cloudflare */}
+                {cfStatus === "ok"       && <StatusRow icon="☁" label="Cloudflare" status="ok"      okText="CNAME criado automaticamente" />}
+                {cfStatus === "already"  && <StatusRow icon="☁" label="Cloudflare" status="ok"      okText="CNAME já existia — mantido" />}
+                {cfStatus === "no_token" && <StatusRow icon="☁" label="Cloudflare" status="warn"    pendingText="Token não configurado — veja instruções abaixo" />}
+                {cfStatus === "error"    && <StatusRow icon="☁" label="Cloudflare" status="error"   pendingText={cfError || "Erro ao criar CNAME"} />}
+
+                {/* Instrução manual de DNS (só aparece se Cloudflare falhou ou sem token) */}
+                {(cfStatus === "no_token" || cfStatus === "error") && (
+                  <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 10 }}>
+                    <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                      Crie este registro DNS manualmente
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "60px 1fr 1fr", gap: "4px 8px", fontFamily: "monospace", fontSize: 11 }}>
+                      <span style={{ color: "#55526A" }}>TIPO</span><span style={{ color: "#55526A" }}>NOME</span><span style={{ color: "#55526A" }}>DESTINO</span>
+                      <span style={{ color: "#A67CFF", fontWeight: 700 }}>CNAME</span>
+                      <span style={{ color: "#F0EEF8" }}>{cnameName}</span>
+                      <span style={{ color: "#F0EEF8" }}>{cnameValue}</span>
+                    </div>
+                    <div style={{ fontSize: 10, color: "#E05260", marginTop: 6 }}>
+                      ⚠ Certifique-se de usar <strong>DNS only</strong> (nuvem cinza) no Cloudflare — proxy laranja quebra a verificação Vercel.
+                    </div>
+                  </div>
+                )}
+
+                {/* Tudo OK */}
+                {(cfStatus === "ok" || cfStatus === "already") && (
+                  <div style={{ fontSize: 11, color: "#55526A", borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8 }}>
+                    Aguarde até 2 minutos para propagação. Após salvar, a campanha já roteia para este domínio.
+                  </div>
+                )}
               </div>
             )}
 
@@ -292,6 +344,23 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
 }
 
 /* ── Helpers visuais ─────────────────────────────────── */
+function StatusRow({ icon, label, status, okText, pendingText }: {
+  icon: string; label: string;
+  status: "ok" | "pending" | "warn" | "error";
+  okText?: string; pendingText?: string;
+}) {
+  const color = status === "ok" ? "#2EB87A" : status === "error" ? "#E05260" : status === "warn" ? "#F0A84A" : "#8E8AA8";
+  const dot   = status === "ok" ? "✓" : status === "error" ? "✕" : "⏳";
+  const text  = status === "ok" ? (okText ?? "") : (pendingText ?? "");
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <span style={{ fontSize: 12, width: 18, textAlign: "center", flexShrink: 0 }}>{icon}</span>
+      <span style={{ fontSize: 11, color: "#8E8AA8", minWidth: 70, flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: 11, color, fontWeight: 600 }}>{dot} {text}</span>
+    </div>
+  );
+}
+
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 14 }}>
