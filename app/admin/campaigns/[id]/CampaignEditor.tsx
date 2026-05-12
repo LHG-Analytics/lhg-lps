@@ -3,8 +3,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
-  DndContext, closestCenter, PointerSensor,
-  useSensor, useSensors, type DragEndEvent,
+  DndContext, closestCenter, DragOverlay, PointerSensor,
+  useSensor, useSensors, type DragEndEvent, type DragStartEvent,
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { DeviceFrame, type Device } from "./DeviceFrame";
@@ -58,6 +58,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [themeSaving, setThemeSaving]         = useState(false);
   const [canUndo, setCanUndo]                 = useState(false);
   const [canRedo, setCanRedo]                 = useState(false);
+  const [activeId, setActiveId]               = useState<string | null>(null);
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -234,7 +235,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     updateBlocks(next);
   }
 
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(String(event.active.id));
+  }
+
   function handleDragEnd(event: DragEndEvent) {
+    setActiveId(null);
     const { active, over } = event;
     if (!over || active.id === over.id) return;
     const oldIdx = Number(active.id);
@@ -335,7 +341,13 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
             <>
               {/* Block list with DnD */}
               <div style={{ flex: 1, overflowY: "auto", padding: "6px 8px" }}>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  onDragCancel={() => setActiveId(null)}
+                >
                   <SortableContext items={blocks.map((_, i) => String(i))} strategy={verticalListSortingStrategy}>
                     {blocks.map((block, i) => (
                       <SortableBlockItem
@@ -353,6 +365,29 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                       />
                     ))}
                   </SortableContext>
+
+                  <DragOverlay dropAnimation={{ duration: 120, easing: "cubic-bezier(0.2,0,0,1)" }}>
+                    {activeId !== null && (() => {
+                      const b = blocks[Number(activeId)];
+                      if (!b) return null;
+                      return (
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: 6, padding: "7px 6px",
+                          borderRadius: 7, cursor: "grabbing",
+                          background: "rgba(166,124,255,0.22)",
+                          border: "1px solid rgba(166,124,255,0.55)",
+                          boxShadow: "0 10px 28px rgba(0,0,0,0.55), 0 2px 8px rgba(166,124,255,0.25)",
+                          transform: "scale(1.03)",
+                        }}>
+                          <span style={{ color: "#8878CC", fontSize: 12, padding: "0 2px", lineHeight: 1 }}>⠿</span>
+                          <span style={{ fontSize: 14, flexShrink: 0 }}>{BLOCK_ICON[b.type] ?? "📦"}</span>
+                          <span style={{ fontSize: 12, color: "#C4AEFF", fontWeight: 600, flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {b.type}
+                          </span>
+                        </div>
+                      );
+                    })()}
+                  </DragOverlay>
                 </DndContext>
               </div>
 

@@ -27,8 +27,8 @@ export function SortableBlockItem({ id, block, selected, hovered, onSelect, onDu
       ref={setNodeRef}
       style={{
         transform: CSS.Transform.toString(transform),
-        transition: transition ?? "transform 150ms ease",
-        opacity: isDragging ? 0.4 : 1,
+        transition,
+        opacity: isDragging ? 0 : 1,
         display: "flex", alignItems: "center", gap: 6, padding: "7px 6px",
         borderRadius: 7, cursor: "pointer", marginBottom: 2,
         background: selected ? "rgba(166,124,255,0.15)" : hovered ? "rgba(255,255,255,0.04)" : "transparent",
