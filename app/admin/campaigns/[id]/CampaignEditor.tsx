@@ -987,5 +987,15 @@ function deepSet(obj: Record<string, unknown>, path: string[], value: unknown): 
   if (path.length === 0) return obj;
   const [key, ...rest] = path;
   if (!key) return obj;
-  return { ...obj, [key]: rest.length === 0 ? value : deepSet((obj[key] as Record<string, unknown>) ?? {}, rest, value) };
+  if (rest.length === 0) return { ...obj, [key]: value };
+  const current = obj[key];
+  // Quando o próximo segmento é um índice numérico e o valor atual é array, preserva como array
+  if (Array.isArray(current) && /^\d+$/.test(rest[0]!)) {
+    const idx = Number(rest[0]);
+    const tail = rest.slice(1);
+    const newArr = [...current];
+    newArr[idx] = tail.length === 0 ? value : deepSet((newArr[idx] as Record<string, unknown>) ?? {}, tail, value);
+    return { ...obj, [key]: newArr };
+  }
+  return { ...obj, [key]: deepSet((current as Record<string, unknown>) ?? {}, rest, value) };
 }
