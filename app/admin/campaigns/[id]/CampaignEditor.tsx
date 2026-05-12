@@ -19,6 +19,7 @@ type SidebarTab = "blocks" | "theme" | "seo";
 type BlockStyle = { bg?: string; paddingTop?: number; paddingBottom?: number };
 type Meta       = { title?: string; description?: string };
 type Block      = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
+type Version    = { id: string; ts: number; label: string; blocks: Block[] };
 
 const BLOCK_SOURCE: Record<string, string> = {
   nav: "components/blocks/Nav.tsx", hero: "components/blocks/Hero.tsx",
@@ -104,6 +105,10 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [canUndo, setCanUndo]                 = useState(false);
   const [canRedo, setCanRedo]                 = useState(false);
   const [activeId, setActiveId]               = useState<string | null>(null);
+  const [fieldFilter, setFieldFilter]         = useState("");
+  const [versionsOpen, setVersionsOpen]       = useState(false);
+  const [versions, setVersions]               = useState<Version[]>([]);
+  const [dupModal, setDupModal]               = useState({ open: false, slug: `${slug}-copia`, saving: false, error: "" });
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -112,7 +117,16 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const monacoRef   = useRef<any>(null);
 
   // ── história de undo/redo via refs (sem stale closure)
-  const histRef = useRef({ stack: [initialBlocks] as Block[][], idx: 0 });
+  const histRef     = useRef({ stack: [initialBlocks] as Block[][], idx: 0 });
+  const versionsRef = useRef<Version[]>([]);
+
+  const pushVersion = useCallback((b: Block[]) => {
+    const v: Version = { id: crypto.randomUUID(), ts: Date.now(), label: new Date().toLocaleString("pt-BR"), blocks: b };
+    const next = [v, ...versionsRef.current].slice(0, 20);
+    versionsRef.current = next;
+    setVersions(next);
+    try { localStorage.setItem(`lhg-versions-${campaignId}`, JSON.stringify(next)); } catch { /* storage indisponível */ }
+  }, [campaignId]);
 
   function pushHistory(b: Block[]) {
     const h = histRef.current;
@@ -185,6 +199,17 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     return () => document.removeEventListener("keydown", onKey);
   }, [undoFn, redoFn]);
 
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`lhg-versions-${campaignId}`);
+      if (stored) {
+        const parsed = JSON.parse(stored) as Version[];
+        versionsRef.current = parsed;
+        setVersions(parsed);
+      }
+    } catch { /* storage indisponível */ }
+  }, [campaignId]);
+
   /* ── save / publish ─────────────────────────────── */
   const save = useCallback(async (b: Block[], publish?: boolean) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -195,12 +220,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         body: JSON.stringify({ blocks: b, ...(publish ? { status: "published" } : {}) }),
       });
       if (!res.ok) throw new Error(await res.text());
-      if (publish) setPublishedBlocks(b);
+      if (publish) { setPublishedBlocks(b); pushVersion(b); }
       setSaved(true); setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao salvar.");
     } finally { setSaving(false); }
-  }, [campaignId]);
+  }, [campaignId, pushVersion]);
 
   function scheduleAutoSave(b: Block[]) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -339,6 +364,29 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     } catch { /* JSON inválido enquanto digita */ }
   }
 
+  function restoreVersion(v: Version) {
+    setBlocks(v.blocks);
+    pushHistory(v.blocks);
+    sendToPreview(v.blocks);
+    setVersionsOpen(false);
+    scheduleAutoSave(v.blocks);
+  }
+
+  async function duplicateCampaign() {
+    setDupModal((m) => ({ ...m, saving: true, error: "" }));
+    try {
+      const res = await fetch("/api/admin/campaigns", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourceId: campaignId, slug: dupModal.slug }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const { id } = await res.json() as { id: string };
+      window.location.href = `/admin/campaigns/${id}`;
+    } catch (err) {
+      setDupModal((m) => ({ ...m, saving: false, error: err instanceof Error ? err.message : "Erro ao duplicar." }));
+    }
+  }
+
   /* ════════════════════════════════════════════════ */
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh", background: "#0D0D12", overflow: "hidden" }}>
@@ -362,6 +410,22 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         <div style={{ display: "flex", gap: 2 }}>
           <button onClick={undoFn} disabled={!canUndo} title="Desfazer (Ctrl+Z)" style={undoRedoBtn(canUndo)}>↩</button>
           <button onClick={redoFn} disabled={!canRedo} title="Refazer (Ctrl+Y)" style={undoRedoBtn(canRedo)}>↪</button>
+        </div>
+
+        <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)" }} />
+
+        {/* Versões + Duplicar */}
+        <div style={{ display: "flex", gap: 2 }}>
+          <button
+            onClick={() => setVersionsOpen((v) => !v)}
+            title="Histórico de versões"
+            style={{ ...undoRedoBtn(true), background: versionsOpen ? "rgba(166,124,255,0.18)" : "none", color: versionsOpen ? "#A67CFF" : "#55526A", fontSize: 13 }}
+          >🕐</button>
+          <button
+            onClick={() => setDupModal((m) => ({ ...m, open: true, slug: `${slug}-copia` }))}
+            title="Duplicar campanha"
+            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
+          >⎘</button>
         </div>
 
         <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)" }} />
@@ -564,6 +628,13 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
 
           {/* Device frame + iframe */}
           <div style={{ flex: 1, overflow: "hidden", position: "relative", display: "flex", flexDirection: "column" }}>
+            {versionsOpen && (
+              <VersionsPanel
+                versions={versions}
+                onRestore={restoreVersion}
+                onClose={() => setVersionsOpen(false)}
+              />
+            )}
             <DeviceFrame device={device} zoom={zoom}>
               <iframe
                 ref={iframeRef}
@@ -619,11 +690,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
               {/* Visual tab */}
               {tab === "visual" && (
                 <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
+                  <input
+                    type="text"
+                    placeholder="Buscar campo…"
+                    value={fieldFilter}
+                    onChange={(e) => setFieldFilter(e.target.value)}
+                    style={{ ...fieldStyle, fontSize: 11, marginBottom: 12, padding: "6px 10px" }}
+                  />
                   <PropForm
                     data={selectedBlock.props}
                     path={[]}
                     brandId={brandId}
                     onChange={(path, val) => updateBlockProp(path, val)}
+                    filter={fieldFilter || undefined}
                   />
                 </div>
               )}
@@ -660,6 +739,13 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           )}
         </div>
       </div>
+
+      <DuplicateModal
+        state={dupModal}
+        onChange={(s) => setDupModal((m) => ({ ...m, slug: s }))}
+        onConfirm={duplicateCampaign}
+        onClose={() => setDupModal((m) => ({ ...m, open: false, error: "" }))}
+      />
     </div>
   );
 }
@@ -676,17 +762,37 @@ function labelify(key: string) {
   return key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim();
 }
 
+function deepKeyMatch(val: unknown, f: string): boolean {
+  if (typeof val === "object" && val !== null && !Array.isArray(val)) {
+    return Object.entries(val as Record<string, unknown>).some(([k, v]) => k.toLowerCase().includes(f) || deepKeyMatch(v, f));
+  }
+  if (Array.isArray(val)) return val.some((item) => deepKeyMatch(item, f));
+  return false;
+}
+
 function PropForm({
-  data, path, brandId, onChange,
+  data, path, brandId, onChange, filter,
 }: {
   data: Record<string, unknown>;
   path: string[];
   brandId: string;
   onChange: (path: string[], val: unknown) => void;
+  filter?: string;
 }) {
+  const f = filter?.toLowerCase() ?? "";
+  const entries = Object.entries(data).filter(([key, val]) => {
+    if (!f) return true;
+    return key.toLowerCase().includes(f) || labelify(key).toLowerCase().includes(f) || deepKeyMatch(val, f);
+  });
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-      {Object.entries(data).map(([key, val]) => {
+      {entries.length === 0 && f && (
+        <div style={{ fontSize: 11, color: "#3A3850", textAlign: "center", padding: "12px 0" }}>
+          Nenhum campo encontrado para &quot;{filter}&quot;
+        </div>
+      )}
+      {entries.map(([key, val]) => {
         const fullPath = [...path, key];
         return (
           <div key={key}>
@@ -732,7 +838,7 @@ function PropForm({
 
             ) : typeof val === "object" && val !== null ? (
               <div style={{ paddingLeft: 10, borderLeft: "2px solid rgba(255,255,255,0.07)", marginTop: 2 }}>
-                <PropForm data={val as Record<string, unknown>} path={fullPath} brandId={brandId} onChange={onChange} />
+                <PropForm data={val as Record<string, unknown>} path={fullPath} brandId={brandId} onChange={onChange} filter={filter} />
               </div>
             ) : null}
           </div>
@@ -998,4 +1104,93 @@ function deepSet(obj: Record<string, unknown>, path: string[], value: unknown): 
     return { ...obj, [key]: newArr };
   }
   return { ...obj, [key]: deepSet((current as Record<string, unknown>) ?? {}, rest, value) };
+}
+
+/* ── VersionsPanel ──────────────────────────────────── */
+function VersionsPanel({ versions, onRestore, onClose }: {
+  versions: Version[];
+  onRestore: (v: Version) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div style={{
+      position: "absolute", top: 0, right: 0, bottom: 0, width: 232, zIndex: 20,
+      background: "#0D0D12", borderLeft: "1px solid rgba(255,255,255,0.08)",
+      display: "flex", flexDirection: "column",
+    }}>
+      <div style={{ padding: "10px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: "#F0EEF8" }}>Histórico de versões</span>
+        <button onClick={onClose} style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 13, padding: "2px 4px" }}>✕</button>
+      </div>
+      <div style={{ flex: 1, overflowY: "auto", padding: 8 }}>
+        {versions.length === 0 ? (
+          <div style={{ fontSize: 11, color: "#3A3850", textAlign: "center", padding: "24px 12px", lineHeight: 1.5 }}>
+            Nenhuma versão salva.<br />Publique a campanha para criar um snapshot.
+          </div>
+        ) : versions.map((v) => (
+          <div
+            key={v.id}
+            onClick={() => onRestore(v)}
+            style={{ padding: "8px 10px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.02)", marginBottom: 5, cursor: "pointer" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(166,124,255,0.35)"; e.currentTarget.style.background = "rgba(166,124,255,0.06)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; }}
+          >
+            <div style={{ fontSize: 11, color: "#C4AEFF", fontWeight: 600 }}>{v.label}</div>
+            <div style={{ fontSize: 10, color: "#55526A", marginTop: 2 }}>{v.blocks.length} bloco{v.blocks.length !== 1 ? "s" : ""} · clique para restaurar</div>
+          </div>
+        ))}
+      </div>
+      {versions.length > 0 && (
+        <div style={{ padding: "8px 10px", borderTop: "1px solid rgba(255,255,255,0.05)", flexShrink: 0 }}>
+          <div style={{ fontSize: 9, color: "#3A3850" }}>Máx. 20 versões armazenadas localmente.</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── DuplicateModal ─────────────────────────────────── */
+function DuplicateModal({ state, onChange, onConfirm, onClose }: {
+  state: { open: boolean; slug: string; saving: boolean; error: string };
+  onChange: (slug: string) => void;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  if (!state.open) return null;
+  return (
+    <div
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(0,0,0,0.72)", display: "flex", alignItems: "center", justifyContent: "center" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{ background: "#13121A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: 24, width: 340, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#F0EEF8" }}>Duplicar campanha</div>
+        <div style={{ fontSize: 12, color: "#8E8AA8" }}>Cria uma cópia em rascunho com os mesmos blocos e configurações.</div>
+        <div>
+          <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Slug da cópia</label>
+          <input
+            type="text"
+            value={state.slug}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ ...fieldStyle, width: "100%" }}
+            placeholder="ex: namorados-copia"
+            onKeyDown={(e) => { if (e.key === "Enter") onConfirm(); if (e.key === "Escape") onClose(); }}
+            autoFocus
+          />
+        </div>
+        {state.error && <div style={{ fontSize: 11, color: "#E05260" }}>{state.error}</div>}
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={onClose} style={{ flex: 1, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 0", color: "#8E8AA8", fontSize: 12, cursor: "pointer", fontWeight: 600 }}>
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={state.saving || !state.slug.trim()}
+            style={{ flex: 1, background: "#A67CFF", color: "#fff", border: "none", borderRadius: 6, padding: "8px 0", fontSize: 12, fontWeight: 700, cursor: state.saving || !state.slug.trim() ? "default" : "pointer", opacity: state.saving || !state.slug.trim() ? 0.6 : 1 }}
+          >
+            {state.saving ? "Duplicando…" : "Duplicar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
