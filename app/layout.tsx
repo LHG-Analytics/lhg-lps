@@ -41,9 +41,9 @@ export const metadata: Metadata = {
   // Default por enquanto (única brand = Lush). Cada rota /[brand]/...
   // sobrescreve via generateMetadata lendo brand.favicon.
   icons: {
-    icon: "/brands/lush/units/favicon-lush.png",
-    shortcut: "/brands/lush/units/favicon-lush.png",
-    apple: "/brands/lush/units/favicon-lush.png",
+    icon: "/brands/lhg/favicon.png",
+    shortcut: "/brands/lhg/favicon.png",
+    apple: "/brands/lhg/favicon.png",
   },
 };
 
