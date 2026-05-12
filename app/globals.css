@@ -427,9 +427,23 @@ section { padding: 96px 0; position: relative; }
   -moz-osx-font-smoothing: grayscale;
 }
 .unit:hover {
-  transform: translateY(-6px);
   border-color: rgba(201,167,245,0.45);
   box-shadow: var(--shadow-gold);
+}
+/* Especificidade (0,3,0) > (0,2,0) de .reveal.in — garante que o hover
+   translateY não seja cancelado pela regra .reveal.in { transform: none } */
+.unit:not(.is-focused):hover {
+  transform: translateY(-6px);
+}
+/* Especificidade (0,2,0) > (0,1,0) de .reveal — restaura a transition completa
+   para que box-shadow e border-color não snapem no hover */
+.unit.reveal {
+  transition:
+    transform 1100ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 900ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 900ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 900ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.35s ease;
 }
 @media (max-width: 520px) {
   .unit { padding: 18px; border-radius: 20px; }
