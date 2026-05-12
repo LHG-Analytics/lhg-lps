@@ -14,7 +14,12 @@ interface Props {
 }
 
 export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
-  const [blocks, setBlocks]           = useState<Block[]>(() => [...initialBlocks]);
+  const [blocks, setBlocks] = useState<Block[]>(() =>
+    initialBlocks.map((b, i) => ({
+      ...b,
+      _id: (b as { _id?: string })._id ?? `blk-${b.type}-${i}`,
+    }))
+  );
   const [themeOverride, setThemeOverride] = useState<Record<string, string> | null>(null);
 
   useEffect(() => {

@@ -40,7 +40,7 @@ interface Props {
 /* ═══════════════════════════════════════════════════ */
 export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, status }: Props) {
   const [blocks, setBlocks]                   = useState<Block[]>(() =>
-    initialBlocks.map(b => b._id ? b : { ...b, _id: crypto.randomUUID() })
+    initialBlocks.map((b, i) => b._id ? b : { ...b, _id: `blk-${b.type}-${i}` })
   );
   const [publishedBlocks, setPublishedBlocks] = useState<Block[]>(initialBlocks);
   const [selectedIdx, setSelectedIdx]         = useState<number | null>(null);
