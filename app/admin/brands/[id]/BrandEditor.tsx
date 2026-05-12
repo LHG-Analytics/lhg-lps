@@ -3,6 +3,20 @@ import { useState } from "react";
 import { ThemePanel, type Theme } from "@/app/admin/campaigns/[id]/ThemePanel";
 
 /* ── tipos ─────────────────────────────────────────── */
+interface Category {
+  id: string;
+  name: string;
+  meta: string;
+  slug: string;
+  amenities: string[];
+  hero?: boolean;
+}
+
+interface UnitCategories {
+  all: Category[];
+  "3h"?: Category[];
+}
+
 interface Unit {
   id: string;
   brand_id: string;
@@ -11,7 +25,7 @@ interface Unit {
   address?: string;
   image?: string;
   booking_base_url?: string;
-  categories?: unknown;
+  categories?: UnitCategories;
 }
 
 interface Brand {
@@ -386,14 +400,152 @@ function UnitsTab({ units, brandId }: { units: Unit[]; brandId: string }) {
             <input value={unit.image ?? ""} onChange={(e) => update("image", e.target.value)} style={{ ...fld, fontFamily: "monospace", fontSize: 12 }} placeholder="/brands/lush/units/lapa.jpg" />
           </div>
 
-          <div style={{ background: "rgba(255,200,0,0.06)", border: "1px solid rgba(255,200,0,0.15)", borderRadius: 6, padding: "8px 12px", fontSize: 10, color: "#C8A03A", lineHeight: 1.6 }}>
-            Categorias são editadas diretamente no Supabase por ora — editor visual em breve.
-          </div>
+          <CategoriesEditor unit={unit} brandId={brandId} />
 
           {error && <div style={{ fontSize: 11, color: "#E05260" }}>{error}</div>}
           <SaveRow saving={saving} saved={false} onSave={saveUnit} label="Salvar unidade" />
         </div>
       )}
+    </div>
+  );
+}
+
+/* ── CategoriesEditor ───────────────────────────────── */
+const CAT_FLD: React.CSSProperties = {
+  background: "#16161F", border: "1px solid rgba(255,255,255,0.07)",
+  borderRadius: 5, padding: "4px 8px", color: "#F0EEF8", fontSize: 11,
+  outline: "none", fontFamily: "inherit", width: "100%",
+};
+
+function blankCategory(): Category {
+  return { id: "", name: "", meta: "", slug: "", amenities: [], hero: false };
+}
+
+function CatRow({ cat, onChange, onRemove }: {
+  cat: Category;
+  onChange: (c: Category) => void;
+  onRemove: () => void;
+}) {
+  function set<K extends keyof Category>(k: K, v: Category[K]) { onChange({ ...cat, [k]: v }); }
+
+  return (
+    <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 7, padding: 10, display: "flex", flexDirection: "column", gap: 7 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 28px", gap: 6, alignItems: "end" }}>
+        <div>
+          <div style={{ fontSize: 8, color: "#55526A", marginBottom: 2, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Nome</div>
+          <input value={cat.name} onChange={(e) => set("name", e.target.value)} style={CAT_FLD} placeholder="Suite Lush" />
+        </div>
+        <div>
+          <div style={{ fontSize: 8, color: "#55526A", marginBottom: 2, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Slug (URL)</div>
+          <input value={cat.slug} onChange={(e) => set("slug", e.target.value.toLowerCase().replace(/\s+/g, "-"))} style={{ ...CAT_FLD, fontFamily: "monospace" }} placeholder="lush" />
+        </div>
+        <button onClick={onRemove} style={{ background: "none", border: "none", color: "#E05260", cursor: "pointer", fontSize: 12, alignSelf: "flex-end", paddingBottom: 4 }}>✕</button>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+        <div>
+          <div style={{ fontSize: 8, color: "#55526A", marginBottom: 2, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>ID (único)</div>
+          <input value={cat.id} onChange={(e) => set("id", e.target.value.toLowerCase().replace(/\s+/g, "-"))} style={{ ...CAT_FLD, fontFamily: "monospace" }} placeholder="lush" />
+        </div>
+        <div>
+          <div style={{ fontSize: 8, color: "#55526A", marginBottom: 2, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Meta (tagline)</div>
+          <input value={cat.meta} onChange={(e) => set("meta", e.target.value)} style={CAT_FLD} placeholder="Suíte padrão" />
+        </div>
+      </div>
+
+      <div>
+        <div style={{ fontSize: 8, color: "#55526A", marginBottom: 2, textTransform: "uppercase" as const, letterSpacing: "0.08em" }}>Amenidades (separadas por vírgula)</div>
+        <input
+          value={cat.amenities.join(", ")}
+          onChange={(e) => set("amenities", e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
+          style={CAT_FLD}
+          placeholder="TV, Wi-Fi, Banheira"
+        />
+      </div>
+
+      <label style={{ display: "flex", alignItems: "center", gap: 6, cursor: "pointer", fontSize: 11, color: "#8E8AA8" }}>
+        <input type="checkbox" checked={cat.hero ?? false} onChange={(e) => set("hero", e.target.checked)} style={{ accentColor: "#A67CFF" }} />
+        Destaque (hero) na LP
+      </label>
+    </div>
+  );
+}
+
+function CategoriesEditor({ unit, brandId }: { unit: Unit; brandId: string }) {
+  const initial = unit.categories ?? { all: [] };
+  const [allCats, setAllCats]     = useState<Category[]>(initial.all);
+  const [cats3h,  setCats3h]      = useState<Category[]>(initial["3h"] ?? []);
+  const [show3h,  setShow3h]      = useState((initial["3h"] ?? []).length > 0);
+  const [saving,  setSaving]      = useState(false);
+  const [error,   setError]       = useState("");
+  const [saved,   setSaved]       = useState(false);
+
+  async function save() {
+    setSaving(true); setError("");
+    const categories: UnitCategories = { all: allCats, ...(show3h ? { "3h": cats3h } : {}) };
+    try {
+      const res = await fetch(`/api/admin/brands/${brandId}/units/${unit.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ categories }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erro");
+    } finally { setSaving(false); }
+  }
+
+  function addAll()  { setAllCats((c) => [...c, blankCategory()]); }
+  function add3h()   { setCats3h((c) => [...c, blankCategory()]); }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 12, borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 14 }}>
+      {/* Catálogo "all" */}
+      <div>
+        <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#55526A", marginBottom: 8 }}>
+          Categorias — all (catálogo completo)
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {allCats.map((c, i) => (
+            <CatRow key={i} cat={c}
+              onChange={(nc) => setAllCats((prev) => prev.map((x, j) => j === i ? nc : x))}
+              onRemove={() => setAllCats((prev) => prev.filter((_, j) => j !== i))}
+            />
+          ))}
+          <button onClick={addAll} style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 0", color: "#55526A", cursor: "pointer", fontSize: 11, textAlign: "center" }}>
+            + Adicionar categoria
+          </button>
+        </div>
+      </div>
+
+      {/* Catálogo "3h" opcional */}
+      <div>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 11, color: "#8E8AA8", marginBottom: show3h ? 8 : 0 }}>
+          <input type="checkbox" checked={show3h} onChange={(e) => setShow3h(e.target.checked)} style={{ accentColor: "#A67CFF" }} />
+          Restringir categorias disponíveis para períodos de 3h
+        </label>
+        {show3h && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ fontSize: 10, color: "#55526A", lineHeight: 1.5 }}>
+              Se vazio, todos os períodos 3h verão o catálogo completo (all).
+            </div>
+            {cats3h.map((c, i) => (
+              <CatRow key={i} cat={c}
+                onChange={(nc) => setCats3h((prev) => prev.map((x, j) => j === i ? nc : x))}
+                onRemove={() => setCats3h((prev) => prev.filter((_, j) => j !== i))}
+              />
+            ))}
+            <button onClick={add3h} style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 0", color: "#55526A", cursor: "pointer", fontSize: 11, textAlign: "center" }}>
+              + Adicionar categoria 3h
+            </button>
+          </div>
+        )}
+      </div>
+
+      {error && <div style={{ fontSize: 11, color: "#E05260" }}>{error}</div>}
+      <SaveRow saving={saving} saved={saved} onSave={save} label="Salvar categorias" />
     </div>
   );
 }

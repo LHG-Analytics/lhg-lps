@@ -12,6 +12,8 @@ import { SortableBlockItem, BLOCK_ICON } from "./SortableBlockItem";
 import { ThemePanel, type Theme } from "./ThemePanel";
 import { DeployPanel, type DeployConfig } from "./DeployPanel";
 import { LotsPanel, type Lot } from "./LotsPanel";
+import { PricingPanel } from "./PricingPanel";
+import { MediaLibrary } from "./MediaLibrary";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -118,6 +120,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [deploy, setDeploy]                   = useState<DeployConfig>(initialDeploy ?? { mode: null, domain: "", basePath: "" });
   const [lotsOpen, setLotsOpen]               = useState(false);
   const [lots, setLots]                       = useState<Lot[]>(initialLots ?? []);
+  const [pricingOpen, setPricingOpen]         = useState(false);
+  const [mediaOpen, setMediaOpen]             = useState(false);
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -440,6 +444,16 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
             title="Lotes & Cupons"
             style={{ ...undoRedoBtn(true), color: lots.length > 0 ? "#F0A84A" : "#55526A", fontSize: 13 }}
           >🏷</button>
+          <button
+            onClick={() => setPricingOpen(true)}
+            title="Tabela de preços"
+            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
+          >📊</button>
+          <button
+            onClick={() => setMediaOpen(true)}
+            title="Biblioteca de mídia"
+            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
+          >🖼</button>
           <button
             onClick={() => setDeployOpen(true)}
             title="Configurar deploy (subdomínio / subdiretório)"
@@ -808,6 +822,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         campaignId={campaignId}
         initialLots={lots}
         onSaved={(l) => setLots(l)}
+      />
+
+      <PricingPanel
+        open={pricingOpen}
+        onClose={() => setPricingOpen(false)}
+        campaignId={campaignId}
+        brandId={brandId}
+      />
+
+      <MediaLibrary
+        open={mediaOpen}
+        onClose={() => setMediaOpen(false)}
+        brandId={brandId}
       />
 
       <DeployPanel

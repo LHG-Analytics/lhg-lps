@@ -13,7 +13,7 @@ export async function PATCH(
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
   const body = await request.json() as Record<string, unknown>;
-  const allowed = ["name", "label", "address", "image", "booking_base_url"];
+  const allowed = ["name", "label", "address", "image", "booking_base_url", "categories"];
   const patch = Object.fromEntries(
     Object.entries(body).filter(([k]) => allowed.includes(k))
   );
