@@ -15,29 +15,31 @@ export type BlockContext = {
 
 type Props = BlockContext & {
   blocks: readonly Block[];
+  editorMode?: boolean;
 };
 
-/**
- * Despacha cada bloco do campaign.json para seu componente.
- *
- * Regras:
- *   - Sem `eval`. Switch exhaustive — TS reclama se um `type` novo for
- *     adicionado ao schema sem tratamento aqui.
- *   - Blocos que precisam de `brand` ou `campaign` recebem via context;
- *     blocos puramente de copy recebem só `props`.
- *   - Não há lógica de layout aqui. Gap, padding, ordem — tudo no JSON.
- */
-export function BlockRenderer({ brand, campaign, blocks }: Props) {
+export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
   return (
     <>
-      {blocks.map((block, index) => (
-        <Render
-          key={`${block.type}-${index}`}
-          block={block}
-          brand={brand}
-          campaign={campaign}
-        />
-      ))}
+      {blocks.map((block, index) =>
+        editorMode ? (
+          <div
+            key={`${block.type}-${index}`}
+            data-block-type={block.type}
+            data-block-index={index}
+            style={{ position: "relative" }}
+          >
+            <Render block={block} brand={brand} campaign={campaign} />
+          </div>
+        ) : (
+          <Render
+            key={`${block.type}-${index}`}
+            block={block}
+            brand={brand}
+            campaign={campaign}
+          />
+        )
+      )}
     </>
   );
 }
