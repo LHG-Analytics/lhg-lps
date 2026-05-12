@@ -37,22 +37,23 @@ interface Props {
 
 /* ═══════════════════════════════════════════════════ */
 export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, status }: Props) {
-  const [blocks, setBlocks] = useState<Block[]>(initialBlocks);
-  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-  const [hoveredIdx, setHoveredIdx]   = useState<number | null>(null);
-  const [tab, setTab]         = useState<EditorTab>("visual");
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [device, setDevice]   = useState<Device>("desktop");
-  const [saving, setSaving]   = useState(false);
-  const [saved, setSaved]     = useState(false);
-  const [error, setError]     = useState<string | null>(null);
-  const [previewKey, setPreviewKey] = useState(0);
+  const [blocks, setBlocks]             = useState<Block[]>(initialBlocks);
+  const [publishedBlocks, setPublishedBlocks] = useState<Block[]>(initialBlocks);
+  const [selectedIdx, setSelectedIdx]   = useState<number | null>(null);
+  const [hoveredIdx, setHoveredIdx]     = useState<number | null>(null);
+  const [tab, setTab]                   = useState<EditorTab>("visual");
+  const [drawerOpen, setDrawerOpen]     = useState(false);
+  const [device, setDevice]             = useState<Device>("desktop");
+  const [saving, setSaving]             = useState(false);
+  const [saved, setSaved]               = useState(false);
+  const [error, setError]               = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] ?? null : null;
+  const isDirty = JSON.stringify(blocks) !== JSON.stringify(publishedBlocks);
 
-  /* ── postMessage from iframe ─────────────────────── */
+  /* ── postMessage bidireccional com o iframe ─────── */
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.data?.type === "block-hover") setHoveredIdx(e.data.blockIndex ?? null);
@@ -60,10 +61,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
         setSelectedIdx(e.data.blockIndex ?? null);
         setDrawerOpen(true);
       }
+      // Iframe sinalizou que está pronto → envia estado atual
+      if (e.data?.type === "preview-ready") {
+        sendToPreview(blocks);
+      }
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blocks]);
+
+  function sendToPreview(b: Block[]) {
+    iframeRef.current?.contentWindow?.postMessage({ type: "update-blocks", blocks: b }, "*");
+  }
 
   /* ── tell iframe which block is selected ─────────── */
   useEffect(() => {
@@ -73,7 +83,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
     );
   }, [selectedIdx]);
 
-  /* ── auto-save debounced ─────────────────────────── */
+  /* ── save / publish ──────────────────────────────── */
   const save = useCallback(async (b: Block[], publish?: boolean) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     setSaving(true);
@@ -85,8 +95,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
         body: JSON.stringify({ blocks: b, ...(publish ? { status: "published" } : {}) }),
       });
       if (!res.ok) throw new Error(await res.text());
+      if (publish) setPublishedBlocks(b);
       setSaved(true);
-      setPreviewKey((k) => k + 1);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao salvar.");
@@ -97,12 +107,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
 
   function scheduleAutoSave(b: Block[]) {
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => save(b), 1500);
+    saveTimer.current = setTimeout(() => save(b), 2000);
   }
 
   function updateBlocks(next: Block[]) {
     setBlocks(next);
+    sendToPreview(next);
     scheduleAutoSave(next);
+  }
+
+  function discardChanges() {
+    setBlocks(publishedBlocks);
+    sendToPreview(publishedBlocks);
+    if (selectedIdx !== null) { setSelectedIdx(null); setDrawerOpen(false); }
   }
 
   /* ── block list actions ──────────────────────────── */
@@ -173,14 +190,36 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
 
         <div style={{ flex: 1 }} />
 
-        {error && <span style={{ fontSize: 11, color: "#E05260", maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{error}</span>}
-        {saved && <span style={{ fontSize: 11, color: "#2EB87A" }}>✓ Salvo</span>}
+        {error && <span style={{ fontSize: 11, color: "#E05260", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{error}</span>}
+        {saved && <span style={{ fontSize: 11, color: "#2EB87A" }}>✓ Publicado</span>}
         {saving && <span style={{ fontSize: 11, color: "#8E8AA8" }}>Salvando…</span>}
+        {isDirty && !saving && !saved && (
+          <span style={{ fontSize: 11, color: "#F0A84A" }}>● Alterações não publicadas</span>
+        )}
+
+        <button
+          onClick={discardChanges}
+          disabled={!isDirty || saving}
+          style={{
+            background: "transparent", color: isDirty ? "#8E8AA8" : "#3A3850",
+            border: `1px solid ${isDirty ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.04)"}`,
+            borderRadius: 6, padding: "6px 14px", fontSize: 12, fontWeight: 600,
+            cursor: isDirty ? "pointer" : "default", transition: "all 0.15s",
+          }}
+        >
+          Descartar
+        </button>
 
         <button
           onClick={() => save(blocks, true)}
-          disabled={saving}
-          style={{ background: "#A67CFF", color: "#fff", border: "none", borderRadius: 6, padding: "6px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+          disabled={saving || !isDirty}
+          style={{
+            background: isDirty ? "#A67CFF" : "#3A2E60",
+            color: isDirty ? "#fff" : "#55526A",
+            border: "none", borderRadius: 6, padding: "6px 16px",
+            fontSize: 12, fontWeight: 700,
+            cursor: isDirty ? "pointer" : "default", transition: "all 0.2s",
+          }}
         >
           Publicar
         </button>
@@ -269,10 +308,10 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
             <DeviceFrame device={device}>
               <iframe
                 ref={iframeRef}
-                key={previewKey}
                 src={`/admin/preview/${brandId}/${slug}`}
                 style={{ width: "100%", height: "100%", border: "none" }}
                 title="Preview ao vivo"
+                onLoad={() => sendToPreview(blocks)}
               />
             </DeviceFrame>
             {!drawerOpen && (
@@ -290,9 +329,10 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, statu
           {/* ── DRAWER ──────────────────────────────── */}
           {drawerOpen && selectedBlock && (
             <div style={{
-              height: 380, borderTop: "1px solid rgba(255,255,255,0.08)",
+              height: tab === "code" ? 580 : 420,
+              borderTop: "1px solid rgba(255,255,255,0.08)",
               display: "flex", flexDirection: "column", flexShrink: 0,
-              background: "#0D0D12",
+              background: "#0D0D12", transition: "height 0.2s ease",
             }}>
               {/* Drawer header */}
               <div style={{

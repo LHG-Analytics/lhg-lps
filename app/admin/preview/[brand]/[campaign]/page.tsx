@@ -1,9 +1,5 @@
 import { getBrand, getCampaign } from "@/lib/content";
-import { themeStyle } from "@/lib/theme";
-import { BlockRenderer } from "@/components/BlockRenderer";
-import { RevealManager } from "@/components/RevealManager";
-import { Concierge24h } from "@/components/Concierge24h";
-import { EditorOverlay } from "./EditorOverlay";
+import { LivePreviewClient } from "./LivePreviewClient";
 import { notFound } from "next/navigation";
 
 export default async function PreviewPage({
@@ -24,18 +20,10 @@ export default async function PreviewPage({
   }
 
   return (
-    <div style={themeStyle(brand.theme)} data-brand={brand.id}>
-      <BlockRenderer
-        brand={brand}
-        campaign={campaign}
-        blocks={campaign.blocks}
-        editorMode={true}
-      />
-      {brand.concierge && (
-        <Concierge24h label={brand.concierge.label} href={brand.concierge.href} />
-      )}
-      <RevealManager />
-      <EditorOverlay />
-    </div>
+    <LivePreviewClient
+      brand={brand}
+      campaign={campaign}
+      initialBlocks={campaign.blocks}
+    />
   );
 }
