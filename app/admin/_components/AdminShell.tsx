@@ -11,7 +11,7 @@ const NAV = [
   { href: "/admin/campaigns", label: "Campanhas"   },
   { href: "/admin/users",     label: "Usuários"    },
   { href: "/admin/audit",     label: "Auditoria"   },
-];
+] as const;
 
 export function AdminShell({ userEmail, children }: { userEmail: string; children: ReactNode }) {
   const pathname = usePathname();
