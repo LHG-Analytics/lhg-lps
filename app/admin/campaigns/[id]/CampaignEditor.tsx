@@ -1624,6 +1624,8 @@ function InspectorRow({ prop, label, color, computed, override, selector, onOver
   selector: string; onOverride: (selector: string, property: string, value: string) => void;
 }) {
   const isSet = !!override;
+  const displayValue = override ?? computed ?? "";
+  const textColor = isSet ? "#F0A84A" : computed ? "#C8C5E0" : "#3A3850";
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
       <span style={{ fontSize: 9, color: "#55526A", minWidth: 70, flexShrink: 0, textTransform: "uppercase" as const, letterSpacing: "0.04em" }}>
@@ -1651,12 +1653,11 @@ function InspectorRow({ prop, label, color, computed, override, selector, onOver
         )}
         <input
           type="text"
-          value={override ?? ""}
+          value={displayValue}
           onChange={(e) => onOverride(selector, prop, e.target.value)}
-          placeholder={computed ?? "—"}
           style={{
             flex: 1, background: "none", border: "none", outline: "none",
-            color: isSet ? "#F0A84A" : "#3A3850",
+            color: textColor,
             fontSize: 11, padding: "0 6px", height: 26,
             fontFamily: "monospace",
           }}
@@ -1664,6 +1665,7 @@ function InspectorRow({ prop, label, color, computed, override, selector, onOver
         {isSet && (
           <button
             onClick={() => onOverride(selector, prop, "")}
+            title="Remover override"
             style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 11, padding: "0 6px", flexShrink: 0, lineHeight: 1 }}
           >✕</button>
         )}
