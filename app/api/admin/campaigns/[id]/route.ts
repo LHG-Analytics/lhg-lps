@@ -89,9 +89,36 @@ export async function PATCH(
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("brand_id, slug")
+    .select("brand_id, slug, blocks, meta, campaign_data")
     .eq("id", id)
     .single();
+
+  // Grava snapshot antes de publicar para permitir rollback
+  if (body.status === "published" && campaign) {
+    void (async () => {
+      await supabase.from("campaign_snapshots").insert({
+        campaign_id:   id,
+        created_by:    user.id,
+        blocks:        campaign.blocks,
+        meta:          campaign.meta,
+        campaign_data: campaign.campaign_data,
+        label:         `Antes de publicar — ${new Date().toLocaleString("pt-BR")}`,
+      });
+      // Mantém apenas os 10 snapshots mais recentes por campanha
+      const { data: old } = await supabase
+        .from("campaign_snapshots")
+        .select("id")
+        .eq("campaign_id", id)
+        .order("created_at", { ascending: false })
+        .range(10, 999);
+      if (old && old.length > 0) {
+        await supabase
+          .from("campaign_snapshots")
+          .delete()
+          .in("id", old.map((r) => r.id));
+      }
+    })();
+  }
 
   const { error } = await supabase
     .from("campaigns")
@@ -112,6 +139,47 @@ export async function PATCH(
   if (body.status === "published" && campaign) {
     revalidatePath(`/${campaign.brand_id}/${campaign.slug}`);
   }
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return new NextResponse("Unauthorized", { status: 401 });
+
+  const role = await getUserRole(supabase, user.id);
+  if (role !== "admin") return new NextResponse("Apenas admins podem excluir campanhas.", { status: 403 });
+
+  const { data: campaign } = await supabase
+    .from("campaigns")
+    .select("slug, brand_id, status")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (!campaign) return new NextResponse("Campanha não encontrada", { status: 404 });
+
+  if (campaign.status === "published") {
+    return new NextResponse("Não é possível excluir uma campanha publicada. Archive-a primeiro.", { status: 409 });
+  }
+
+  const { error } = await supabase
+    .from("campaigns")
+    .update({ status: "archived", updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (error) return new NextResponse(error.message, { status: 500 });
+
+  void logAudit(supabase, user.id, user.email, {
+    action: "archive_campaign", entityType: "campaign",
+    entityId: id, entityLabel: campaign.slug,
+    details: { previousStatus: campaign.status },
+  });
 
   return NextResponse.json({ ok: true });
 }

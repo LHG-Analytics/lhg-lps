@@ -1,12 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { z } from "zod";
 import { getAllCampaigns, getBrand, getCampaign } from "@/lib/content";
 import { themeStyle } from "@/lib/theme";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
 import { AnalyticsScripts, type Analytics } from "@/components/AnalyticsScripts";
+import { JsonLd } from "@/components/JsonLd";
 import { createClient as createSupabasePublic } from "@supabase/supabase-js";
+import type { Block } from "@/lib/schema";
+
+const LooseBlockSchema = z.array(
+  z.object({ type: z.string(), props: z.record(z.string(), z.unknown()) }).passthrough()
+);
 
 // Revalida a cada 60 s — após publicar no CMS, a LP reflete em até 1 minuto
 export const revalidate = 60;
@@ -25,13 +32,31 @@ export async function generateMetadata({
   const { brand, campaign } = await params;
   const data = await safeLoad(brand, campaign);
   if (!data) return {};
+
+  const { title, description, ogImage } = data.campaign.meta;
+  const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: title }] : [];
+
   return {
-    title: data.campaign.meta.title,
-    description: data.campaign.meta.description,
+    title,
+    description,
     icons: {
       icon: data.brand.favicon,
       shortcut: data.brand.favicon,
       apple: data.brand.favicon,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: data.campaign.lang.replace("-", "_"),
+      siteName: data.brand.name,
+      ...(images.length > 0 && { images }),
+    },
+    twitter: {
+      card: images.length > 0 ? "summary_large_image" : "summary",
+      title,
+      description,
+      ...(images.length > 0 && { images: [ogImage!] }),
     },
   };
 }
@@ -41,7 +66,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
   const data = await safeLoad(brandId, campaignSlug);
   if (!data) notFound();
 
-  const analytics = (data.campaign.meta as { analytics?: Analytics }).analytics;
+  const analytics = data.campaign.meta.analytics as Analytics | undefined;
 
   return (
     <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
@@ -57,6 +82,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
         />
       ) : null}
       <RevealManager />
+      <JsonLd brand={data.brand} campaign={data.campaign} />
       <AnalyticsScripts analytics={analytics} id={`${brandId}-${campaignSlug}`} />
     </div>
   );
@@ -84,15 +110,15 @@ async function safeLoad(brandId: string, campaignSlug: string) {
         .eq("status", "published")
         .maybeSingle();
 
-      if (row?.blocks && Array.isArray(row.blocks) && row.blocks.length > 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        campaign = { ...campaign, blocks: row.blocks as any };
+      if (row?.blocks) {
+        const parsed = LooseBlockSchema.safeParse(row.blocks);
+        if (parsed.success && parsed.data.length > 0) {
+          campaign = { ...campaign, blocks: parsed.data as Block[] };
+        }
       }
-      if (row?.meta) {
-        campaign = {
-          ...campaign,
-          meta: { ...campaign.meta, ...row.meta as { title?: string; description?: string } },
-        };
+      if (row?.meta && typeof row.meta === "object") {
+        const incoming = row.meta as { title?: string; description?: string; ogImage?: string };
+        campaign = { ...campaign, meta: { ...campaign.meta, ...incoming } };
       }
     } catch { /* Supabase indisponível → mantém JSON */ }
 

@@ -21,6 +21,7 @@ import { getActiveLot, type ActiveLot } from "@/lib/lots";
 import { buildBookingUrl } from "@/lib/booking";
 import { lookupPrice, formatBRL } from "@/lib/pricing";
 import { TypewriterHTML } from "@/components/TypewriterHTML";
+import { track } from "@/lib/analytics";
 
 type Props = UnitPickerBlockProps & {
   brand: Brand;
@@ -184,6 +185,7 @@ export function UnitPicker({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleLock(unitId);
+                      track("wizard_open", { unit_id: unitId, unit_name: unit.name });
                     }}
                   >
                     {openCtaLabel}
@@ -278,16 +280,18 @@ function UnitWizard({
   const handleSelectPeriod = (next: string) => {
     onInteract();
     setPeriodId(next);
-    // Trocar período pode mudar o conjunto de categorias — limpa.
     setCategoryId(null);
+    track("wizard_select_period", { unit_id: unit.id, period_id: next });
   };
   const handleSelectDate = (next: CampaignDate) => {
     onInteract();
     setDateValue(next.value);
+    track("wizard_select_date", { unit_id: unit.id, date: next.value, tier: next.tier });
   };
   const handleSelectCategory = (nextId: string) => {
     onInteract();
     setCategoryId(nextId);
+    track("wizard_select_category", { unit_id: unit.id, category_id: nextId });
   };
 
   const goto = (n: number) => {
@@ -409,6 +413,14 @@ function UnitWizard({
             href={finalUrl}
             target="_blank"
             rel="noopener"
+            onClick={() =>
+              track("begin_checkout", {
+                unit_id: unit.id,
+                period_id: periodId ?? undefined,
+                date: dateValue ?? undefined,
+                category_id: categoryId ?? undefined,
+              })
+            }
           >
             {confirmCtaLabel}
             <ArrowIcon />
@@ -816,6 +828,7 @@ function CopyableCoupon({ code }: { code: string }) {
       }
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
+      track("coupon_copied", { coupon: code });
     } catch {
       /* noop — silenciar é melhor que crashar a LP */
     }

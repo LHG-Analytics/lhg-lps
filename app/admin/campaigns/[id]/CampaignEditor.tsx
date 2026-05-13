@@ -1,5 +1,10 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { z } from "zod";
+
+const BlockShapeSchema = z.array(
+  z.object({ type: z.string().min(1), props: z.record(z.string(), z.unknown()) }).passthrough()
+);
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
@@ -228,6 +233,17 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   /* ── save / publish ─────────────────────────────── */
   const save = useCallback(async (b: Block[], publish?: boolean) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
+
+    // Validação client-side antes de enviar ao servidor
+    const validation = BlockShapeSchema.safeParse(b);
+    if (!validation.success) {
+      const msg = validation.error.issues
+        .map((e) => `[bloco ${e.path[0] ?? "?"}] ${e.message}`)
+        .join("; ");
+      setError(`Blocos inválidos — corrija antes de salvar: ${msg}`);
+      return;
+    }
+
     setSaving(true); setError(null);
     try {
       const res = await fetch(`/api/admin/campaigns/${campaignId}`, {

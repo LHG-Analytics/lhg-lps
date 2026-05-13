@@ -13,10 +13,16 @@ export default async function UsersPage() {
   const role = await getUserRole(supabase, user.id);
   if (role !== "admin") redirect("/admin");
 
-  const { data: profiles } = await supabase
-    .from("admin_profiles")
-    .select("id, name, email, role, created_at")
-    .order("created_at", { ascending: true });
+  const [{ data: profiles }, { data: invites }] = await Promise.all([
+    supabase
+      .from("admin_profiles")
+      .select("id, name, email, role, created_at")
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("admin_invites")
+      .select("id, email, role, created_at, expires_at")
+      .order("created_at", { ascending: false }),
+  ]);
 
   return (
     <div className="admin-shell">
@@ -42,7 +48,11 @@ export default async function UsersPage() {
           <h1>Usuários</h1>
         </header>
         <section className="admin-section">
-          <UsersTable profiles={profiles ?? []} currentUserId={user.id} />
+          <UsersTable
+            profiles={profiles ?? []}
+            initialInvites={invites ?? []}
+            currentUserId={user.id}
+          />
         </section>
       </main>
     </div>

@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { ThreeDMarquee, type MarqueeImage } from "../_components/ThreeDMarquee";
@@ -19,9 +20,17 @@ const MARQUEE_IMAGES: MarqueeImage[] = [
   { src: "/brands/lhg/logos/logo-white.png", logo: true },
 ];
 
-export default function LoginPage() {
+const URL_ERRORS: Record<string, string> = {
+  not_invited:    "Seu e-mail não tem acesso ao CMS. Solicite um convite ao administrador.",
+  invite_expired: "Seu convite expirou. Solicite um novo convite ao administrador.",
+  auth:           "Erro na autenticação. Tente novamente.",
+};
+
+function LoginContent() {
+  const searchParams = useSearchParams();
+  const urlError     = searchParams.get("error");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error,   setError]   = useState(urlError ? (URL_ERRORS[urlError] ?? "Erro desconhecido.") : "");
 
   async function handleGoogle() {
     setLoading(true);
@@ -29,9 +38,7 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
     if (error) {
       setError("Não foi possível conectar com o Google. Tente novamente.");
@@ -40,35 +47,47 @@ export default function LoginPage() {
   }
 
   return (
+    <div className="login-card" style={{ position: "relative", zIndex: 10 }}>
+      <div className="login-logo">
+        <Image
+          src="/brands/lhg/logos/logo-white.png"
+          alt="LHG"
+          width={160}
+          height={40}
+          priority
+          style={{ width: "auto", height: 36 }}
+        />
+      </div>
+
+      <h1 className="login-title">Gerenciador de Campanhas</h1>
+      <p className="login-sub">Acesso restrito à equipe LHG.</p>
+
+      {error && (
+        <p className="login-error" style={{
+          background: urlError === "not_invited" ? "rgba(224,82,96,0.12)" : undefined,
+          border:     urlError === "not_invited" ? "1px solid rgba(224,82,96,0.3)" : undefined,
+          borderRadius: 7, padding: urlError === "not_invited" ? "10px 14px" : undefined,
+          lineHeight: 1.5,
+        }}>
+          {error}
+        </p>
+      )}
+
+      <button onClick={handleGoogle} className="login-btn-google" disabled={loading}>
+        <GoogleIcon />
+        {loading ? "Redirecionando…" : "Entrar com Google"}
+      </button>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
     <div className="login-wrap" style={{ position: "relative" }}>
       <ThreeDMarquee images={MARQUEE_IMAGES} />
-
-      <div className="login-card" style={{ position: "relative", zIndex: 10 }}>
-        <div className="login-logo">
-          <Image
-            src="/brands/lhg/logos/logo-white.png"
-            alt="LHG"
-            width={160}
-            height={40}
-            priority
-            style={{ width: "auto", height: 36 }}
-          />
-        </div>
-
-        <h1 className="login-title">Gerenciador de Campanhas</h1>
-        <p className="login-sub">Acesso restrito à equipe LHG.</p>
-
-        {error && <p className="login-error">{error}</p>}
-
-        <button
-          onClick={handleGoogle}
-          className="login-btn-google"
-          disabled={loading}
-        >
-          <GoogleIcon />
-          {loading ? "Redirecionando…" : "Entrar com Google"}
-        </button>
-      </div>
+      <Suspense fallback={<div className="login-card" style={{ position: "relative", zIndex: 10 }} />}>
+        <LoginContent />
+      </Suspense>
     </div>
   );
 }

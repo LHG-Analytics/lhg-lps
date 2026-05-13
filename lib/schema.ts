@@ -355,6 +355,13 @@ export type FaqBlockProps = z.infer<typeof FaqBlock>["props"];
 export type FooterBlockProps = z.infer<typeof FooterBlock>["props"];
 export type StickyCtaBlockProps = z.infer<typeof StickyCtaBlock>["props"];
 
+const AnalyticsSchema = z.object({
+  ga4:          z.string().optional(),
+  metaPixel:    z.string().optional(),
+  gtm:          z.string().optional(),
+  tiktokPixel:  z.string().optional(),
+}).optional();
+
 export const CampaignSchema = z.object({
   slug: z.string(),
   brand: z.string(),
@@ -362,6 +369,10 @@ export const CampaignSchema = z.object({
   meta: z.object({
     title: z.string(),
     description: z.string(),
+    /** URL absoluta da imagem para compartilhamento (og:image / twitter:image).
+     * Recomendado: 1200×630 px. Se ausente, sem preview de imagem. */
+    ogImage: z.string().optional(),
+    analytics: AnalyticsSchema,
   }),
   campaign: z.object({
     name: z.string(),

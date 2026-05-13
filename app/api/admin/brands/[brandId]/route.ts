@@ -58,3 +58,44 @@ export async function PATCH(
 
   return NextResponse.json({ ok: true });
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Params }
+) {
+  const { brandId } = await params;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return new NextResponse("Unauthorized", { status: 401 });
+
+  const role = await getUserRole(supabase, user.id);
+  if (role !== "admin") return new NextResponse("Apenas admins podem excluir marcas.", { status: 403 });
+
+  // Bloqueia exclusão se houver campanhas publicadas
+  const { data: published } = await supabase
+    .from("campaigns")
+    .select("id")
+    .eq("brand_id", brandId)
+    .eq("status", "published")
+    .limit(1);
+
+  if (published && published.length > 0) {
+    return new NextResponse("Não é possível excluir uma marca com campanhas publicadas.", { status: 409 });
+  }
+
+  const { data: brand } = await supabase
+    .from("brands")
+    .select("name")
+    .eq("id", brandId)
+    .maybeSingle();
+
+  const { error } = await supabase.from("brands").delete().eq("id", brandId);
+  if (error) return new NextResponse(error.message, { status: 500 });
+
+  void logAudit(supabase, user.id, user.email, {
+    action: "delete_brand", entityType: "brand",
+    entityId: brandId, entityLabel: brand?.name,
+  });
+
+  return NextResponse.json({ ok: true });
+}

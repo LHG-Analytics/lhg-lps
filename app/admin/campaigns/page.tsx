@@ -23,7 +23,7 @@ export default async function CampaignsPage({
 
   let query = supabase
     .from("campaigns")
-    .select("id, slug, brand_id, status, created_at", { count: "exact" })
+    .select("id, slug, brand_id, status, created_at, meta", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(offset, offset + PAGE_SIZE - 1);
 
@@ -34,11 +34,12 @@ export default async function CampaignsPage({
   const { data: campaigns, count } = await query;
   const total = count ?? 0;
 
-  const { data: brandsRows } = await supabase
-    .from("campaigns")
-    .select("brand_id")
-    .order("brand_id");
+  const [{ data: brandsRows }, { data: brandNames }] = await Promise.all([
+    supabase.from("campaigns").select("brand_id").order("brand_id"),
+    supabase.from("brands").select("id, name"),
+  ]);
   const brands = [...new Set((brandsRows ?? []).map((r) => r.brand_id as string))];
+  const brandNameMap = Object.fromEntries((brandNames ?? []).map((b) => [b.id, b.name]));
 
   return (
     <div className="admin-shell">
@@ -76,7 +77,7 @@ export default async function CampaignsPage({
             <table className="admin-table">
               <thead>
                 <tr>
-                  <th>Slug</th>
+                  <th>Campanha</th>
                   <th>Marca</th>
                   <th>Status</th>
                   <th>Criada em</th>
@@ -84,21 +85,31 @@ export default async function CampaignsPage({
                 </tr>
               </thead>
               <tbody>
-                {campaigns.map((c) => (
-                  <tr key={c.id}>
-                    <td><code>{c.slug}</code></td>
-                    <td><span style={{ fontSize: 12, color: "#8E8AA8" }}>{c.brand_id}</span></td>
-                    <td>
-                      <span className={`status-badge status-${c.status}`}>{c.status}</span>
-                    </td>
-                    <td>{new Date(c.created_at).toLocaleDateString("pt-BR")}</td>
-                    <td>
-                      <Link href={`/admin/campaigns/${c.id}`} className="admin-link">
-                        Editar
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                {campaigns.map((c) => {
+                  const meta = c.meta as { title?: string } | null;
+                  return (
+                    <tr key={c.id}>
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                          {meta?.title
+                            ? <span style={{ fontSize: 13, color: "#F0EEF8", fontWeight: 500 }}>{meta.title}</span>
+                            : null}
+                          <code style={{ fontSize: 11, color: "#55526A" }}>{c.slug}</code>
+                        </div>
+                      </td>
+                      <td><span style={{ fontSize: 12, color: "#8E8AA8" }}>{brandNameMap[c.brand_id] ?? c.brand_id}</span></td>
+                      <td>
+                        <span className={`status-badge status-${c.status}`}>{c.status}</span>
+                      </td>
+                      <td>{new Date(c.created_at).toLocaleDateString("pt-BR")}</td>
+                      <td>
+                        <Link href={`/admin/campaigns/${c.id}`} className="admin-link">
+                          Editar
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           ) : (

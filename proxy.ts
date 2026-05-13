@@ -1,5 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
+
+function getIp(req: NextRequest): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    req.headers.get("x-real-ip") ??
+    "unknown"
+  );
+}
 
 /* ── Cache de rotas dinâmicas (sobrevive warm invocations) ─────────────── */
 type RouteEntry = { brandId: string; slug: string };
@@ -84,7 +93,22 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  /* 2. Auth guard para /admin/* */
+  /* 2. Rate limiting */
+  const ip = getIp(request);
+  if (pathname.startsWith("/api/admin")) {
+    // 120 req/min por IP nas APIs admin
+    if (!rateLimit(`api:${ip}`, 120, 60_000)) {
+      return new NextResponse("Too Many Requests", { status: 429 });
+    }
+  }
+  if (pathname.startsWith("/auth/callback")) {
+    // 10 tentativas de auth por IP por minuto
+    if (!rateLimit(`auth:${ip}`, 10, 60_000)) {
+      return NextResponse.redirect(new URL("/admin/login?error=auth", request.url));
+    }
+  }
+
+  /* 3. Auth guard para /admin/* */
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

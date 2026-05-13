@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface BlobItem {
   url: string;
@@ -14,6 +14,11 @@ interface Props {
   brandId: string;
   onSelect?: (url: string) => void;
 }
+
+// Cache de sessão por brandId — evita re-fetch a cada abertura do modal
+type CacheEntry = { items: BlobItem[]; ts: number };
+const MEDIA_CACHE = new Map<string, CacheEntry>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutos
 
 function fmt(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -32,18 +37,30 @@ export function MediaLibrary({ open, onClose, brandId, onSelect }: Props) {
   const [copied, setCopied]       = useState("");
   const [filter, setFilter]       = useState("");
 
+  const fetchMedia = useCallback(async (force = false) => {
+    const cached = MEDIA_CACHE.get(brandId);
+    if (!force && cached && Date.now() - cached.ts < CACHE_TTL) {
+      setItems(cached.items);
+      return;
+    }
+    setLoading(true);
+    try {
+      const r = await fetch(`/api/admin/media?brandId=${encodeURIComponent(brandId)}`);
+      const { items: blobs, unavailable: ua } = await r.json() as { items: BlobItem[]; unavailable?: boolean };
+      setItems(blobs);
+      setUnavail(ua ?? false);
+      MEDIA_CACHE.set(brandId, { items: blobs, ts: Date.now() });
+    } catch {
+      setUnavail(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [brandId]);
+
   useEffect(() => {
     if (!open) return;
-    setLoading(true);
-    fetch(`/api/admin/media?brandId=${encodeURIComponent(brandId)}`)
-      .then((r) => r.json() as Promise<{ items: BlobItem[]; unavailable?: boolean }>)
-      .then(({ items: blobs, unavailable: ua }) => {
-        setItems(blobs);
-        setUnavail(ua ?? false);
-      })
-      .catch(() => setUnavail(true))
-      .finally(() => setLoading(false));
-  }, [open, brandId]);
+    void fetchMedia();
+  }, [open, fetchMedia]);
 
   if (!open) return null;
 
@@ -77,6 +94,14 @@ export function MediaLibrary({ open, onClose, brandId, onSelect }: Props) {
             onChange={(e) => setFilter(e.target.value)}
             style={{ background: "#16161F", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "5px 10px", color: "#F0EEF8", fontSize: 12, outline: "none", width: 160 }}
           />
+          <button
+            onClick={() => void fetchMedia(true)}
+            disabled={loading}
+            title="Atualizar lista"
+            style={{ background: "none", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 5, color: loading ? "#2A2838" : "#55526A", cursor: loading ? "default" : "pointer", fontSize: 12, padding: "3px 8px" }}
+          >
+            ↻
+          </button>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 15, padding: "0 4px" }}>✕</button>
         </div>
 
