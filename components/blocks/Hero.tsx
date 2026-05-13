@@ -42,6 +42,7 @@ export function Hero({
         preload="metadata"
         aria-hidden="true"
       >
+        <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
         <source src={asset(video)} type="video/mp4" />
       </video>
       <div className="hero__bg" />

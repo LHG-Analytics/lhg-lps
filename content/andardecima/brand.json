@@ -3,7 +3,7 @@
   "name": "Andar de Cima",
   "domain": "andardecimasuites.com.br",
   "logo": {
-    "src": "/brands/andardecima/units/svg-adc.png",
+    "src": "/brands/andardecima/units/svg-adc.webp",
     "alt": "Andar de Cima"
   },
   "favicon": "/brands/andardecima/units/favicon-adc.png",
@@ -54,7 +54,7 @@
       "label": "Andar de Cima · São Paulo",
       "name": "República",
       "address": "R. Araújo, 224 · República, SP",
-      "image": "/brands/andardecima/units/fachada-adc.png",
+      "image": "/brands/andardecima/units/fachada-adc.webp",
       "imageAlt": "Suíte Andar de Cima Suítes em São Paulo",
       "bookingBaseUrl": "https://andardecimasuites.com.br/pt-BR/sao-paulo",
       "categories": {

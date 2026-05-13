@@ -3,7 +3,7 @@
   "name": "Tout",
   "domain": "toutmotel.com.br",
   "logo": {
-    "src": "/brands/tout/units/svg-tout.png",
+    "src": "/brands/tout/units/svg-tout.webp",
     "alt": "Tout"
   },
   "favicon": "/brands/tout/units/favicon-tout.png",
@@ -54,7 +54,7 @@
       "label": "Tout · Campinas",
       "name": "Campinas",
       "address": "Av. Cambacica, 680 · Campinas, SP",
-      "image": "/brands/tout/units/fachada-tout.jpg",
+      "image": "/brands/tout/units/fachada-tout.webp",
       "imageAlt": "Fachada Tout Motel iluminada",
       "bookingBaseUrl": "https://toutmotel.com.br/pt-BR/campinas",
       "categories": {

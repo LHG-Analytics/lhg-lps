@@ -25,7 +25,7 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
       <aside className="admin-sidebar">
         <div className="admin-sidebar__logo">
           <Image
-            src="/brands/lhg/logos/logo-white.png"
+            src="/brands/lhg/logos/logo-white.webp"
             alt="LHG"
             width={120}
             height={30}

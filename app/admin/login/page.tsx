@@ -6,18 +6,18 @@ import { createClient } from "@/lib/supabase/client";
 import { ThreeDMarquee, type MarqueeImage } from "../_components/ThreeDMarquee";
 
 const MARQUEE_IMAGES: MarqueeImage[] = [
-  { src: "/brands/lush/units/fachada-ipiranga.png" },
-  { src: "/brands/lush/units/fachada-lapa.png" },
-  { src: "/brands/andardecima/units/fachada-adc.png" },
-  { src: "/brands/tout/units/fachada-tout.jpg" },
-  { src: "/brands/lush/logo-lush.png", logo: true },
-  { src: "/brands/andardecima/units/svg-adc.png", logo: true },
-  { src: "/brands/tout/units/svg-tout.png", logo: true },
-  { src: "/brands/lush/units/fachada-lapa.png" },
-  { src: "/brands/andardecima/units/fachada-adc.png" },
-  { src: "/brands/tout/units/fachada-tout.jpg" },
-  { src: "/brands/lush/units/fachada-ipiranga.png" },
-  { src: "/brands/lhg/logos/logo-white.png", logo: true },
+  { src: "/brands/lush/units/fachada-ipiranga.webp" },
+  { src: "/brands/lush/units/fachada-lapa.webp" },
+  { src: "/brands/andardecima/units/fachada-adc.webp" },
+  { src: "/brands/tout/units/fachada-tout.webp" },
+  { src: "/brands/lush/logo-lush.webp", logo: true },
+  { src: "/brands/andardecima/units/svg-adc.webp", logo: true },
+  { src: "/brands/tout/units/svg-tout.webp", logo: true },
+  { src: "/brands/lush/units/fachada-lapa.webp" },
+  { src: "/brands/andardecima/units/fachada-adc.webp" },
+  { src: "/brands/tout/units/fachada-tout.webp" },
+  { src: "/brands/lush/units/fachada-ipiranga.webp" },
+  { src: "/brands/lhg/logos/logo-white.webp", logo: true },
 ];
 
 const URL_ERRORS: Record<string, string> = {
@@ -50,7 +50,7 @@ function LoginContent() {
     <div className="login-card" style={{ position: "relative", zIndex: 10 }}>
       <div className="login-logo">
         <Image
-          src="/brands/lhg/logos/logo-white.png"
+          src="/brands/lhg/logos/logo-white.webp"
           alt="LHG"
           width={160}
           height={40}

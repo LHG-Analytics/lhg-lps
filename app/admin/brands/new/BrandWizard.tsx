@@ -65,7 +65,7 @@ export function BrandWizard() {
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh", background: "#0D0D12" }}>
       {/* Header */}
       <header style={{ height: 48, borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", padding: "0 20px", gap: 12, flexShrink: 0 }}>
-        <Image src="/brands/lhg/logos/logo-white.png" alt="LHG" width={80} height={20} style={{ width: "auto", height: 20 }} />
+        <Image src="/brands/lhg/logos/logo-white.webp" alt="LHG" width={80} height={20} style={{ width: "auto", height: 20 }} />
         <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
         <Link href="/admin/brands" style={{ color: "#55526A", fontSize: 12, textDecoration: "none" }}>Marcas</Link>
         <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>

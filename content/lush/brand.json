@@ -3,7 +3,7 @@
   "name": "Lush Motel",
   "domain": "lushmotel.com.br",
   "logo": {
-    "src": "/brands/lush/logo-lush.png",
+    "src": "/brands/lush/logo-lush.webp",
     "alt": "Lush"
   },
   "favicon": "/brands/lush/units/favicon-lush.png",
@@ -54,7 +54,7 @@
       "label": "Lush · Zona Sul",
       "name": "Ipiranga",
       "address": "Av. do Estado, 6600 · Ipiranga, SP",
-      "image": "/brands/lush/units/fachada-ipiranga.png",
+      "image": "/brands/lush/units/fachada-ipiranga.webp",
       "imageAlt": "Fachada Lush Ipiranga iluminada em tons de púrpura e âmbar",
       "bookingBaseUrl": "https://lushmotel.com.br/pt-BR/ipiranga",
       "categories": {
@@ -76,7 +76,7 @@
       "label": "Lush · Zona Oeste",
       "name": "Lapa",
       "address": "Av. Emb. Macedo Soares, 1037 · Lapa, SP",
-      "image": "/brands/lush/units/fachada-lapa.png",
+      "image": "/brands/lush/units/fachada-lapa.webp",
       "imageAlt": "Fachada Lush Lapa com letreiro iluminado",
       "bookingBaseUrl": "https://lushmotel.com.br/pt-BR/lapa",
       "categories": {
