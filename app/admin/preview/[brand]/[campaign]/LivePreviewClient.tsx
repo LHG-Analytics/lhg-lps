@@ -50,7 +50,6 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
   }, [blocks]);
 
   // Mescla o tema original com overrides do editor e passa pelo mapeamento correto de CSS vars
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const effectiveTheme = themeOverride ? { ...brand.theme, ...(themeOverride as any) } : brand.theme;
   const mergedStyle = themeStyle(effectiveTheme);
 

@@ -1,9 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "../_components/LogoutButton";
+import { AdminShell } from "../_components/AdminShell";
 import { CampaignFilters } from "./CampaignFilters";
 
 const PAGE_SIZE = 20;
@@ -42,85 +41,66 @@ export default async function CampaignsPage({
   const brandNameMap = Object.fromEntries((brandNames ?? []).map((b) => [b.id, b.name]));
 
   return (
-    <div className="admin-shell">
-      <aside className="admin-sidebar">
-        <div className="admin-sidebar__logo">
-          <Image src="/brands/lhg/logos/logo-white.png" alt="LHG" width={120} height={30} style={{ width: "auto", height: 28 }} />
-        </div>
-        <nav className="admin-nav">
-          <a href="/admin"           className="admin-nav__item">Dashboard</a>
-          <a href="/admin/brands"    className="admin-nav__item">Marcas</a>
-          <a href="/admin/campaigns" className="admin-nav__item active">Campanhas</a>
-          <a href="/admin/users"     className="admin-nav__item">Usuários</a>
-          <a href="/admin/audit"     className="admin-nav__item">Auditoria</a>
-        </nav>
-        <div className="admin-sidebar__footer">
-          <span className="admin-user-email">{user.email}</span>
-          <LogoutButton />
-        </div>
-      </aside>
+    <AdminShell userEmail={user.email!}>
+      <header className="admin-header">
+        <h1>Campanhas</h1>
+        <Link href="/admin/campaigns/new" className="admin-btn-primary">
+          + Nova campanha
+        </Link>
+      </header>
 
-      <main className="admin-main">
-        <header className="admin-header">
-          <h1>Campanhas</h1>
-          <Link href="/admin/campaigns/new" className="admin-btn-primary">
-            + Nova campanha
-          </Link>
-        </header>
+      <section className="admin-section">
+        <Suspense>
+          <CampaignFilters brands={brands} total={total} page={page} />
+        </Suspense>
 
-        <section className="admin-section">
-          <Suspense>
-            <CampaignFilters brands={brands} total={total} page={page} />
-          </Suspense>
-
-          {campaigns && campaigns.length > 0 ? (
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Campanha</th>
-                  <th>Marca</th>
-                  <th>Status</th>
-                  <th>Criada em</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {campaigns.map((c) => {
-                  const meta = c.meta as { title?: string } | null;
-                  return (
-                    <tr key={c.id}>
-                      <td>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                          {meta?.title
-                            ? <span style={{ fontSize: 13, color: "#F0EEF8", fontWeight: 500 }}>{meta.title}</span>
-                            : null}
-                          <code style={{ fontSize: 11, color: "#55526A" }}>{c.slug}</code>
-                        </div>
-                      </td>
-                      <td><span style={{ fontSize: 12, color: "#8E8AA8" }}>{brandNameMap[c.brand_id] ?? c.brand_id}</span></td>
-                      <td>
-                        <span className={`status-badge status-${c.status}`}>{c.status}</span>
-                      </td>
-                      <td>{new Date(c.created_at).toLocaleDateString("pt-BR")}</td>
-                      <td>
-                        <Link href={`/admin/campaigns/${c.id}`} className="admin-link">
-                          Editar
-                        </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          ) : (
-            <p className="admin-empty">
-              {(q || brand || status)
-                ? "Nenhuma campanha encontrada com esses filtros."
-                : "Nenhuma campanha cadastrada. Crie a primeira acima."}
-            </p>
-          )}
-        </section>
-      </main>
-    </div>
+        {campaigns && campaigns.length > 0 ? (
+          <table className="admin-table">
+            <thead>
+              <tr>
+                <th>Campanha</th>
+                <th>Marca</th>
+                <th>Status</th>
+                <th>Criada em</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {campaigns.map((c) => {
+                const meta = c.meta as { title?: string } | null;
+                return (
+                  <tr key={c.id}>
+                    <td>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        {meta?.title
+                          ? <span style={{ fontSize: 13, color: "#F0EEF8", fontWeight: 500 }}>{meta.title}</span>
+                          : null}
+                        <code style={{ fontSize: 11, color: "#55526A" }}>{c.slug}</code>
+                      </div>
+                    </td>
+                    <td><span style={{ fontSize: 12, color: "#8E8AA8" }}>{brandNameMap[c.brand_id] ?? c.brand_id}</span></td>
+                    <td>
+                      <span className={`status-badge status-${c.status}`}>{c.status}</span>
+                    </td>
+                    <td>{new Date(c.created_at).toLocaleDateString("pt-BR")}</td>
+                    <td>
+                      <Link href={`/admin/campaigns/${c.id}`} className="admin-link">
+                        Editar
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <p className="admin-empty">
+            {(q || brand || status)
+              ? "Nenhuma campanha encontrada com esses filtros."
+              : "Nenhuma campanha cadastrada. Crie a primeira acima."}
+          </p>
+        )}
+      </section>
+    </AdminShell>
   );
 }

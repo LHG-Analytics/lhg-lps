@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "./_components/LogoutButton";
+import { AdminShell } from "./_components/AdminShell";
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
@@ -28,34 +28,8 @@ export default async function AdminDashboard() {
   ]);
 
   return (
-    <div className="admin-shell">
-      {/* Sidebar */}
-      <aside className="admin-sidebar">
-        <div className="admin-sidebar__logo">
-          <Image
-            src="/brands/lhg/logos/logo-white.png"
-            alt="LHG"
-            width={120}
-            height={30}
-            style={{ width: "auto", height: 28 }}
-          />
-        </div>
-        <nav className="admin-nav">
-          <a href="/admin"           className="admin-nav__item active">Dashboard</a>
-          <a href="/admin/brands"    className="admin-nav__item">Marcas</a>
-          <a href="/admin/campaigns" className="admin-nav__item">Campanhas</a>
-          <a href="/admin/users"     className="admin-nav__item">Usuários</a>
-          <a href="/admin/audit"     className="admin-nav__item">Auditoria</a>
-        </nav>
-        <div className="admin-sidebar__footer">
-          <span className="admin-user-email">{user.email}</span>
-          <LogoutButton />
-        </div>
-      </aside>
-
-      {/* Main */}
-      <main className="admin-main">
-        <header className="admin-header">
+    <AdminShell userEmail={user.email!}>
+      <header className="admin-header">
           <h1>Dashboard</h1>
           <Link href="/admin/campaigns/new" className="admin-btn-primary">
             + Nova campanha
@@ -168,7 +142,6 @@ export default async function AdminDashboard() {
             <p className="admin-empty">Nenhuma campanha cadastrada ainda. Crie a primeira acima.</p>
           )}
         </section>
-      </main>
-    </div>
+    </AdminShell>
   );
 }

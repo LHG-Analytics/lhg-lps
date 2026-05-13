@@ -25,7 +25,6 @@ export function CampaignFilters({ brands, total, page }: Props) {
     if (updates.q !== undefined || updates.brand !== undefined || updates.status !== undefined) {
       p.delete("page");
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     startTransition(() => router.push(`${pathname}?${p.toString()}` as any));
   }, [router, pathname, searchParams]);
 

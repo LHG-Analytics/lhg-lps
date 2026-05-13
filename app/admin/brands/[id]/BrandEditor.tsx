@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { ThemePanel, type Theme } from "@/app/admin/campaigns/[id]/ThemePanel";
 
@@ -100,7 +101,7 @@ export function BrandEditor({ initial }: { initial: Brand }) {
 
       {/* Header */}
       <header style={{ height: 48, borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", padding: "0 20px", gap: 12, flexShrink: 0 }}>
-        <a href="/admin/brands" style={{ color: "#55526A", fontSize: 12, textDecoration: "none" }}>← Marcas</a>
+        <Link href="/admin/brands" style={{ color: "#55526A", fontSize: 12, textDecoration: "none" }}>← Marcas</Link>
         <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
         <span style={{ fontSize: 13, color: "#F0EEF8", fontWeight: 700 }}>{brand.name}</span>
         <span style={{ fontSize: 11, color: "#55526A", fontFamily: "monospace" }}>{brand.id}</span>

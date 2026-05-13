@@ -3,7 +3,7 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const nextConfig = require("eslint-config-next");
 
-export default [
+const config = [
   ...nextConfig,
   {
     ignores: [".next/**", "node_modules/**", "out/**"],
@@ -16,3 +16,5 @@ export default [
     },
   },
 ];
+
+export default config;

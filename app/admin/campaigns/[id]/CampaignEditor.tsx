@@ -133,7 +133,6 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
   const divDragRef  = useRef<{ startY: number; startH: number } | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const monacoRef   = useRef<any>(null);
 
   // ── história de undo/redo via refs (sem stale closure)
@@ -178,7 +177,6 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blocks, theme]);
 
   useEffect(() => {

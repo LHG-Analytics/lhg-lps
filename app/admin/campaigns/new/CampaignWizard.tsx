@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 
 interface Brand {
@@ -87,7 +88,7 @@ export function CampaignWizard({ brands }: Props) {
 
         {/* Header */}
         <div style={{ marginBottom: 32 }}>
-          <a href="/admin/campaigns" style={{ fontSize: 12, color: "#55526A", textDecoration: "none" }}>← Campanhas</a>
+          <Link href="/admin/campaigns" style={{ fontSize: 12, color: "#55526A", textDecoration: "none" }}>← Campanhas</Link>
           <h1 style={{ fontSize: 22, fontWeight: 700, color: "#F0EEF8", margin: "10px 0 4px" }}>Nova campanha</h1>
           <p style={{ fontSize: 13, color: "#8E8AA8", margin: 0 }}>Configure os detalhes básicos. Você poderá editar tudo no editor.</p>
         </div>
