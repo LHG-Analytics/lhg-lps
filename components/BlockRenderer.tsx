@@ -21,6 +21,7 @@ type Props = BlockContext & {
 type BlockWithMeta = Block & {
   _id?: string;
   _style?: {
+    cssVars?: Record<string, string>;
     bg?: string;
     color?: string;
     paddingTop?: number;
@@ -39,7 +40,11 @@ export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
         const b = block as BlockWithMeta;
         const key = b._id ?? `${block.type}-${index}`;
         const s = b._style;
+        const cssVarsStyle = s?.cssVars
+          ? Object.fromEntries(Object.entries(s.cssVars).map(([k, v]) => [`--${k}`, v])) as React.CSSProperties
+          : {};
         const wrapStyle: React.CSSProperties = {
+          ...cssVarsStyle,
           ...(s?.bg            ? { background:    s.bg            } : {}),
           ...(s?.color         ? { color:         s.color         } : {}),
           ...(s?.paddingTop    ? { paddingTop:    s.paddingTop    } : {}),

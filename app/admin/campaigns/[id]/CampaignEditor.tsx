@@ -28,6 +28,7 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false 
 type EditorTab  = "visual" | "code" | "style";
 type SidebarTab = "blocks" | "theme" | "seo";
 type BlockStyle = {
+  cssVars?: Record<string, string>;
   bg?: string;
   color?: string;
   paddingTop?: number;
@@ -50,6 +51,64 @@ const BLOCK_SOURCE: Record<string, string> = {
 };
 
 const MEDIA_KEY = /image|img|src|video|poster|photo|thumb|media|bg/i;
+
+const BLOCK_CSS_VARS: Record<string, Array<{ key: string; label: string }>> = {
+  nav: [
+    { key: "lav",      label: "Cor de destaque" },
+    { key: "bg",       label: "Fundo" },
+    { key: "ink-mut",  label: "Texto da tag" },
+    { key: "gold",     label: "Destaque na tag" },
+    { key: "line",     label: "Borda ao rolar a página" },
+  ],
+  hero: [
+    { key: "lav",  label: "Destaque (título em gradiente, cursor, botão)" },
+    { key: "bg",   label: "Fundo" },
+    { key: "ink",  label: "Cor do texto" },
+  ],
+  benefits: [
+    { key: "lav",       label: "Ícones e destaques" },
+    { key: "bg",        label: "Fundo dos cards" },
+    { key: "bg-elev",   label: "Fundo hover dos cards" },
+    { key: "ink-mut",   label: "Texto dos cards" },
+    { key: "line",      label: "Grade entre cards" },
+    { key: "line-soft", label: "Linhas suaves" },
+  ],
+  unitPicker: [
+    { key: "lav",     label: "Destaque (foco, hover, botão de seleção)" },
+    { key: "bg",      label: "Fundo da seção" },
+    { key: "bg-card", label: "Fundo dos cards de unidade" },
+    { key: "bg-elev", label: "Fundo hover/foco" },
+    { key: "ink-mut", label: "Texto secundário" },
+    { key: "line",    label: "Bordas dos cards" },
+    { key: "emerald", label: "Cor de confirmação / selecionado" },
+  ],
+  offer: [
+    { key: "lav",     label: "Destaque (contador, borda neon)" },
+    { key: "bg",      label: "Fundo" },
+    { key: "bg-elev", label: "Fundo do card da oferta" },
+    { key: "emerald", label: "Segunda cor do neon" },
+    { key: "ink-mut", label: "Texto secundário" },
+    { key: "line",    label: "Bordas" },
+  ],
+  faq: [
+    { key: "lav",       label: "Destaque (hover da pergunta, ícone aberto)" },
+    { key: "bg",        label: "Fundo da seção" },
+    { key: "ink",       label: "Cor das perguntas" },
+    { key: "ink-mut",   label: "Cor das respostas" },
+    { key: "line",      label: "Bordas dos itens" },
+    { key: "line-soft", label: "Separadores suaves" },
+  ],
+  footer: [
+    { key: "lav",       label: "Títulos das colunas e hover dos links" },
+    { key: "ink-mut",   label: "Cor dos links" },
+    { key: "ink-dim",   label: "Texto fraco (copyright, aviso)" },
+    { key: "line-soft", label: "Borda superior" },
+  ],
+  stickyCta: [
+    { key: "lav",  label: "Cor do botão principal" },
+    { key: "line", label: "Borda da barra" },
+  ],
+};
 
 /* Props mínimas para cada tipo — evita crash quando props: {} é enviado ao preview */
 const BLOCK_DEFAULTS: Record<string, Record<string, unknown>> = {
@@ -799,6 +858,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                 <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
                   <BlockStylePanel
                     style={selectedBlock._style}
+                    blockType={selectedBlock.type}
                     onChange={(patch) => updateBlockStyle(patch)}
                   />
                 </div>
@@ -1073,9 +1133,10 @@ function ArrayField({ value, path, brandId, onChange }: {
 
 
 /* ── BlockStylePanel ────────────────────────────────── */
-function BlockStylePanel({ style, onChange }: {
+function BlockStylePanel({ style, onChange, blockType }: {
   style?: BlockStyle;
   onChange: (patch: Partial<BlockStyle>) => void;
+  blockType: string;
 }) {
   const s: BlockStyle = style ?? {};
 
@@ -1089,10 +1150,37 @@ function BlockStylePanel({ style, onChange }: {
     onChange(next);
   }
 
-  const hasAny = Object.values(s).some((v) => v !== undefined);
+  function updateCssVar(key: string, val?: string) {
+    const next = { ...(s.cssVars ?? {}) };
+    if (val) { next[key] = val; } else { delete next[key]; }
+    update("cssVars", Object.keys(next).length > 0 ? next : undefined);
+  }
+
+  const blockVars = BLOCK_CSS_VARS[blockType] ?? [];
+  const hasAny = Object.values(s).some((v) => {
+    if (typeof v === "object" && v !== null) return Object.keys(v).length > 0;
+    return v !== undefined;
+  });
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+
+      {/* ── CORES DO BLOCO ── */}
+      {blockVars.length > 0 && (
+        <StyleSection title={`Cores — ${blockType}`}>
+          {blockVars.map(({ key, label }) => (
+            <ColorRow
+              key={key}
+              label={label}
+              value={s.cssVars?.[key]}
+              onChange={(v) => updateCssVar(key, v)}
+            />
+          ))}
+          <div style={{ fontSize: 9, color: "#3A3850", marginTop: 4, lineHeight: 1.5 }}>
+            Sobrepõe o tema global somente neste bloco. Deixe em branco para herdar.
+          </div>
+        </StyleSection>
+      )}
 
       {/* ── ESPAÇAMENTO ── */}
       <StyleSection title="Espaçamento">
@@ -1177,6 +1265,7 @@ function BlockStylePanel({ style, onChange }: {
       {hasAny && (
         <button
           onClick={() => onChange({
+            cssVars: undefined,
             bg: undefined, color: undefined,
             paddingTop: undefined, paddingBottom: undefined,
             paddingLeft: undefined, paddingRight: undefined,
