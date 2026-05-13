@@ -57,7 +57,7 @@
     ],
     "dates": [
       { "value": "2026-06-11", "day": "11", "dow": "Quinta",  "tier": "regular", "label": "11 de junho · Quinta" },
-      { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "premium", "label": "12 de junho · Sexta" },
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",   "tier": "regular", "label": "12 de junho · Sexta" },
       { "value": "2026-06-13", "day": "13", "dow": "Sábado",  "tier": "regular", "label": "13 de junho · Sábado" },
       { "value": "2026-06-14", "day": "14", "dow": "Domingo", "tier": "regular", "label": "14 de junho · Domingo" }
     ],
@@ -65,12 +65,12 @@
       "currency": "BRL",
       "units": {
         "campinas": {
-          "suite-a": { "3h-18": { "premium":  35600, "regular":  30900 }, "3h-22": { "premium":  38600, "regular":  33900 }, "pernoite": { "premium": 102400, "regular":  94000 } },
-          "hidro":   { "3h-18": { "premium":  41400, "regular":  35400 }, "3h-22": { "premium":  44400, "regular":  38400 }, "pernoite": { "premium": 105000, "regular":  96000 } },
-          "glam":    { "3h-18": { "premium":  44000, "regular":  37400 }, "3h-22": { "premium":  47000, "regular":  40400 }, "pernoite": { "premium": 111500, "regular": 101000 } },
-          "relax":   { "3h-18": { "premium":  45300, "regular":  38400 }, "3h-22": { "premium":  48300, "regular":  41400 }, "pernoite": { "premium": 112800, "regular": 102000 } },
-          "sublime": { "3h-18": { "premium":  55700, "regular":  46400 }, "3h-22": { "premium":  58700, "regular":  49400 }, "pernoite": { "premium": 118000, "regular": 106000 } },
-          "club":    { "3h-18": { "premium":  96000, "regular":  77400 }, "3h-22": { "premium":  99000, "regular":  80400 }, "pernoite": { "premium": 164200, "regular": 141500 } }
+          "suite-a": { "3h-18": { "premium":  35600, "regular":  30900 }, "3h-22": { "premium":  38600, "regular":  33900 }, "pernoite": { "premium": 103400, "regular": 103400 } },
+          "hidro":   { "3h-18": { "premium":  41400, "regular":  35400 }, "3h-22": { "premium":  44400, "regular":  38400 }, "pernoite": { "premium": 114400, "regular": 114400 } },
+          "glam":    { "3h-18": { "premium":  44000, "regular":  37400 }, "3h-22": { "premium":  47000, "regular":  40400 }, "pernoite": { "premium": 119500, "regular": 119500 } },
+          "relax":   { "3h-18": { "premium":  45300, "regular":  38400 }, "3h-22": { "premium":  48300, "regular":  41400 }, "pernoite": { "premium": 123800, "regular": 123800 } },
+          "sublime": { "3h-18": { "premium":  55700, "regular":  46400 }, "3h-22": { "premium":  58700, "regular":  49400 }, "pernoite": { "premium": 138000, "regular": 138000 } },
+          "club":    { "3h-18": { "premium":  96000, "regular":  77400 }, "3h-22": { "premium":  99000, "regular":  80400 }, "pernoite": { "premium": 247200, "regular": 247200 } }
         }
       }
     }
