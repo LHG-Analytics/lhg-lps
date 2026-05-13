@@ -27,7 +27,16 @@ const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false 
 /* ── tipos ─────────────────────────────────────────── */
 type EditorTab  = "visual" | "code" | "style";
 type SidebarTab = "blocks" | "theme" | "seo";
-type BlockStyle = { bg?: string; paddingTop?: number; paddingBottom?: number };
+type BlockStyle = {
+  bg?: string;
+  color?: string;
+  paddingTop?: number;
+  paddingBottom?: number;
+  paddingLeft?: number;
+  paddingRight?: number;
+  borderRadius?: number;
+  opacity?: number;
+};
 type Analytics  = { ga4?: string; metaPixel?: string; gtm?: string; tiktokPixel?: string };
 type Meta       = { title?: string; description?: string; analytics?: Analytics };
 type Block      = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
@@ -1068,74 +1077,208 @@ function BlockStylePanel({ style, onChange }: {
   style?: BlockStyle;
   onChange: (patch: Partial<BlockStyle>) => void;
 }) {
-  const s = style ?? {};
+  const s: BlockStyle = style ?? {};
+
+  function update<K extends keyof BlockStyle>(key: K, val: BlockStyle[K]) {
+    const next = { ...s };
+    if (val === undefined || val === "" || val === 0) {
+      delete (next as Record<string, unknown>)[key];
+    } else {
+      (next as Record<string, unknown>)[key] = val;
+    }
+    onChange(next);
+  }
+
+  const hasAny = Object.values(s).some((v) => v !== undefined);
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      {/* Background */}
-      <div>
-        <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>Cor de fundo do bloco</label>
-        <div style={{ display: "flex", gap: 6, alignItems: "stretch" }}>
-          {/^#[0-9a-fA-F]{3,8}$/.test(s.bg ?? "") && (
-            <input type="color" value={s.bg} onChange={(e) => onChange({ ...s, bg: e.target.value })}
-              style={{ width: 34, padding: 2, border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, cursor: "pointer", background: "none", flexShrink: 0 }} />
-          )}
-          <input
-            type="text"
-            value={s.bg ?? ""}
-            placeholder="ex: #1A1A2E ou transparent"
-            onChange={(e) => onChange({ ...s, bg: e.target.value || undefined })}
-            style={{ ...fieldStyle, flex: 1 }}
+    <div style={{ display: "flex", flexDirection: "column" }}>
+
+      {/* ── ESPAÇAMENTO ── */}
+      <StyleSection title="Espaçamento">
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "52px 1fr 52px",
+          gridTemplateRows: "auto auto auto",
+          gap: 6, alignItems: "center", justifyItems: "center",
+          margin: "2px 0 8px",
+        }}>
+          <div />
+          <SpacingInput label="Acima" value={s.paddingTop ?? 0}
+            onChange={(v) => update("paddingTop", v || undefined)} />
+          <div />
+
+          <SpacingInput label="Esq." value={s.paddingLeft ?? 0}
+            onChange={(v) => update("paddingLeft", v || undefined)} />
+          <div style={{
+            width: "100%", height: 44, borderRadius: 6,
+            border: "1.5px dashed rgba(166,124,255,0.18)",
+            background: "rgba(166,124,255,0.04)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <span style={{ fontSize: 9, color: "#3A3850", textTransform: "uppercase", letterSpacing: "0.1em" }}>bloco</span>
+          </div>
+          <SpacingInput label="Dir." value={s.paddingRight ?? 0}
+            onChange={(v) => update("paddingRight", v || undefined)} />
+
+          <div />
+          <SpacingInput label="Abaixo" value={s.paddingBottom ?? 0}
+            onChange={(v) => update("paddingBottom", v || undefined)} />
+          <div />
+        </div>
+        <div style={{ fontSize: 9, color: "#3A3850", textAlign: "center" }}>Espaçamento interno em pixels</div>
+      </StyleSection>
+
+      {/* ── APARÊNCIA ── */}
+      <StyleSection title="Aparência">
+        <ColorRow label="Fundo"  value={s.bg}    onChange={(v) => update("bg", v)} />
+        <ColorRow label="Texto"  value={s.color} onChange={(v) => update("color", v)} />
+
+        {/* Opacidade */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2, marginBottom: 10 }}>
+          <span style={{ fontSize: 10, color: "#8E8AA8", minWidth: 44, textTransform: "uppercase", letterSpacing: "0.07em" }}>Opac.</span>
+          <input type="range" min={10} max={100} step={5}
+            value={s.opacity ?? 100}
+            onChange={(e) => { const v = Number(e.target.value); update("opacity", v === 100 ? undefined : v); }}
+            style={{ flex: 1, accentColor: "#A67CFF", cursor: "pointer" }}
           />
-          {s.bg && (
-            <button onClick={() => onChange({ ...s, bg: undefined })}
-              style={{ background: "none", border: "1px solid rgba(224,82,96,0.3)", borderRadius: 6, color: "#E05260", cursor: "pointer", fontSize: 11, padding: "0 10px" }}>✕</button>
-          )}
+          <span style={{
+            fontSize: 11, fontWeight: 600, minWidth: 36, textAlign: "right",
+            color: (s.opacity ?? 100) < 100 ? "#A67CFF" : "#3A3850",
+            fontVariantNumeric: "tabular-nums",
+          }}>{s.opacity ?? 100}%</span>
         </div>
-        <div style={{ fontSize: 10, color: "#3A3850", marginTop: 4 }}>Aplica-se como background do wrapper. Útil com espaçamento.</div>
-      </div>
 
-      {/* Spacing top */}
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-          <label style={{ fontSize: 10, color: "#8E8AA8", textTransform: "uppercase", letterSpacing: "0.07em" }}>Espaço acima</label>
-          <span style={{ fontSize: 12, color: "#A67CFF", fontWeight: 700, minWidth: 36, textAlign: "right" }}>{s.paddingTop ?? 0}px</span>
+        {/* Raio de borda */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 10, color: "#8E8AA8", minWidth: 44, textTransform: "uppercase", letterSpacing: "0.07em" }}>Raio</span>
+          <input type="range" min={0} max={48} step={2}
+            value={s.borderRadius ?? 0}
+            onChange={(e) => update("borderRadius", Number(e.target.value) || undefined)}
+            style={{ flex: 1, accentColor: "#A67CFF", cursor: "pointer" }}
+          />
+          <div style={{ display: "flex", alignItems: "center", gap: 5, minWidth: 54 }}>
+            <div style={{
+              width: 14, height: 14, flexShrink: 0,
+              border: "1.5px solid rgba(166,124,255,0.4)",
+              borderRadius: Math.min(s.borderRadius ?? 0, 7),
+              background: "rgba(166,124,255,0.08)",
+              transition: "border-radius 0.12s",
+            }} />
+            <span style={{
+              fontSize: 11, fontWeight: 600, fontVariantNumeric: "tabular-nums",
+              color: (s.borderRadius ?? 0) > 0 ? "#A67CFF" : "#3A3850",
+            }}>{s.borderRadius ?? 0}px</span>
+          </div>
         </div>
-        <input
-          type="range" min={0} max={200} step={4}
-          value={s.paddingTop ?? 0}
-          onChange={(e) => { const v = Number(e.target.value); onChange({ ...s, paddingTop: v || undefined }); }}
-          style={{ width: "100%", accentColor: "#A67CFF" }}
-        />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#3A3850", marginTop: 2 }}>
-          <span>0</span><span>200</span>
-        </div>
-      </div>
+      </StyleSection>
 
-      {/* Spacing bottom */}
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-          <label style={{ fontSize: 10, color: "#8E8AA8", textTransform: "uppercase", letterSpacing: "0.07em" }}>Espaço abaixo</label>
-          <span style={{ fontSize: 12, color: "#A67CFF", fontWeight: 700, minWidth: 36, textAlign: "right" }}>{s.paddingBottom ?? 0}px</span>
-        </div>
-        <input
-          type="range" min={0} max={200} step={4}
-          value={s.paddingBottom ?? 0}
-          onChange={(e) => { const v = Number(e.target.value); onChange({ ...s, paddingBottom: v || undefined }); }}
-          style={{ width: "100%", accentColor: "#A67CFF" }}
-        />
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#3A3850", marginTop: 2 }}>
-          <span>0</span><span>200</span>
-        </div>
-      </div>
-
-      {(s.bg || s.paddingTop || s.paddingBottom) && (
+      {/* ── RESET ── */}
+      {hasAny && (
         <button
-          onClick={() => onChange({ bg: undefined, paddingTop: undefined, paddingBottom: undefined })}
-          style={{ background: "rgba(224,82,96,0.08)", border: "1px solid rgba(224,82,96,0.2)", borderRadius: 6, padding: "7px 0", color: "#E05260", cursor: "pointer", fontSize: 11, fontWeight: 600 }}
+          onClick={() => onChange({
+            bg: undefined, color: undefined,
+            paddingTop: undefined, paddingBottom: undefined,
+            paddingLeft: undefined, paddingRight: undefined,
+            borderRadius: undefined, opacity: undefined,
+          })}
+          style={{
+            width: "100%", marginTop: 4,
+            background: "rgba(224,82,96,0.07)", border: "1px solid rgba(224,82,96,0.18)",
+            borderRadius: 6, padding: "8px 0", color: "#E05260",
+            cursor: "pointer", fontSize: 11, fontWeight: 600,
+          }}
         >
           Resetar estilos deste bloco
         </button>
       )}
+    </div>
+  );
+}
+
+function StyleSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{
+        fontSize: 9, fontWeight: 700, textTransform: "uppercase",
+        letterSpacing: "0.12em", color: "#3A3850",
+        marginBottom: 12, paddingBottom: 6,
+        borderBottom: "1px solid rgba(255,255,255,0.05)",
+      }}>{title}</div>
+      {children}
+    </div>
+  );
+}
+
+function SpacingInput({ label, value, onChange }: {
+  label: string; value: number; onChange: (v: number) => void;
+}) {
+  const active = value > 0;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+      <span style={{
+        fontSize: 9, textTransform: "uppercase", letterSpacing: "0.05em",
+        color: active ? "#A67CFF" : "#3A3850",
+      }}>{label}</span>
+      <input
+        type="number" min={0} max={400} step={4}
+        value={value}
+        onChange={(e) => onChange(Math.max(0, Number(e.target.value)))}
+        style={{
+          width: 44, textAlign: "center", outline: "none",
+          background: active ? "rgba(166,124,255,0.1)" : "#16161F",
+          border: `1px solid ${active ? "rgba(166,124,255,0.35)" : "rgba(255,255,255,0.08)"}`,
+          borderRadius: 5, padding: "5px 0",
+          color: active ? "#C4AEFF" : "#55526A",
+          fontSize: 12, fontWeight: 600, fontVariantNumeric: "tabular-nums",
+        }}
+      />
+    </div>
+  );
+}
+
+function ColorRow({ label, value, onChange }: {
+  label: string; value?: string; onChange: (v?: string) => void;
+}) {
+  const isSet = !!value;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+      <span style={{ fontSize: 10, color: "#8E8AA8", minWidth: 44, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</span>
+      <div style={{
+        flex: 1, display: "flex", alignItems: "center",
+        background: "#16161F",
+        border: `1px solid ${isSet ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)"}`,
+        borderRadius: 6, overflow: "hidden",
+      }}>
+        {/* Swatch */}
+        <label style={{ position: "relative", width: 32, height: 30, flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{
+            width: 18, height: 18, borderRadius: 3,
+            background: isSet ? value : undefined,
+            backgroundImage: isSet ? undefined : "repeating-conic-gradient(#2A2838 0% 25%, #16161F 0% 50%)",
+            backgroundSize: isSet ? undefined : "6px 6px",
+            border: "1px solid rgba(255,255,255,0.12)",
+            boxShadow: isSet ? "0 1px 4px rgba(0,0,0,0.4)" : undefined,
+          }} />
+          <input type="color" value={value || "#000000"} onChange={(e) => onChange(e.target.value)}
+            style={{ position: "absolute", opacity: 0, inset: 0, cursor: "pointer", width: "100%", height: "100%" }} />
+        </label>
+        <div style={{ width: 1, height: 18, background: "rgba(255,255,255,0.07)", flexShrink: 0 }} />
+        <input
+          type="text" value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}
+          placeholder="—"
+          style={{
+            flex: 1, background: "none", border: "none", outline: "none",
+            color: isSet ? "#F0EEF8" : "#3A3850",
+            fontSize: 12, padding: "0 8px", height: 30,
+            fontFamily: "monospace",
+          }}
+        />
+        {isSet && (
+          <button onClick={() => onChange(undefined)}
+            style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 11, padding: "0 8px", height: 30, flexShrink: 0 }}>✕</button>
+        )}
+      </div>
     </div>
   );
 }

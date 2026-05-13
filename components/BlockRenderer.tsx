@@ -20,7 +20,16 @@ type Props = BlockContext & {
 
 type BlockWithMeta = Block & {
   _id?: string;
-  _style?: { bg?: string; paddingTop?: number; paddingBottom?: number };
+  _style?: {
+    bg?: string;
+    color?: string;
+    paddingTop?: number;
+    paddingBottom?: number;
+    paddingLeft?: number;
+    paddingRight?: number;
+    borderRadius?: number;
+    opacity?: number;
+  };
 };
 
 export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
@@ -31,9 +40,14 @@ export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
         const key = b._id ?? `${block.type}-${index}`;
         const s = b._style;
         const wrapStyle: React.CSSProperties = {
-          ...(s?.bg ? { background: s.bg } : {}),
-          ...(s?.paddingTop  ? { paddingTop:  s.paddingTop  } : {}),
+          ...(s?.bg            ? { background:    s.bg            } : {}),
+          ...(s?.color         ? { color:         s.color         } : {}),
+          ...(s?.paddingTop    ? { paddingTop:    s.paddingTop    } : {}),
           ...(s?.paddingBottom ? { paddingBottom: s.paddingBottom } : {}),
+          ...(s?.paddingLeft   ? { paddingLeft:   s.paddingLeft   } : {}),
+          ...(s?.paddingRight  ? { paddingRight:  s.paddingRight  } : {}),
+          ...(s?.borderRadius  ? { borderRadius:  s.borderRadius  } : {}),
+          ...(s?.opacity !== undefined && s.opacity < 100 ? { opacity: s.opacity / 100 } : {}),
         };
 
         if (editorMode) {
