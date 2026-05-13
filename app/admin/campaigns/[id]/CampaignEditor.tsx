@@ -959,6 +959,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                       <BlockStylePanel
                         style={selectedBlock._style}
                         blockType={selectedBlock.type}
+                        theme={theme}
                         onChange={(patch) => updateBlockStyle(patch)}
                       />
                     </div>
@@ -1094,6 +1095,26 @@ function labelify(key: string) {
   return FIELD_LABELS[key] ?? key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim();
 }
 
+/* Campos simples importantes aparecem antes de objetos e arrays */
+const FIELD_PRIORITY = [
+  "eyebrow", "headlineFull", "headlineEmphasis", "headlineHtml", "headline", "title",
+  "subtitle", "tag", "intro", "tagline", "note", "copyright", "ageNotice",
+  "typewriter", "video", "src", "poster", "body", "highlight", "value",
+  "href", "label", "variant", "focusUnit", "openCtaLabel", "confirmCtaLabel", "countdownTo",
+];
+
+function fieldSortScore(key: string, val: unknown): number {
+  const pri = FIELD_PRIORITY.indexOf(key);
+  if (pri >= 0) return pri;                          // prioridade explícita
+  if (Array.isArray(val)) return 1000;               // arrays por último
+  if (typeof val === "object" && val !== null) return 500; // objetos penúltimos
+  return 200;                                        // scalars não-prioritários no meio
+}
+
+function sortedEntries(data: Record<string, unknown>): [string, unknown][] {
+  return Object.entries(data).sort(([ka, va], [kb, vb]) => fieldSortScore(ka, va) - fieldSortScore(kb, vb));
+}
+
 function deepKeyMatch(val: unknown, f: string): boolean {
   if (typeof val === "object" && val !== null && !Array.isArray(val)) {
     return Object.entries(val as Record<string, unknown>).some(([k, v]) => k.toLowerCase().includes(f) || deepKeyMatch(v, f));
@@ -1112,7 +1133,7 @@ function PropForm({
   filter?: string;
 }) {
   const f = filter?.toLowerCase() ?? "";
-  const entries = Object.entries(data).filter(([key, val]) => {
+  const entries = sortedEntries(data).filter(([key, val]) => {
     if (!f) return true;
     return key.toLowerCase().includes(f) || labelify(key).toLowerCase().includes(f) || deepKeyMatch(val, f);
   });
@@ -1234,10 +1255,11 @@ function ArrayField({ value, path, brandId, onChange }: {
 
 
 /* ── BlockStylePanel ────────────────────────────────── */
-function BlockStylePanel({ style, onChange, blockType }: {
+function BlockStylePanel({ style, onChange, blockType, theme }: {
   style?: BlockStyle;
   onChange: (patch: Partial<BlockStyle>) => void;
   blockType: string;
+  theme?: Record<string, string>;
 }) {
   const s: BlockStyle = style ?? {};
 
@@ -1292,11 +1314,12 @@ function BlockStylePanel({ style, onChange, blockType }: {
               key={key}
               label={label}
               value={s.cssVars?.[key]}
+              inherited={theme?.[key]}
               onChange={(v) => updateCssVar(key, v)}
             />
           ))}
           <div style={{ fontSize: 9, color: "#3A3850", marginTop: 4, lineHeight: 1.5 }}>
-            Sobrepõe o tema global somente neste bloco. Deixe em branco para herdar.
+            Valor atual do tema em cinza. Clique para sobrescrever só neste bloco.
           </div>
         </StyleSection>
       )}
@@ -1619,48 +1642,54 @@ function SpacingInput({ label, value, onChange }: {
   );
 }
 
-function ColorRow({ label, value, onChange }: {
-  label: string; value?: string; onChange: (v?: string) => void;
+function ColorRow({ label, value, inherited, onChange }: {
+  label: string; value?: string; inherited?: string; onChange: (v?: string) => void;
 }) {
   const isSet = !!value;
+  const displayColor = value || inherited;
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-      <span style={{ fontSize: 10, color: "#8E8AA8", minWidth: 44, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</span>
+      <span style={{ fontSize: 10, color: "#8E8AA8", minWidth: 44, textTransform: "uppercase", letterSpacing: "0.07em", lineHeight: 1.3 }}>{label}</span>
       <div style={{
         flex: 1, display: "flex", alignItems: "center",
         background: "#16161F",
-        border: `1px solid ${isSet ? "rgba(255,255,255,0.12)" : "rgba(255,255,255,0.06)"}`,
+        border: `1px solid ${isSet ? "rgba(240,168,74,0.4)" : inherited ? "rgba(255,255,255,0.09)" : "rgba(255,255,255,0.06)"}`,
         borderRadius: 6, overflow: "hidden",
       }}>
-        {/* Swatch */}
+        {/* Swatch — mostra valor override (âmbar) ou herdado (cinza) */}
         <label style={{ position: "relative", width: 32, height: 30, flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{
             width: 18, height: 18, borderRadius: 3,
-            background: isSet ? value : undefined,
-            backgroundImage: isSet ? undefined : "repeating-conic-gradient(#2A2838 0% 25%, #16161F 0% 50%)",
-            backgroundSize: isSet ? undefined : "6px 6px",
-            border: "1px solid rgba(255,255,255,0.12)",
-            boxShadow: isSet ? "0 1px 4px rgba(0,0,0,0.4)" : undefined,
+            background: displayColor ?? undefined,
+            backgroundImage: displayColor ? undefined : "repeating-conic-gradient(#2A2838 0% 25%, #16161F 0% 50%)",
+            backgroundSize: displayColor ? undefined : "6px 6px",
+            border: `1px solid ${isSet ? "rgba(240,168,74,0.5)" : "rgba(255,255,255,0.12)"}`,
+            boxShadow: displayColor ? "0 1px 4px rgba(0,0,0,0.4)" : undefined,
+            opacity: isSet ? 1 : 0.6,
           }} />
-          <input type="color" value={value || "#000000"} onChange={(e) => onChange(e.target.value)}
+          <input type="color" value={value || inherited || "#000000"} onChange={(e) => onChange(e.target.value)}
             style={{ position: "absolute", opacity: 0, inset: 0, cursor: "pointer", width: "100%", height: "100%" }} />
         </label>
         <div style={{ width: 1, height: 18, background: "rgba(255,255,255,0.07)", flexShrink: 0 }} />
         <input
           type="text" value={value ?? ""} onChange={(e) => onChange(e.target.value || undefined)}
-          placeholder="—"
+          placeholder={inherited ?? "—"}
           style={{
             flex: 1, background: "none", border: "none", outline: "none",
-            color: isSet ? "#F0EEF8" : "#3A3850",
+            color: isSet ? "#F0A84A" : "#3A3850",
             fontSize: 12, padding: "0 8px", height: 30,
             fontFamily: "monospace",
           }}
         />
         {isSet && (
-          <button onClick={() => onChange(undefined)}
+          <button onClick={() => onChange(undefined)} title="Remover override — volta ao tema"
             style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 11, padding: "0 8px", height: 30, flexShrink: 0 }}>✕</button>
         )}
       </div>
+      {/* Badge "tema" quando não há override mas há valor herdado */}
+      {!isSet && inherited && (
+        <span style={{ fontSize: 8, color: "#3A3850", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 3, padding: "1px 5px", flexShrink: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>tema</span>
+      )}
     </div>
   );
 }
