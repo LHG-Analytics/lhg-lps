@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --dir .",
     "typecheck": "tsc --noEmit",
     "validate": "tsx scripts/validate-content.ts",
     "test": "vitest run",
