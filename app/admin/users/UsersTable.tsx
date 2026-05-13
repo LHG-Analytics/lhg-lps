@@ -101,7 +101,7 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
       if (!res.ok) throw new Error(await res.text());
       setInviteOk(`Convite enviado para ${inviteEmail}.`);
       setInvites((prev) => [
-        { id: crypto.randomUUID(), email: inviteEmail, role: inviteRole, created_at: new Date().toISOString() },
+        { id: crypto.randomUUID(), email: inviteEmail, role: inviteRole, created_at: new Date().toISOString(), expires_at: null },
         ...prev,
       ]);
       setInviteEmail("");

@@ -238,7 +238,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     const validation = BlockShapeSchema.safeParse(b);
     if (!validation.success) {
       const msg = validation.error.issues
-        .map((e) => `[bloco ${e.path[0] ?? "?"}] ${e.message}`)
+        .map((e) => `[bloco ${String(e.path[0] ?? "?")}] ${e.message}`)
         .join("; ");
       setError(`Blocos inválidos — corrija antes de salvar: ${msg}`);
       return;
