@@ -20,6 +20,7 @@ import { LotsPanel, type Lot } from "./LotsPanel";
 import { PricingPanel } from "./PricingPanel";
 import { MediaLibrary } from "./MediaLibrary";
 import { PeriodsPanel } from "./PeriodsPanel";
+import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -870,8 +871,57 @@ const ENUM_OPTIONS: Record<string, string[]> = {
   scopeKey: ["3h", "all"],
 };
 
+const FIELD_LABELS: Record<string, string> = {
+  eyebrow:         "Texto acima do título",
+  headlineFull:    "Título completo",
+  headlineEmphasis:"Palavra em destaque",
+  headlineHtml:    "Título com formatação (HTML)",
+  headline:        "Título",
+  subtitle:        "Subtítulo",
+  typewriter:      "Efeito de digitação",
+  tag:             "Tag / Badge",
+  note:            "Nota de rodapé",
+  intro:           "Texto introdutório",
+  tagline:         "Tagline da marca",
+  copyright:       "Copyright",
+  ageNotice:       "Aviso de idade",
+  label:           "Texto do botão",
+  href:            "Link (URL)",
+  variant:         "Estilo / Cor",
+  focusUnit:       "Focar na unidade",
+  countdownTo:     "Contagem regressiva até (ISO)",
+  primaryCta:      "Botão principal",
+  ctas:            "Botões de ação",
+  items:           "Itens",
+  meta:            "Destaques",
+  columns:         "Colunas de links",
+  links:           "Links",
+  icon:            "Ícone",
+  body:            "Texto",
+  highlight:       "Em destaque",
+  value:           "Valor",
+  units:           "IDs das unidades",
+  wizardSteps:     "Passos do wizard",
+  openCtaLabel:    "Botão abrir seleção",
+  confirmCtaLabel: "Botão confirmar",
+  stepCopy:        "Textos de cada passo",
+  period:          "Período",
+  date:            "Data",
+  category:        "Suíte / Categoria",
+  summary:         "Resumo da reserva",
+  couponLine:      "Linha do cupom",
+  lotLineNoCoupon: "Linha sem cupom",
+  hint:            "Dica / subtexto",
+  smallHint:       "Dica pequena",
+  couponHint:      "Dica do cupom",
+  n:               "Número do passo",
+  video:           "Vídeo de fundo",
+  src:             "Imagem",
+  poster:          "Poster do vídeo",
+};
+
 function labelify(key: string) {
-  return key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim();
+  return FIELD_LABELS[key] ?? key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim();
 }
 
 function deepKeyMatch(val: unknown, f: string): boolean {
@@ -920,6 +970,9 @@ function PropForm({
             ) : typeof val === "string" && key.endsWith("Html") ? (
               <RichTextField value={val} onChange={(v) => onChange(fullPath, v)} />
 
+            ) : typeof val === "string" && MEDIA_KEY.test(key) ? (
+              <ImageUploadField value={val} brandId={brandId} onChange={(url) => onChange(fullPath, url)} compact />
+
             ) : typeof val === "string" && val.length > 80 ? (
               <textarea value={val} onChange={(e) => onChange(fullPath, e.target.value)} style={fieldStyle} rows={3} />
 
@@ -930,9 +983,6 @@ function PropForm({
                     style={{ width: 34, padding: 2, border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, cursor: "pointer", background: "none", flexShrink: 0 }} />
                 )}
                 <input type="text" value={val} onChange={(e) => onChange(fullPath, e.target.value)} style={{ ...fieldStyle, flex: 1 }} />
-                {MEDIA_KEY.test(key) && (
-                  <UploadBtn brandId={brandId} onUploaded={(p) => onChange(fullPath, p)} />
-                )}
               </div>
 
             ) : typeof val === "number" ? (
@@ -1012,49 +1062,6 @@ function ArrayField({ value, path, brandId, onChange }: {
   );
 }
 
-/* ── UploadBtn ──────────────────────────────────────── */
-function UploadBtn({ brandId, onUploaded }: { brandId: string; onUploaded: (path: string) => void }) {
-  const [uploading, setUploading] = useState(false);
-  const ref = useRef<HTMLInputElement>(null);
-
-  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("brandId", brandId);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!res.ok) throw new Error(await res.text());
-      const { path } = await res.json() as { path: string };
-      onUploaded(path);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Erro no upload");
-    } finally {
-      setUploading(false);
-      if (ref.current) ref.current.value = "";
-    }
-  }
-
-  return (
-    <>
-      <input ref={ref} type="file" accept="image/*,video/*" onChange={handleFile} style={{ display: "none" }} />
-      <button
-        onClick={() => ref.current?.click()}
-        disabled={uploading}
-        title="Fazer upload de arquivo"
-        style={{
-          background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: 6, padding: "0 10px", fontSize: 13, cursor: uploading ? "wait" : "pointer",
-          color: "#8E8AA8", flexShrink: 0, height: "100%",
-        }}
-      >
-        {uploading ? "…" : "↑"}
-      </button>
-    </>
-  );
-}
 
 /* ── BlockStylePanel ────────────────────────────────── */
 function BlockStylePanel({ style, onChange }: {

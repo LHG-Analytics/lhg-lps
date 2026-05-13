@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ThemePanel, type Theme } from "@/app/admin/campaigns/[id]/ThemePanel";
+import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
 
 /* ── tipos ─────────────────────────────────────────── */
 interface Category {
@@ -143,7 +144,7 @@ export function BrandEditor({ initial }: { initial: Brand }) {
 
           {/* ── IDENTIDADE ──────────────────────────── */}
           {tab === "identity" && (
-            <IdentityTab brand={brand} saving={saving === "identity"} saved={saved === "identity"}
+            <IdentityTab brand={brand} brandId={brand.id} saving={saving === "identity"} saved={saved === "identity"}
               onSave={(fields) => save(fields, "identity")} />
           )}
 
@@ -192,8 +193,9 @@ export function BrandEditor({ initial }: { initial: Brand }) {
 }
 
 /* ── Identidade ─────────────────────────────────────── */
-function IdentityTab({ brand, saving, saved, onSave }: {
+function IdentityTab({ brand, brandId, saving, saved, onSave }: {
   brand: Brand;
+  brandId: string;
   saving: boolean;
   saved: boolean;
   onSave: (fields: Partial<Brand>) => void;
@@ -230,33 +232,21 @@ function IdentityTab({ brand, saving, saved, onSave }: {
 
       <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16 }}>
         {section("Logotipo")}
-        <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-          {logoSrc && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoSrc} alt={logoAlt} style={{ width: 64, height: 64, objectFit: "contain", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", flexShrink: 0 }} />
-          )}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}>
-            <div>
-              {label("Caminho do arquivo (logo)")}
-              <input value={logoSrc} onChange={(e) => setLogoSrc(e.target.value)} style={fld} placeholder="/brands/lush/logo.png" />
-            </div>
-            <div>
-              {label("Texto alternativo")}
-              <input value={logoAlt} onChange={(e) => setLogoAlt(e.target.value)} style={fld} placeholder="Lush Motel" />
-            </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div>
+            {label("Arquivo")}
+            <ImageUploadField value={logoSrc} brandId={brandId} accept="image/*" onChange={setLogoSrc} />
+          </div>
+          <div>
+            {label("Texto alternativo")}
+            <input value={logoAlt} onChange={(e) => setLogoAlt(e.target.value)} style={fld} placeholder="Lush Motel" />
           </div>
         </div>
       </div>
 
       <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16 }}>
         {section("Favicon")}
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          {favicon && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={favicon} alt="favicon" style={{ width: 32, height: 32, objectFit: "contain", borderRadius: 4, border: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)", flexShrink: 0 }} />
-          )}
-          <input value={favicon} onChange={(e) => setFavicon(e.target.value)} style={{ ...fld, flex: 1 }} placeholder="/brands/lush/favicon.png" />
-        </div>
+        <ImageUploadField value={favicon} brandId={brandId} accept="image/*" onChange={setFavicon} />
       </div>
 
       <SaveRow saving={saving} saved={saved} onSave={submit} />
@@ -411,7 +401,7 @@ function UnitsTab({ units, brandId }: { units: Unit[]; brandId: string }) {
           </div>
           <div>
             {label("Imagem")}
-            <input value={unit.image ?? ""} onChange={(e) => update("image", e.target.value)} style={{ ...fld, fontFamily: "monospace", fontSize: 12 }} placeholder="/brands/lush/units/lapa.jpg" />
+            <ImageUploadField value={unit.image ?? ""} brandId={brandId} accept="image/*" onChange={(url) => update("image", url)} />
           </div>
 
           <CategoriesEditor unit={unit} brandId={brandId} />

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { AdminShell } from "../_components/AdminShell";
 import { CampaignFilters } from "./CampaignFilters";
+import { CampaignRowActions } from "./CampaignRowActions";
 
 const PAGE_SIZE = 20;
 
@@ -62,6 +63,7 @@ export default async function CampaignsPage({
                 <th>Marca</th>
                 <th>Status</th>
                 <th>Criada em</th>
+                <th>Ações</th>
                 <th></th>
               </tr>
             </thead>
@@ -84,8 +86,11 @@ export default async function CampaignsPage({
                     </td>
                     <td>{new Date(c.created_at).toLocaleDateString("pt-BR")}</td>
                     <td>
+                      <CampaignRowActions id={c.id} brandId={c.brand_id} slug={c.slug} status={c.status} />
+                    </td>
+                    <td>
                       <Link href={`/admin/campaigns/${c.id}`} className="admin-link">
-                        Editar
+                        Editar →
                       </Link>
                     </td>
                   </tr>
