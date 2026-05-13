@@ -422,53 +422,40 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         <div style={{ flex: 1 }} />
 
         {/* Undo / Redo */}
-        <div style={{ display: "flex", gap: 2 }}>
-          <button onClick={undoFn} disabled={!canUndo} title="Desfazer (Ctrl+Z)" style={undoRedoBtn(canUndo)}>↩</button>
-          <button onClick={redoFn} disabled={!canRedo} title="Refazer (Ctrl+Y)" style={undoRedoBtn(canRedo)}>↪</button>
+        <div style={{ display: "flex", gap: 1 }}>
+          <TBtn onClick={undoFn} disabled={!canUndo} title="Desfazer (Ctrl+Z)"><Ico name="undo" /></TBtn>
+          <TBtn onClick={redoFn} disabled={!canRedo} title="Refazer (Ctrl+Y)"><Ico name="redo" /></TBtn>
         </div>
 
-        <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)" }} />
+        <Divider />
 
-        {/* Versões + Duplicar */}
-        <div style={{ display: "flex", gap: 2 }}>
-          <button
-            onClick={() => setVersionsOpen((v) => !v)}
-            title="Histórico de versões"
-            style={{ ...undoRedoBtn(true), background: versionsOpen ? "rgba(166,124,255,0.18)" : "none", color: versionsOpen ? "#A67CFF" : "#55526A", fontSize: 13 }}
-          >🕐</button>
-          <button
-            onClick={() => setDupModal((m) => ({ ...m, open: true, slug: `${slug}-copia` }))}
-            title="Duplicar campanha"
-            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
-          >⎘</button>
-          <button
-            onClick={() => setLotsOpen(true)}
-            title="Lotes & Cupons"
-            style={{ ...undoRedoBtn(true), color: lots.length > 0 ? "#F0A84A" : "#55526A", fontSize: 13 }}
-          >🏷</button>
-          <button
-            onClick={() => setPricingOpen(true)}
-            title="Tabela de preços"
-            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
-          >📊</button>
-          <button
-            onClick={() => setMediaOpen(true)}
-            title="Biblioteca de mídia"
-            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
-          >🖼</button>
-          <button
-            onClick={() => setPeriodsOpen(true)}
-            title="Períodos & Datas"
-            style={{ ...undoRedoBtn(true), color: "#55526A", fontSize: 13 }}
-          >🗓</button>
-          <button
-            onClick={() => setDeployOpen(true)}
-            title="Configurar deploy (subdomínio / subdiretório)"
-            style={{ ...undoRedoBtn(true), color: deploy.mode ? "#A67CFF" : "#55526A", fontSize: 13 }}
-          >🌐</button>
+        {/* Ferramentas */}
+
+        <div style={{ display: "flex", gap: 1 }}>
+          <TBtn onClick={() => setVersionsOpen((v) => !v)} title="Histórico de versões" active={versionsOpen}>
+            <Ico name="clock" />
+          </TBtn>
+          <TBtn onClick={() => setDupModal((m) => ({ ...m, open: true, slug: `${slug}-copia` }))} title="Duplicar campanha">
+            <Ico name="copy" />
+          </TBtn>
+          <TBtn onClick={() => setLotsOpen(true)} title="Lotes & Cupons" color={lots.length > 0 ? "#F0A84A" : undefined} dot={lots.length > 0}>
+            <Ico name="tag" />
+          </TBtn>
+          <TBtn onClick={() => setPricingOpen(true)} title="Tabela de preços">
+            <Ico name="bar-chart" />
+          </TBtn>
+          <TBtn onClick={() => setMediaOpen(true)} title="Biblioteca de mídia">
+            <Ico name="image" />
+          </TBtn>
+          <TBtn onClick={() => setPeriodsOpen(true)} title="Períodos & Datas">
+            <Ico name="calendar" />
+          </TBtn>
+          <TBtn onClick={() => setDeployOpen(true)} title="Configurar deploy" active={!!deploy.mode} color={deploy.mode ? "#A67CFF" : undefined} dot={!!deploy.mode}>
+            <Ico name="globe" />
+          </TBtn>
         </div>
 
-        <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)" }} />
+        <Divider />
 
         {error  && <span style={{ fontSize: 11, color: "#E05260", maxWidth: 260, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{error}</span>}
         {saved  && <span style={{ fontSize: 11, color: "#2EB87A" }}>✓ Publicado</span>}
@@ -1193,11 +1180,65 @@ const fieldStyle: React.CSSProperties = {
   fontFamily: "inherit", resize: "vertical",
 };
 
-function undoRedoBtn(active: boolean): React.CSSProperties {
-  return {
-    background: "none", border: "none", cursor: active ? "pointer" : "default",
-    color: active ? "#8E8AA8" : "#2A2838", fontSize: 14, padding: "4px 8px", borderRadius: 4,
-  };
+/* ── Toolbar primitives ─────────────────────────────── */
+function Divider() {
+  return <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />;
+}
+
+function TBtn({ children, onClick, disabled, title, active, color, dot }: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  title?: string;
+  active?: boolean;
+  color?: string;
+  dot?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.background = active ? "rgba(166,124,255,0.22)" : "rgba(255,255,255,0.07)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = active ? "rgba(166,124,255,0.14)" : "transparent"; }}
+      style={{
+        position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
+        width: 30, height: 30, borderRadius: 6, border: "none", flexShrink: 0,
+        background: active ? "rgba(166,124,255,0.14)" : "transparent",
+        color: disabled ? "#282535" : color ?? "#6B6785",
+        cursor: disabled ? "default" : "pointer",
+        transition: "color 0.1s",
+      }}
+    >
+      {children}
+      {dot && (
+        <span style={{
+          position: "absolute", top: 5, right: 5,
+          width: 5, height: 5, borderRadius: "50%",
+          background: color ?? "#F0A84A",
+          boxShadow: `0 0 5px ${color ?? "#F0A84A"}60`,
+        }} />
+      )}
+    </button>
+  );
+}
+
+function Ico({ name, size = 15 }: { name: string; size?: number }) {
+  const p = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  switch (name) {
+    case "undo":        return <svg {...p}><polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>;
+    case "redo":        return <svg {...p}><polyline points="15 14 20 9 15 4"/><path d="M4 20v-7a4 4 0 0 0 4-4h12"/></svg>;
+    case "clock":       return <svg {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+    case "copy":        return <svg {...p}><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>;
+    case "tag":         return <svg {...p}><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>;
+    case "bar-chart":   return <svg {...p}><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>;
+    case "image":       return <svg {...p}><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>;
+    case "calendar":    return <svg {...p}><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>;
+    case "globe":       return <svg {...p}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>;
+    case "plus":        return <svg {...p}><path d="M5 12h14"/><path d="M12 5v14"/></svg>;
+    case "check":       return <svg {...p}><path d="M20 6 9 17l-5-5"/></svg>;
+    default:            return null;
+  }
 }
 
 function deepSet(obj: Record<string, unknown>, path: string[], value: unknown): Record<string, unknown> {

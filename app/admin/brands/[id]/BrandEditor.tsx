@@ -148,15 +148,28 @@ export function BrandEditor({ initial }: { initial: Brand }) {
 
           {/* ── TEMA ────────────────────────────────── */}
           {tab === "theme" && (
-            <div style={{ maxWidth: 420 }}>
-              {section("Paleta de cores")}
-              <ThemePanel
-                theme={(brand.theme ?? {}) as Theme}
-                onChange={(t) => setBrand((b) => ({ ...b, theme: t }))}
-                saving={saving === "theme"}
-                onSave={() => save({ theme: brand.theme }, "theme")}
-              />
-              {saved === "theme" && <div style={{ fontSize: 11, color: "#2EB87A", marginTop: 8 }}>✓ Tema salvo</div>}
+            <div style={{ maxWidth: 660 }}>
+              <div style={{ maxWidth: 420 }}>
+                {section("Paleta de cores")}
+                <ThemePanel
+                  theme={(brand.theme ?? {}) as Theme}
+                  onChange={(t) => setBrand((b) => ({ ...b, theme: t }))}
+                  saving={saving === "theme"}
+                  onSave={() => save({ theme: brand.theme }, "theme")}
+                />
+                {saved === "theme" && <div style={{ fontSize: 11, color: "#2EB87A", marginTop: 8 }}>✓ Tema salvo</div>}
+              </div>
+
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 28, paddingTop: 24 }}>
+                {section("Tipografia")}
+                <TypographyPicker
+                  fonts={(brand.fonts ?? {}) as { display?: string; body?: string }}
+                  onChange={(f) => setBrand((b) => ({ ...b, fonts: f }))}
+                  saving={saving === "theme"}
+                  saved={saved === "theme"}
+                  onSave={(f) => save({ fonts: f }, "theme")}
+                />
+              </div>
             </div>
           )}
 
@@ -546,6 +559,214 @@ function CategoriesEditor({ unit, brandId }: { unit: Unit; brandId: string }) {
 
       {error && <div style={{ fontSize: 11, color: "#E05260" }}>{error}</div>}
       <SaveRow saving={saving} saved={saved} onSave={save} label="Salvar categorias" />
+    </div>
+  );
+}
+
+/* ── TypographyPicker ────────────────────────────────── */
+const DISPLAY_FONTS = [
+  { name: "Fraunces",           label: "Fraunces",           category: "Serif editorial" },
+  { name: "Cormorant Garamond", label: "Cormorant Garamond", category: "Serif elegante" },
+  { name: "Playfair Display",   label: "Playfair Display",   category: "Serif clássico" },
+  { name: "DM Serif Display",   label: "DM Serif Display",   category: "Serif moderno" },
+  { name: "Bodoni Moda",        label: "Bodoni Moda",        category: "Serif luxo" },
+  { name: "Cinzel",             label: "Cinzel",             category: "Maiúsculas romanas" },
+  { name: "Libre Baskerville",  label: "Libre Baskerville",  category: "Serif legível" },
+  { name: "Spectral",           label: "Spectral",           category: "Serif digital" },
+  { name: "Cardo",              label: "Cardo",              category: "Serif clássico" },
+];
+
+const BODY_FONTS = [
+  { name: "Inter",             label: "Inter",             category: "Sans neutro" },
+  { name: "Plus Jakarta Sans", label: "Plus Jakarta Sans", category: "Sans moderno" },
+  { name: "DM Sans",           label: "DM Sans",           category: "Sans geométrico" },
+  { name: "Outfit",            label: "Outfit",            category: "Sans contemporâneo" },
+  { name: "Raleway",           label: "Raleway",           category: "Sans refinado" },
+  { name: "Nunito",            label: "Nunito",            category: "Sans arredondado" },
+  { name: "Lato",              label: "Lato",              category: "Sans humanista" },
+  { name: "Source Sans 3",     label: "Source Sans 3",     category: "Sans legível" },
+];
+
+const GOOGLE_FONTS_URL =
+  "https://fonts.googleapis.com/css2?" +
+  "family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400" +
+  "&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400" +
+  "&family=Playfair+Display:ital,wght@0,400;1,400" +
+  "&family=DM+Serif+Display:ital@0;1" +
+  "&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400" +
+  "&family=Cinzel:wght@400" +
+  "&family=Libre+Baskerville:ital,wght@0,400;1,400" +
+  "&family=Spectral:ital,wght@0,300;1,300" +
+  "&family=Cardo:ital,wght@0,400;1,400" +
+  "&family=Inter:wght@300;400" +
+  "&family=Plus+Jakarta+Sans:wght@300;400" +
+  "&family=DM+Sans:wght@300;400" +
+  "&family=Outfit:wght@300;400" +
+  "&family=Raleway:wght@300;400" +
+  "&family=Nunito:wght@300;400" +
+  "&family=Lato:wght@300;400" +
+  "&family=Source+Sans+3:wght@300;400" +
+  "&display=swap";
+
+function TypographyPicker({ fonts, onChange, saving, saved, onSave }: {
+  fonts: { display?: string; body?: string };
+  onChange: (f: { display?: string; body?: string }) => void;
+  saving: boolean;
+  saved: boolean;
+  onSave: (f: { display?: string; body?: string }) => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+
+  function loadFonts() {
+    if (loaded) return;
+    if (typeof window === "undefined") return;
+    if (!document.getElementById("typ-picker-fonts")) {
+      const link = document.createElement("link");
+      link.id   = "typ-picker-fonts";
+      link.rel  = "stylesheet";
+      link.href = GOOGLE_FONTS_URL;
+      document.head.appendChild(link);
+    }
+    setLoaded(true);
+  }
+
+  function pickDisplay(name: string) {
+    const next = { ...fonts, display: name };
+    onChange(next);
+  }
+  function pickBody(name: string) {
+    const next = { ...fonts, body: name };
+    onChange(next);
+  }
+
+  const SUGGESTED_PAIRS = [
+    { display: "Cormorant Garamond", body: "Inter",             label: "Luxo clássico" },
+    { display: "Fraunces",           body: "Plus Jakarta Sans", label: "Editorial moderno" },
+    { display: "Playfair Display",   body: "Lato",              label: "Elegante & legível" },
+    { display: "Bodoni Moda",        body: "DM Sans",           label: "Alta moda" },
+  ];
+
+  return (
+    <div>
+      {/* Pares sugeridos */}
+      <div style={{ fontSize: 10, color: "#55526A", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>Pares sugeridos</div>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 24 }}>
+        {SUGGESTED_PAIRS.map((pair) => {
+          const active = fonts.display === pair.display && fonts.body === pair.body;
+          return (
+            <button
+              key={pair.label}
+              onClick={() => { loadFonts(); onChange({ display: pair.display, body: pair.body }); }}
+              style={{
+                padding: "10px 14px", borderRadius: 8, border: `1px solid ${active ? "#A67CFF" : "rgba(255,255,255,0.08)"}`,
+                background: active ? "rgba(166,124,255,0.12)" : "rgba(255,255,255,0.02)",
+                cursor: "pointer", textAlign: "left", minWidth: 140,
+              }}
+            >
+              <div style={{ fontSize: 15, color: "#F0EEF8", fontFamily: pair.display, marginBottom: 2, lineHeight: 1.2 }}>
+                Momentos únicos
+              </div>
+              <div style={{ fontSize: 10, color: "#8E8AA8", fontFamily: pair.body }}>
+                Reserva · {pair.display.split(" ")[0]} × {pair.body.split(" ")[0]}
+              </div>
+              <div style={{ fontSize: 9, color: active ? "#A67CFF" : "#3A3850", marginTop: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                {pair.label} {active && "✓"}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Display */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 10, color: "#55526A", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>
+          Fonte de destaque (headlines)
+          {fonts.display && <span style={{ color: "#A67CFF", marginLeft: 8, fontFamily: fonts.display }}>— {fonts.display}</span>}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+          {DISPLAY_FONTS.map((f) => {
+            const active = fonts.display === f.name;
+            return (
+              <button
+                key={f.name}
+                onClick={() => { loadFonts(); pickDisplay(f.name); }}
+                onMouseEnter={() => loadFonts()}
+                style={{
+                  padding: "12px 14px", borderRadius: 8, border: `1px solid ${active ? "#A67CFF" : "rgba(255,255,255,0.08)"}`,
+                  background: active ? "rgba(166,124,255,0.12)" : "rgba(255,255,255,0.02)",
+                  cursor: "pointer", textAlign: "left",
+                  transition: "border-color 0.15s, background 0.15s",
+                }}
+              >
+                <div style={{ fontSize: 18, color: "#F0EEF8", fontFamily: f.name, lineHeight: 1.2, marginBottom: 4 }}>
+                  Aa
+                </div>
+                <div style={{ fontSize: 16, color: "#C4BFDE", fontFamily: f.name, lineHeight: 1.2, marginBottom: 6 }}>
+                  Experiência
+                </div>
+                <div style={{ fontSize: 9, color: active ? "#A67CFF" : "#55526A", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  {f.label}
+                </div>
+                <div style={{ fontSize: 9, color: "#3A3850", marginTop: 2 }}>{f.category}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Body */}
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ fontSize: 10, color: "#55526A", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>
+          Fonte do texto (body)
+          {fonts.body && <span style={{ color: "#A67CFF", marginLeft: 8, fontFamily: fonts.body }}>— {fonts.body}</span>}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+          {BODY_FONTS.map((f) => {
+            const active = fonts.body === f.name;
+            return (
+              <button
+                key={f.name}
+                onClick={() => { loadFonts(); pickBody(f.name); }}
+                onMouseEnter={() => loadFonts()}
+                style={{
+                  padding: "10px 12px", borderRadius: 8, border: `1px solid ${active ? "#A67CFF" : "rgba(255,255,255,0.08)"}`,
+                  background: active ? "rgba(166,124,255,0.12)" : "rgba(255,255,255,0.02)",
+                  cursor: "pointer", textAlign: "left",
+                  transition: "border-color 0.15s, background 0.15s",
+                }}
+              >
+                <div style={{ fontSize: 13, color: "#F0EEF8", fontFamily: f.name, lineHeight: 1.4, marginBottom: 4 }}>
+                  O melhor da<br />experiência.
+                </div>
+                <div style={{ fontSize: 9, color: active ? "#A67CFF" : "#55526A", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                  {f.label}
+                </div>
+                <div style={{ fontSize: 9, color: "#3A3850", marginTop: 1 }}>{f.category}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Preview combinado */}
+      {(fonts.display || fonts.body) && (
+        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "20px 24px", marginBottom: 20 }}>
+          <div style={{ fontSize: 9, color: "#3A3850", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Preview combinado</div>
+          <div style={{ fontSize: 26, color: "#F0EEF8", fontFamily: fonts.display ?? "inherit", lineHeight: 1.2, marginBottom: 8 }}>
+            Uma noite inesquecível.
+          </div>
+          <div style={{ fontSize: 13, color: "#8E8AA8", fontFamily: fonts.body ?? "inherit", lineHeight: 1.6, marginBottom: 12 }}>
+            Reserve agora sua experiência exclusiva. Suítes pensadas para quem valoriza privacidade e momentos únicos.
+          </div>
+          <div style={{ fontSize: 11, color: "#55526A", fontFamily: fonts.body ?? "inherit" }}>
+            {fonts.display && <span>Destaque: <b style={{ color: "#8E8AA8" }}>{fonts.display}</b></span>}
+            {fonts.display && fonts.body && <span style={{ margin: "0 8px" }}>·</span>}
+            {fonts.body && <span>Corpo: <b style={{ color: "#8E8AA8" }}>{fonts.body}</b></span>}
+          </div>
+        </div>
+      )}
+
+      <SaveRow saving={saving} saved={saved} onSave={() => onSave(fonts)} label="Salvar tipografia" />
     </div>
   );
 }

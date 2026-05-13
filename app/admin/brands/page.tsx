@@ -34,6 +34,9 @@ export default async function BrandsPage() {
       <main className="admin-main">
         <header className="admin-header">
           <h1>Marcas</h1>
+          <Link href="/admin/brands/new" className="admin-btn-primary">
+            + Nova marca
+          </Link>
         </header>
 
         <section className="admin-section">
