@@ -23,8 +23,17 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (!error) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error && data.user) {
+      // Garante que o usuário tem um perfil admin (role padrão: editor)
+      await supabase.from("admin_profiles").upsert(
+        {
+          id:    data.user.id,
+          email: data.user.email ?? null,
+          name:  data.user.user_metadata?.full_name ?? data.user.email ?? "",
+        },
+        { onConflict: "id", ignoreDuplicates: false }
+      );
       return NextResponse.redirect(`${origin}/admin`);
     }
   }

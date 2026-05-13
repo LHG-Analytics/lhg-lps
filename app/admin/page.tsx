@@ -56,10 +56,11 @@ export default async function AdminDashboard() {
           />
         </div>
         <nav className="admin-nav">
-          <a href="/admin" className="admin-nav__item active">Dashboard</a>
-          <a href="/admin/brands" className="admin-nav__item">Marcas</a>
+          <a href="/admin"           className="admin-nav__item active">Dashboard</a>
+          <a href="/admin/brands"    className="admin-nav__item">Marcas</a>
           <a href="/admin/campaigns" className="admin-nav__item">Campanhas</a>
-          <a href="/admin/audit" className="admin-nav__item">Auditoria</a>
+          <a href="/admin/users"     className="admin-nav__item">Usuários</a>
+          <a href="/admin/audit"     className="admin-nav__item">Auditoria</a>
         </nav>
         <div className="admin-sidebar__footer">
           <span className="admin-user-email">{user.email}</span>

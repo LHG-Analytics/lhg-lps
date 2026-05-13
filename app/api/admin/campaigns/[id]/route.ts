@@ -9,6 +9,46 @@ const CmsBlockSchema = z.array(
   z.object({ type: z.string(), props: z.record(z.string(), z.unknown()) }).passthrough()
 );
 
+const PriceMatrixSchema = z.object({
+  regular: z.number().int().nonnegative(),
+  premium: z.number().int().nonnegative(),
+});
+
+const CampaignDataSchema = z.object({
+  lots: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    discountPct: z.number().int().min(0).max(100),
+    coupon: z.string().optional(),
+    from: z.string().optional(),
+    to: z.string().optional(),
+    before: z.string().optional(),
+    after: z.string().optional(),
+  })).optional(),
+  periods: z.array(z.object({
+    id: z.string(),
+    label: z.string(),
+    shortLabel: z.string(),
+    meta: z.string(),
+    scope: z.string(),
+    scopeKey: z.enum(["3h", "all"]),
+    featured: z.boolean().optional(),
+    featuredTag: z.string().optional(),
+    inclusos: z.string(),
+  })).optional(),
+  dates: z.array(z.object({
+    value: z.string(),
+    day: z.string(),
+    dow: z.string(),
+    tier: z.enum(["regular", "premium"]),
+    label: z.string(),
+  })).optional(),
+  pricing: z.object({
+    currency: z.literal("BRL"),
+    units: z.record(z.string(), z.record(z.string(), z.record(z.string(), PriceMatrixSchema))),
+  }).optional(),
+}).passthrough();
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -35,6 +75,15 @@ export async function PATCH(
     if (!result.success) {
       const msg = result.error.issues.map((e) => `[${e.path.join(".")}] ${e.message}`).join("; ");
       return new NextResponse(`Blocks inválidos: ${msg}`, { status: 400 });
+    }
+  }
+
+  // Validação dos dados de campanha (periods, lots, pricing, dates)
+  if (body.campaign_data !== undefined) {
+    const result = CampaignDataSchema.safeParse(body.campaign_data);
+    if (!result.success) {
+      const msg = result.error.issues.map((e) => `[${e.path.join(".")}] ${e.message}`).join("; ");
+      return new NextResponse(`campaign_data inválido: ${msg}`, { status: 400 });
     }
   }
 
