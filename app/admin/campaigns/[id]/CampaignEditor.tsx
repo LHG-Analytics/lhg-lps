@@ -29,6 +29,7 @@ type EditorTab  = "visual" | "code" | "style";
 type SidebarTab = "blocks" | "theme" | "seo";
 type BlockStyle = {
   cssVars?: Record<string, string>;
+  elementOverrides?: Record<string, Record<string, string>>;
   bg?: string;
   color?: string;
   paddingTop?: number;
@@ -198,6 +199,11 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [pricingOpen, setPricingOpen]         = useState(false);
   const [mediaOpen, setMediaOpen]             = useState(false);
   const [periodsOpen, setPeriodsOpen]         = useState(false);
+  const [pickerActive, setPickerActive]       = useState(false);
+  const [pickedElement, setPickedElement]     = useState<{
+    blockIndex: number; blockId: string; selector: string;
+    computedStyles: Record<string, string>; tagName: string;
+  } | null>(null);
 
   const iframeRef   = useRef<HTMLIFrameElement>(null);
   const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -243,6 +249,18 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
       if (e.data?.type === "block-hover") setHoveredIdx(e.data.blockIndex ?? null);
       if (e.data?.type === "block-click") { setSelectedIdx(e.data.blockIndex ?? null); setDrawerOpen(true); }
       if (e.data?.type === "preview-ready") { sendToPreview(blocks); sendThemeToPreview(theme); }
+      if (e.data?.type === "element-selected") {
+        setPickerActive(false);
+        setPickedElement({
+          blockIndex: e.data.blockIndex,
+          blockId: e.data.blockId,
+          selector: e.data.selector,
+          computedStyles: e.data.computedStyles,
+          tagName: e.data.tagName,
+        });
+        setTab("style");
+      }
+      if (e.data?.type === "picker-cancelled") setPickerActive(false);
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
@@ -250,6 +268,9 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage({ type: "select-block", blockIndex: selectedIdx }, "*");
+    setPickedElement(null);
+    setPickerActive(false);
+    iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
   }, [selectedIdx]);
 
   /* ── undo / redo ────────────────────────────────── */
@@ -362,6 +383,24 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
       const merged = { ...b._style, ...patch } as Record<string, unknown>;
       Object.keys(merged).forEach((k) => merged[k] === undefined && delete merged[k]);
       return { ...b, _style: Object.keys(merged).length > 0 ? merged as BlockStyle : undefined };
+    });
+    updateBlocks(next);
+  }
+
+  function updateElementOverride(selector: string, property: string, value: string) {
+    if (selectedIdx === null) return;
+    const next = blocks.map((b, i) => {
+      if (i !== selectedIdx) return b;
+      const current = b._style?.elementOverrides ?? {};
+      const props = { ...(current[selector] ?? {}), [property]: value };
+      if (!value) delete props[property];
+      const newOverrides = { ...current };
+      if (Object.keys(props).length > 0) { newOverrides[selector] = props; } else { delete newOverrides[selector]; }
+      const newStyle: BlockStyle = {
+        ...b._style,
+        elementOverrides: Object.keys(newOverrides).length > 0 ? newOverrides : undefined,
+      };
+      return { ...b, _style: newStyle };
     });
     updateBlocks(next);
   }
@@ -860,6 +899,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                     style={selectedBlock._style}
                     blockType={selectedBlock.type}
                     onChange={(patch) => updateBlockStyle(patch)}
+                    pickerActive={pickerActive}
+                    pickedElement={pickedElement}
+                    onPickerToggle={() => {
+                      if (pickerActive) {
+                        iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
+                        setPickerActive(false);
+                      } else if (selectedIdx !== null) {
+                        setPickedElement(null);
+                        iframeRef.current?.contentWindow?.postMessage({ type: "enable-element-picker", blockIndex: selectedIdx }, "*");
+                        setPickerActive(true);
+                      }
+                    }}
+                    onElementOverride={updateElementOverride}
                   />
                 </div>
               )}
@@ -1133,10 +1185,14 @@ function ArrayField({ value, path, brandId, onChange }: {
 
 
 /* ── BlockStylePanel ────────────────────────────────── */
-function BlockStylePanel({ style, onChange, blockType }: {
+function BlockStylePanel({ style, onChange, blockType, pickerActive, pickedElement, onPickerToggle, onElementOverride }: {
   style?: BlockStyle;
   onChange: (patch: Partial<BlockStyle>) => void;
   blockType: string;
+  pickerActive?: boolean;
+  pickedElement?: { blockIndex: number; blockId: string; selector: string; computedStyles: Record<string, string>; tagName: string; } | null;
+  onPickerToggle?: () => void;
+  onElementOverride?: (selector: string, property: string, value: string) => void;
 }) {
   const s: BlockStyle = style ?? {};
 
@@ -1164,6 +1220,58 @@ function BlockStylePanel({ style, onChange, blockType }: {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+
+      {/* ── SELETOR DE ELEMENTO ── */}
+      <StyleSection title="Estilo de elemento">
+        <button
+          onClick={onPickerToggle}
+          style={{
+            width: "100%", padding: "8px 12px",
+            background: pickerActive ? "rgba(240,168,74,0.12)" : "rgba(166,124,255,0.08)",
+            border: `1px solid ${pickerActive ? "rgba(240,168,74,0.35)" : "rgba(166,124,255,0.2)"}`,
+            borderRadius: 6, color: pickerActive ? "#F0A84A" : "#A67CFF",
+            fontSize: 11, fontWeight: 700, cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+            transition: "all 0.15s",
+          }}
+        >
+          <span style={{ fontSize: 13 }}>{pickerActive ? "⊕" : "◎"}</span>
+          {pickerActive ? "Clique em um elemento no preview…" : "Selecionar elemento"}
+        </button>
+        {pickerActive && (
+          <div style={{ fontSize: 10, color: "#8E8AA8", textAlign: "center", marginTop: 6, lineHeight: 1.5 }}>
+            Passe o mouse sobre o preview e clique no elemento que deseja estilizar.
+          </div>
+        )}
+        {pickedElement && !pickerActive && (
+          <ElementPickerPanel
+            picked={pickedElement}
+            overrides={style?.elementOverrides ?? {}}
+            onOverride={onElementOverride ?? (() => {})}
+          />
+        )}
+        {style?.elementOverrides && Object.keys(style.elementOverrides).length > 0 && (
+          <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
+            <div style={{ fontSize: 9, color: "#3A3850", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 3 }}>Elementos com override</div>
+            {Object.entries(style.elementOverrides)
+              .filter(([sel]) => !pickedElement || sel !== pickedElement.selector)
+              .map(([sel, props]) => (
+                <div key={sel} style={{
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
+                  padding: "4px 8px", borderRadius: 5,
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                }}>
+                  <code style={{ fontSize: 10, color: "#8E8AA8" }}>{sel}</code>
+                  <span style={{ fontSize: 10, color: "#3A3850" }}>
+                    {Object.keys(props).length}p
+                  </span>
+                </div>
+              ))
+            }
+          </div>
+        )}
+      </StyleSection>
 
       {/* ── CORES DO BLOCO ── */}
       {blockVars.length > 0 && (
@@ -1266,6 +1374,7 @@ function BlockStylePanel({ style, onChange, blockType }: {
         <button
           onClick={() => onChange({
             cssVars: undefined,
+            elementOverrides: undefined,
             bg: undefined, color: undefined,
             paddingTop: undefined, paddingBottom: undefined,
             paddingLeft: undefined, paddingRight: undefined,
@@ -1281,6 +1390,119 @@ function BlockStylePanel({ style, onChange, blockType }: {
           Resetar estilos deste bloco
         </button>
       )}
+    </div>
+  );
+}
+
+/* ── ElementPickerPanel ─────────────────────────────── */
+const STYLE_GROUPS_EL = [
+  { label: "Texto",     props: ["color", "font-family", "font-size", "font-weight", "line-height", "letter-spacing", "text-transform", "text-decoration", "text-shadow"] },
+  { label: "Fundo",     props: ["background-color", "opacity"] },
+  { label: "Borda",     props: ["border-color", "border-width", "border-style", "border-radius"] },
+  { label: "Sombra",    props: ["box-shadow"] },
+  { label: "Padding",   props: ["padding-top", "padding-right", "padding-bottom", "padding-left"] },
+  { label: "Margin",    props: ["margin-top", "margin-right", "margin-bottom", "margin-left"] },
+];
+
+const PROP_LABELS: Record<string, string> = {
+  "color": "Cor", "background-color": "Fundo", "font-family": "Fonte",
+  "font-size": "Tamanho", "font-weight": "Peso", "line-height": "Altura",
+  "letter-spacing": "Kerning", "text-transform": "Transform",
+  "text-decoration": "Decoração", "text-shadow": "Sombra txt",
+  "opacity": "Opacidade", "border-color": "Cor borda",
+  "border-width": "Esp. borda", "border-style": "Estilo borda",
+  "border-radius": "Raio", "box-shadow": "Sombra",
+  "padding-top": "↑ top", "padding-right": "→ right",
+  "padding-bottom": "↓ bottom", "padding-left": "← left",
+  "margin-top": "↑ top", "margin-right": "→ right",
+  "margin-bottom": "↓ bottom", "margin-left": "← left",
+};
+
+const COLOR_PROPS_EL = ["color", "background-color", "border-color"];
+
+function ElementPickerPanel({
+  picked, overrides, onOverride,
+}: {
+  picked: { blockIndex: number; blockId: string; selector: string; computedStyles: Record<string, string>; tagName: string; };
+  overrides: Record<string, Record<string, string>>;
+  onOverride: (selector: string, property: string, value: string) => void;
+}) {
+  const currentOverrides = overrides[picked.selector] ?? {};
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div style={{
+        padding: "6px 10px", borderRadius: 6,
+        background: "rgba(240,168,74,0.06)", border: "1px solid rgba(240,168,74,0.18)",
+        marginBottom: 10, display: "flex", alignItems: "center", gap: 8,
+      }}>
+        <span style={{ fontSize: 11 }}>◎</span>
+        <code style={{ fontSize: 10, color: "#F0A84A", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {picked.tagName}{picked.selector !== picked.tagName ? ` ${picked.selector}` : ""}
+        </code>
+        {Object.keys(currentOverrides).length > 0 && (
+          <button
+            onClick={() => Object.keys(currentOverrides).forEach((p) => onOverride(picked.selector, p, ""))}
+            style={{ background: "none", border: "none", color: "#E05260", cursor: "pointer", fontSize: 9, fontWeight: 700, flexShrink: 0 }}
+          >LIMPAR</button>
+        )}
+      </div>
+      {STYLE_GROUPS_EL.map(({ label, props }) => {
+        const visible = props.filter((p) => picked.computedStyles[p] || currentOverrides[p]);
+        if (visible.length === 0) return null;
+        return (
+          <div key={label} style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#3A3850", marginBottom: 5 }}>{label}</div>
+            {visible.map((prop) => {
+              const computed = picked.computedStyles[prop];
+              const override = currentOverrides[prop] ?? "";
+              const isColor = COLOR_PROPS_EL.includes(prop);
+              return (
+                <div key={prop} style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
+                  <span style={{ fontSize: 9, color: "#55526A", minWidth: 60, flexShrink: 0, textTransform: "uppercase" as const, letterSpacing: "0.04em" }}>
+                    {PROP_LABELS[prop] ?? prop}
+                  </span>
+                  <div style={{
+                    flex: 1, display: "flex", alignItems: "center", height: 24,
+                    background: "#16161F",
+                    border: `1px solid ${override ? "rgba(240,168,74,0.4)" : "rgba(255,255,255,0.06)"}`,
+                    borderRadius: 5, overflow: "hidden",
+                  }}>
+                    {isColor && (
+                      <label style={{ position: "relative", width: 24, height: 24, flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <div style={{ width: 12, height: 12, borderRadius: 2, background: override || computed || "#000", border: "1px solid rgba(255,255,255,0.15)" }} />
+                        <input type="color"
+                          value={override || computed || "#000000"}
+                          onChange={(e) => onOverride(picked.selector, prop, e.target.value)}
+                          style={{ position: "absolute", opacity: 0, inset: 0, cursor: "pointer", width: "100%", height: "100%" }}
+                        />
+                      </label>
+                    )}
+                    <input
+                      type="text"
+                      value={override}
+                      onChange={(e) => onOverride(picked.selector, prop, e.target.value)}
+                      placeholder={computed ?? "—"}
+                      style={{
+                        flex: 1, background: "none", border: "none", outline: "none",
+                        color: override ? "#F0A84A" : "#3A3850",
+                        fontSize: 10, padding: "0 5px", height: 24,
+                        fontFamily: "monospace",
+                      }}
+                    />
+                    {override && (
+                      <button
+                        onClick={() => onOverride(picked.selector, prop, "")}
+                        style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 10, padding: "0 5px", flexShrink: 0 }}
+                      >✕</button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 }

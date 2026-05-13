@@ -22,6 +22,7 @@ type BlockWithMeta = Block & {
   _id?: string;
   _style?: {
     cssVars?: Record<string, string>;
+    elementOverrides?: Record<string, Record<string, string>>;
     bg?: string;
     color?: string;
     paddingTop?: number;
@@ -55,22 +56,34 @@ export function BlockRenderer({ brand, campaign, blocks, editorMode }: Props) {
           ...(s?.opacity !== undefined && s.opacity < 100 ? { opacity: s.opacity / 100 } : {}),
         };
 
+        const overridesCSS = s?.elementOverrides
+          ? Object.entries(s.elementOverrides)
+              .map(([sel, props]) => {
+                const decls = Object.entries(props).map(([p, v]) => `${p}: ${v}`).join("; ");
+                return `[data-block-id="${key}"] ${sel} { ${decls} }`;
+              })
+              .join("\n")
+          : "";
+
         if (editorMode) {
           return (
             <div
               key={key}
               data-block-type={block.type}
               data-block-index={index}
+              data-block-id={key}
               style={{ position: "relative", ...wrapStyle }}
             >
+              {overridesCSS && <style>{overridesCSS}</style>}
               <Render block={block} brand={brand} campaign={campaign} />
             </div>
           );
         }
 
-        if (Object.keys(wrapStyle).length > 0) {
+        if (Object.keys(wrapStyle).length > 0 || overridesCSS) {
           return (
-            <div key={key} style={wrapStyle}>
+            <div key={key} data-block-id={key} style={wrapStyle}>
+              {overridesCSS && <style>{overridesCSS}</style>}
               <Render block={block} brand={brand} campaign={campaign} />
             </div>
           );
