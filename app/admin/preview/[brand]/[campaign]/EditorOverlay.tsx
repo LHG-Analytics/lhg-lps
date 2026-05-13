@@ -59,14 +59,21 @@ export function EditorOverlay() {
         font: 700 9px/1 monospace; padding: 2px 8px; border-radius: 0 0 4px 4px;
         letter-spacing: 0.06em; white-space: nowrap;
       }
+      #picker-banner {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 99999; pointer-events: none;
+        background: #F0A84A; color: #0D0D12; text-align: center;
+        font: 700 11px/1 monospace; padding: 6px; letter-spacing: 0.06em;
+      }
     `;
     document.head.appendChild(styleEl);
 
     let selected: Element | null = null;
     let pickerActive = false;
+    let pickerGlobal = false;  // true = qualquer elemento da página
     let pickerBlockIndex = -1;
     let hlEl: HTMLDivElement | null = null;
     let lblEl: HTMLDivElement | null = null;
+    let bannerEl: HTMLDivElement | null = null;
 
     function createOverlays() {
       hlEl = document.createElement("div"); hlEl.id = "picker-highlight";
@@ -75,12 +82,17 @@ export function EditorOverlay() {
     }
     function removeOverlays() {
       hlEl?.remove(); hlEl = null; lblEl?.remove(); lblEl = null;
+      bannerEl?.remove(); bannerEl = null;
     }
-    function positionOverlays(el: Element, selector: string) {
+    function positionOverlays(el: Element, label: string) {
       const r = el.getBoundingClientRect();
-      if (hlEl) Object.assign(hlEl.style, { top: `${r.top}px`, left: `${r.left}px`, width: `${r.width}px`, height: `${r.height}px` });
-      if (lblEl) Object.assign(lblEl.style, { top: `${r.top}px`, left: `${r.left}px` });
-      if (lblEl) lblEl.textContent = `${el.tagName.toLowerCase()}  ${selector}`;
+      if (hlEl) Object.assign(hlEl.style, { top: `${r.top}px`, left: `${r.left}px`, width: `${r.width}px`, height: `${r.height}px`, display: "block" });
+      if (lblEl) Object.assign(lblEl.style, { top: `${r.top}px`, left: `${r.left}px`, display: "block" });
+      if (lblEl) lblEl.textContent = label;
+    }
+    function hideOverlays() {
+      if (hlEl) hlEl.style.display = "none";
+      if (lblEl) lblEl.style.display = "none";
     }
 
     /* ── normal block hover/click ── */
@@ -103,16 +115,38 @@ export function EditorOverlay() {
     function onPickerMove(e: MouseEvent) {
       if (!pickerActive) return;
       const target = e.target as HTMLElement;
-      const root = document.querySelector(`[data-block-index="${pickerBlockIndex}"]`);
-      if (!root?.contains(target) || target === root) return;
-      positionOverlays(target, getSelectorPath(target, root));
+
+      if (pickerGlobal) {
+        const blockEl = target.closest("[data-block-index]") as Element | null;
+        if (!blockEl || target === blockEl) { hideOverlays(); return; }
+        const label = `${target.tagName.toLowerCase()}  ${getSelectorPath(target, blockEl)}`;
+        positionOverlays(target, label);
+      } else {
+        const root = document.querySelector(`[data-block-index="${pickerBlockIndex}"]`);
+        if (!root?.contains(target) || target === root) return;
+        positionOverlays(target, `${target.tagName.toLowerCase()}  ${getSelectorPath(target, root)}`);
+      }
     }
+
     function onPickerClick(e: MouseEvent) {
       if (!pickerActive) return;
       e.preventDefault(); e.stopPropagation();
       const target = e.target as HTMLElement;
-      const root = document.querySelector(`[data-block-index="${pickerBlockIndex}"]`);
-      if (!root?.contains(target) || target === root) { disablePicker(); return; }
+
+      let root: Element | null;
+      let resolvedBlockIndex: number;
+
+      if (pickerGlobal) {
+        const blockEl = target.closest("[data-block-index]") as Element | null;
+        if (!blockEl || target === blockEl) { disablePicker(); return; }
+        root = blockEl;
+        resolvedBlockIndex = Number(blockEl.getAttribute("data-block-index"));
+      } else {
+        root = document.querySelector(`[data-block-index="${pickerBlockIndex}"]`);
+        if (!root?.contains(target) || target === root) { disablePicker(); return; }
+        resolvedBlockIndex = pickerBlockIndex;
+      }
+
       const selector = getSelectorPath(target, root);
       const cs = window.getComputedStyle(target);
       const styles: Record<string, string> = {};
@@ -122,27 +156,41 @@ export function EditorOverlay() {
       });
       window.parent?.postMessage({
         type: "element-selected",
-        blockIndex: pickerBlockIndex,
+        blockIndex: resolvedBlockIndex,
         blockId: root.getAttribute("data-block-id") ?? "",
         selector, computedStyles: styles,
         tagName: target.tagName.toLowerCase(),
       }, "*");
       disablePicker();
     }
-    function enablePicker(blockIndex: number) {
-      pickerActive = true; pickerBlockIndex = blockIndex;
+
+    function enablePicker(blockIndex: number, global: boolean) {
+      pickerActive = true;
+      pickerGlobal = global;
+      pickerBlockIndex = blockIndex;
       document.body.classList.add("picker-active");
       createOverlays();
+      if (global) {
+        bannerEl = document.createElement("div");
+        bannerEl.id = "picker-banner";
+        bannerEl.textContent = "◎  INSPECIONAR — clique em qualquer elemento  •  Esc para cancelar";
+        document.body.appendChild(bannerEl);
+      }
       document.addEventListener("mousemove", onPickerMove);
       document.addEventListener("click", onPickerClick, true);
+      document.addEventListener("keydown", onPickerKey);
     }
     function disablePicker() {
-      pickerActive = false; pickerBlockIndex = -1;
+      pickerActive = false; pickerGlobal = false; pickerBlockIndex = -1;
       document.body.classList.remove("picker-active");
       removeOverlays();
       document.removeEventListener("mousemove", onPickerMove);
       document.removeEventListener("click", onPickerClick, true);
+      document.removeEventListener("keydown", onPickerKey);
       window.parent?.postMessage({ type: "picker-cancelled" }, "*");
+    }
+    function onPickerKey(e: KeyboardEvent) {
+      if (e.key === "Escape") disablePicker();
     }
 
     /* ── messages from editor ── */
@@ -154,7 +202,10 @@ export function EditorOverlay() {
         el.classList.add("editor-selected");
         el.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-      if (e.data?.type === "enable-element-picker") enablePicker(Number(e.data.blockIndex));
+      if (e.data?.type === "enable-element-picker") {
+        const isGlobal = e.data.blockIndex === -1;
+        enablePicker(isGlobal ? -1 : Number(e.data.blockIndex), isGlobal);
+      }
       if (e.data?.type === "disable-element-picker") disablePicker();
     }
 
@@ -167,6 +218,7 @@ export function EditorOverlay() {
       window.removeEventListener("message", onMessage);
       document.removeEventListener("mousemove", onPickerMove);
       document.removeEventListener("click", onPickerClick, true);
+      document.removeEventListener("keydown", onPickerKey);
       removeOverlays();
       document.body.classList.remove("picker-active");
       styleEl.remove();

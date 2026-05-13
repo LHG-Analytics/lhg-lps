@@ -200,6 +200,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [mediaOpen, setMediaOpen]             = useState(false);
   const [periodsOpen, setPeriodsOpen]         = useState(false);
   const [pickerActive, setPickerActive]       = useState(false);
+  const [inspectorMode, setInspectorMode]     = useState(false);
   const [pickedElement, setPickedElement]     = useState<{
     blockIndex: number; blockId: string; selector: string;
     computedStyles: Record<string, string>; tagName: string;
@@ -251,6 +252,9 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
       if (e.data?.type === "preview-ready") { sendToPreview(blocks); sendThemeToPreview(theme); }
       if (e.data?.type === "element-selected") {
         setPickerActive(false);
+        setInspectorMode(false);
+        setSelectedIdx(e.data.blockIndex);
+        setDrawerOpen(true);
         setPickedElement({
           blockIndex: e.data.blockIndex,
           blockId: e.data.blockId,
@@ -258,9 +262,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           computedStyles: e.data.computedStyles,
           tagName: e.data.tagName,
         });
-        setTab("style");
       }
-      if (e.data?.type === "picker-cancelled") setPickerActive(false);
+      if (e.data?.type === "picker-cancelled") { setPickerActive(false); setInspectorMode(false); }
     }
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
@@ -270,6 +273,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     iframeRef.current?.contentWindow?.postMessage({ type: "select-block", blockIndex: selectedIdx }, "*");
     setPickedElement(null);
     setPickerActive(false);
+    setInspectorMode(false);
     iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
   }, [selectedIdx]);
 
@@ -803,6 +807,33 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
               <button onClick={() => setZoom((z) => Math.min(2, parseFloat((z + 0.25).toFixed(2))))} disabled={zoom >= 2}
                 style={{ background: "none", border: "none", color: zoom >= 2 ? "#2A2838" : "#55526A", cursor: zoom >= 2 ? "default" : "pointer", fontSize: 14, padding: "2px 6px" }}>+</button>
             </div>
+            <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.08)", margin: "0 4px" }} />
+            <button
+              onClick={() => {
+                if (inspectorMode) {
+                  iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
+                  setInspectorMode(false);
+                } else {
+                  setPickedElement(null);
+                  iframeRef.current?.contentWindow?.postMessage({ type: "enable-element-picker", blockIndex: -1 }, "*");
+                  setInspectorMode(true);
+                }
+              }}
+              title="Inspecionar elemento (global)"
+              style={{
+                display: "flex", alignItems: "center", gap: 5,
+                padding: "4px 12px", borderRadius: 6, border: "none",
+                background: inspectorMode ? "rgba(240,168,74,0.15)" : "transparent",
+                color: inspectorMode ? "#F0A84A" : "#55526A",
+                fontSize: 11, fontWeight: 700, cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => { if (!inspectorMode) e.currentTarget.style.color = "#F0EEF8"; }}
+              onMouseLeave={(e) => { if (!inspectorMode) e.currentTarget.style.color = "#55526A"; }}
+            >
+              <span style={{ fontSize: 14 }}>◎</span>
+              Inspecionar
+            </button>
             <div style={{ flex: 1 }} />
             <a href={`/admin/preview/${brandId}/${slug}`} target="_blank" rel="noopener noreferrer"
               style={{ display: "flex", alignItems: "center", gap: 5, padding: "4px 10px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.08)", color: "#55526A", fontSize: 11, fontWeight: 600, textDecoration: "none" }}
@@ -850,88 +881,106 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           {drawerOpen && selectedBlock && (
             <div style={{ height: drawerHeight, flexShrink: 0, position: "relative", overflow: "hidden", background: "#0D0D12" }}>
 
-              {/* Drawer header */}
-              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 44, display: "flex", alignItems: "center", padding: "0 12px", gap: 10, borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#0D0D12", zIndex: 10 }}>
-                <span style={{ fontSize: 15 }}>{BLOCK_ICON[selectedBlock.type] ?? "📦"}</span>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#F0EEF8" }}>{selectedBlock.type}</span>
-                {BLOCK_SOURCE[selectedBlock.type] && (
-                  <span style={{ fontSize: 10, color: "#55526A", fontFamily: "monospace", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 4 }}>
-                    {BLOCK_SOURCE[selectedBlock.type]}
-                  </span>
-                )}
-                <div style={{ flex: 1 }} />
-                <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
-                  {(["visual","style","code"] as EditorTab[]).map((t) => (
-                    <button key={t} onClick={() => setTab(t)} style={{
-                      padding: "4px 10px", borderRadius: 4, border: "none",
-                      background: tab === t ? "#1E1E2A" : "transparent",
-                      color: tab === t ? "#A67CFF" : "#55526A", fontSize: 11, fontWeight: 600, cursor: "pointer",
-                    }}>{t === "visual" ? "✦ Visual" : t === "style" ? "🎨 Estilo" : "</> Código"}</button>
-                  ))}
-                </div>
-                <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); }} style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 14, padding: "4px 6px" }}>✕</button>
-              </div>
-
-              {/* Visual tab */}
-              {tab === "visual" && (
-                <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
-                  <input
-                    type="text"
-                    placeholder="Buscar campo…"
-                    value={fieldFilter}
-                    onChange={(e) => setFieldFilter(e.target.value)}
-                    style={{ ...fieldStyle, fontSize: 11, marginBottom: 12, padding: "6px 10px" }}
-                  />
-                  <PropForm
-                    data={selectedBlock.props}
-                    path={[]}
-                    brandId={brandId}
-                    onChange={(path, val) => updateBlockProp(path, val)}
-                    filter={fieldFilter || undefined}
-                  />
-                </div>
-              )}
-
-              {/* Style tab */}
-              {tab === "style" && (
-                <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
-                  <BlockStylePanel
-                    style={selectedBlock._style}
-                    blockType={selectedBlock.type}
-                    onChange={(patch) => updateBlockStyle(patch)}
-                    pickerActive={pickerActive}
-                    pickedElement={pickedElement}
-                    onPickerToggle={() => {
-                      if (pickerActive) {
-                        iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
-                        setPickerActive(false);
-                      } else if (selectedIdx !== null) {
-                        setPickedElement(null);
-                        iframeRef.current?.contentWindow?.postMessage({ type: "enable-element-picker", blockIndex: selectedIdx }, "*");
-                        setPickerActive(true);
-                      }
-                    }}
-                    onElementOverride={updateElementOverride}
-                  />
-                </div>
-              )}
-
-              {/* Code tab */}
-              {tab === "code" && (
+              {pickedElement ? (
+                /* ── MODO INSPECTOR ───────────────────── */
                 <>
-                  <style>{`.lhg-code section { padding-top: 0 !important; padding-bottom: 10px !important; }`}</style>
-                  <div className="lhg-code" style={{ position: "absolute", left: 0, right: 0, top: 0, height: drawerHeight, overflow: "hidden" }}>
-                    <MonacoEditor
-                      height={drawerHeight}
-                      width="100%"
-                      defaultLanguage="json"
-                      theme="vs-dark"
-                      value={JSON.stringify(selectedBlock, null, 2)}
-                      onChange={(v) => updateBlockJson(v ?? "")}
-                      onMount={(editor) => { monacoRef.current = editor; requestAnimationFrame(() => editor.layout()); }}
-                      options={{ automaticLayout: true, fontSize: 13, minimap: { enabled: false }, wordWrap: "on", tabSize: 2, scrollBeyondLastLine: false, padding: { top: 0, bottom: 10 } }}
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 44, display: "flex", alignItems: "center", padding: "0 12px", gap: 8, borderBottom: "1px solid rgba(240,168,74,0.15)", background: "rgba(240,168,74,0.04)", zIndex: 10 }}>
+                    <span style={{ fontSize: 13, color: "#F0A84A" }}>◎</span>
+                    <code style={{ fontSize: 12, color: "#F0A84A", fontWeight: 700, maxWidth: 280, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {pickedElement.tagName}{pickedElement.selector !== pickedElement.tagName ? `  ${pickedElement.selector}` : ""}
+                    </code>
+                    <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.12)", flexShrink: 0 }} />
+                    <span style={{ fontSize: 10, color: "#55526A" }}>bloco: {selectedBlock.type}</span>
+                    <div style={{ flex: 1 }} />
+                    <button
+                      onClick={() => { setPickedElement(null); setTab("visual"); }}
+                      style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 5, color: "#8E8AA8", cursor: "pointer", fontSize: 11, padding: "3px 10px", fontWeight: 600 }}
+                    >← Editar bloco</button>
+                    <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); setPickedElement(null); }} style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 14, padding: "4px 6px" }}>✕</button>
+                  </div>
+                  <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto" }}>
+                    <InspectorPanel
+                      picked={pickedElement}
+                      overrides={selectedBlock._style?.elementOverrides ?? {}}
+                      onOverride={updateElementOverride}
+                      onPickAnother={() => {
+                        setPickedElement(null);
+                        iframeRef.current?.contentWindow?.postMessage({ type: "enable-element-picker", blockIndex: -1 }, "*");
+                        setInspectorMode(true);
+                      }}
                     />
                   </div>
+                </>
+              ) : (
+                /* ── MODO NORMAL (tabs) ───────────────── */
+                <>
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 44, display: "flex", alignItems: "center", padding: "0 12px", gap: 10, borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#0D0D12", zIndex: 10 }}>
+                    <span style={{ fontSize: 15 }}>{BLOCK_ICON[selectedBlock.type] ?? "📦"}</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "#F0EEF8" }}>{selectedBlock.type}</span>
+                    {BLOCK_SOURCE[selectedBlock.type] && (
+                      <span style={{ fontSize: 10, color: "#55526A", fontFamily: "monospace", background: "rgba(255,255,255,0.05)", padding: "2px 8px", borderRadius: 4 }}>
+                        {BLOCK_SOURCE[selectedBlock.type]}
+                      </span>
+                    )}
+                    <div style={{ flex: 1 }} />
+                    <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: 2 }}>
+                      {(["visual","style","code"] as EditorTab[]).map((t) => (
+                        <button key={t} onClick={() => setTab(t)} style={{
+                          padding: "4px 10px", borderRadius: 4, border: "none",
+                          background: tab === t ? "#1E1E2A" : "transparent",
+                          color: tab === t ? "#A67CFF" : "#55526A", fontSize: 11, fontWeight: 600, cursor: "pointer",
+                        }}>{t === "visual" ? "✦ Visual" : t === "style" ? "🎨 Estilo" : "</> Código"}</button>
+                      ))}
+                    </div>
+                    <button onClick={() => { setDrawerOpen(false); setSelectedIdx(null); }} style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 14, padding: "4px 6px" }}>✕</button>
+                  </div>
+
+                  {tab === "visual" && (
+                    <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
+                      <input
+                        type="text"
+                        placeholder="Buscar campo…"
+                        value={fieldFilter}
+                        onChange={(e) => setFieldFilter(e.target.value)}
+                        style={{ ...fieldStyle, fontSize: 11, marginBottom: 12, padding: "6px 10px" }}
+                      />
+                      <PropForm
+                        data={selectedBlock.props}
+                        path={[]}
+                        brandId={brandId}
+                        onChange={(path, val) => updateBlockProp(path, val)}
+                        filter={fieldFilter || undefined}
+                      />
+                    </div>
+                  )}
+
+                  {tab === "style" && (
+                    <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
+                      <BlockStylePanel
+                        style={selectedBlock._style}
+                        blockType={selectedBlock.type}
+                        onChange={(patch) => updateBlockStyle(patch)}
+                      />
+                    </div>
+                  )}
+
+                  {tab === "code" && (
+                    <>
+                      <style>{`.lhg-code section { padding-top: 0 !important; padding-bottom: 10px !important; }`}</style>
+                      <div className="lhg-code" style={{ position: "absolute", left: 0, right: 0, top: 0, height: drawerHeight, overflow: "hidden" }}>
+                        <MonacoEditor
+                          height={drawerHeight}
+                          width="100%"
+                          defaultLanguage="json"
+                          theme="vs-dark"
+                          value={JSON.stringify(selectedBlock, null, 2)}
+                          onChange={(v) => updateBlockJson(v ?? "")}
+                          onMount={(editor) => { monacoRef.current = editor; requestAnimationFrame(() => editor.layout()); }}
+                          options={{ automaticLayout: true, fontSize: 13, minimap: { enabled: false }, wordWrap: "on", tabSize: 2, scrollBeyondLastLine: false, padding: { top: 0, bottom: 10 } }}
+                        />
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -1185,14 +1234,10 @@ function ArrayField({ value, path, brandId, onChange }: {
 
 
 /* ── BlockStylePanel ────────────────────────────────── */
-function BlockStylePanel({ style, onChange, blockType, pickerActive, pickedElement, onPickerToggle, onElementOverride }: {
+function BlockStylePanel({ style, onChange, blockType }: {
   style?: BlockStyle;
   onChange: (patch: Partial<BlockStyle>) => void;
   blockType: string;
-  pickerActive?: boolean;
-  pickedElement?: { blockIndex: number; blockId: string; selector: string; computedStyles: Record<string, string>; tagName: string; } | null;
-  onPickerToggle?: () => void;
-  onElementOverride?: (selector: string, property: string, value: string) => void;
 }) {
   const s: BlockStyle = style ?? {};
 
@@ -1221,57 +1266,23 @@ function BlockStylePanel({ style, onChange, blockType, pickerActive, pickedEleme
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
 
-      {/* ── SELETOR DE ELEMENTO ── */}
-      <StyleSection title="Estilo de elemento">
-        <button
-          onClick={onPickerToggle}
-          style={{
-            width: "100%", padding: "8px 12px",
-            background: pickerActive ? "rgba(240,168,74,0.12)" : "rgba(166,124,255,0.08)",
-            border: `1px solid ${pickerActive ? "rgba(240,168,74,0.35)" : "rgba(166,124,255,0.2)"}`,
-            borderRadius: 6, color: pickerActive ? "#F0A84A" : "#A67CFF",
-            fontSize: 11, fontWeight: 700, cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
-            transition: "all 0.15s",
-          }}
-        >
-          <span style={{ fontSize: 13 }}>{pickerActive ? "⊕" : "◎"}</span>
-          {pickerActive ? "Clique em um elemento no preview…" : "Selecionar elemento"}
-        </button>
-        {pickerActive && (
-          <div style={{ fontSize: 10, color: "#8E8AA8", textAlign: "center", marginTop: 6, lineHeight: 1.5 }}>
-            Passe o mouse sobre o preview e clique no elemento que deseja estilizar.
+      {/* Overrides de elemento existentes */}
+      {style?.elementOverrides && Object.keys(style.elementOverrides).length > 0 && (
+        <div style={{ marginBottom: 16, padding: "8px 10px", borderRadius: 6, background: "rgba(240,168,74,0.05)", border: "1px solid rgba(240,168,74,0.15)" }}>
+          <div style={{ fontSize: 9, color: "#8E8AA8", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ color: "#F0A84A" }}>◎</span> Elementos estilizados
           </div>
-        )}
-        {pickedElement && !pickerActive && (
-          <ElementPickerPanel
-            picked={pickedElement}
-            overrides={style?.elementOverrides ?? {}}
-            onOverride={onElementOverride ?? (() => {})}
-          />
-        )}
-        {style?.elementOverrides && Object.keys(style.elementOverrides).length > 0 && (
-          <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 3 }}>
-            <div style={{ fontSize: 9, color: "#3A3850", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 3 }}>Elementos com override</div>
-            {Object.entries(style.elementOverrides)
-              .filter(([sel]) => !pickedElement || sel !== pickedElement.selector)
-              .map(([sel, props]) => (
-                <div key={sel} style={{
-                  display: "flex", alignItems: "center", justifyContent: "space-between",
-                  padding: "4px 8px", borderRadius: 5,
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                }}>
-                  <code style={{ fontSize: 10, color: "#8E8AA8" }}>{sel}</code>
-                  <span style={{ fontSize: 10, color: "#3A3850" }}>
-                    {Object.keys(props).length}p
-                  </span>
-                </div>
-              ))
-            }
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {Object.entries(style.elementOverrides).map(([sel, props]) => (
+              <div key={sel} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <code style={{ fontSize: 10, color: "#C4AEFF" }}>{sel}</code>
+                <span style={{ fontSize: 9, color: "#55526A" }}>{Object.keys(props).length} prop{Object.keys(props).length !== 1 ? "s" : ""}</span>
+              </div>
+            ))}
           </div>
-        )}
-      </StyleSection>
+          <div style={{ fontSize: 9, color: "#3A3850", marginTop: 6 }}>Use ◎ Inspecionar na toolbar para editar.</div>
+        </div>
+      )}
 
       {/* ── CORES DO BLOCO ── */}
       {blockVars.length > 0 && (
@@ -1394,115 +1405,175 @@ function BlockStylePanel({ style, onChange, blockType, pickerActive, pickedEleme
   );
 }
 
-/* ── ElementPickerPanel ─────────────────────────────── */
-const STYLE_GROUPS_EL = [
-  { label: "Texto",     props: ["color", "font-family", "font-size", "font-weight", "line-height", "letter-spacing", "text-transform", "text-decoration", "text-shadow"] },
-  { label: "Fundo",     props: ["background-color", "opacity"] },
-  { label: "Borda",     props: ["border-color", "border-width", "border-style", "border-radius"] },
-  { label: "Sombra",    props: ["box-shadow"] },
-  { label: "Padding",   props: ["padding-top", "padding-right", "padding-bottom", "padding-left"] },
-  { label: "Margin",    props: ["margin-top", "margin-right", "margin-bottom", "margin-left"] },
+/* ── InspectorPanel ─────────────────────────────────── */
+const INSPECTOR_GROUPS: { label: string; grid?: boolean; props: { prop: string; label: string; color?: boolean }[] }[] = [
+  { label: "Texto", props: [
+    { prop: "color",          label: "Cor",        color: true },
+    { prop: "font-size",      label: "Tamanho" },
+    { prop: "font-weight",    label: "Peso" },
+    { prop: "font-family",    label: "Família" },
+    { prop: "line-height",    label: "Altura linha" },
+    { prop: "letter-spacing", label: "Kerning" },
+    { prop: "text-transform", label: "Transform" },
+    { prop: "text-decoration",label: "Decoração" },
+    { prop: "text-shadow",    label: "Sombra" },
+  ]},
+  { label: "Fundo", props: [
+    { prop: "background-color", label: "Cor de fundo", color: true },
+    { prop: "opacity",          label: "Opacidade" },
+  ]},
+  { label: "Borda", props: [
+    { prop: "border-color",  label: "Cor",      color: true },
+    { prop: "border-width",  label: "Espessura" },
+    { prop: "border-style",  label: "Estilo" },
+    { prop: "border-radius", label: "Raio" },
+  ]},
+  { label: "Sombra", props: [
+    { prop: "box-shadow", label: "Box shadow" },
+  ]},
+  { label: "Padding", grid: true, props: [
+    { prop: "padding-top",    label: "↑" },
+    { prop: "padding-right",  label: "→" },
+    { prop: "padding-bottom", label: "↓" },
+    { prop: "padding-left",   label: "←" },
+  ]},
+  { label: "Margin", grid: true, props: [
+    { prop: "margin-top",    label: "↑" },
+    { prop: "margin-right",  label: "→" },
+    { prop: "margin-bottom", label: "↓" },
+    { prop: "margin-left",   label: "←" },
+  ]},
 ];
 
-const PROP_LABELS: Record<string, string> = {
-  "color": "Cor", "background-color": "Fundo", "font-family": "Fonte",
-  "font-size": "Tamanho", "font-weight": "Peso", "line-height": "Altura",
-  "letter-spacing": "Kerning", "text-transform": "Transform",
-  "text-decoration": "Decoração", "text-shadow": "Sombra txt",
-  "opacity": "Opacidade", "border-color": "Cor borda",
-  "border-width": "Esp. borda", "border-style": "Estilo borda",
-  "border-radius": "Raio", "box-shadow": "Sombra",
-  "padding-top": "↑ top", "padding-right": "→ right",
-  "padding-bottom": "↓ bottom", "padding-left": "← left",
-  "margin-top": "↑ top", "margin-right": "→ right",
-  "margin-bottom": "↓ bottom", "margin-left": "← left",
-};
-
-const COLOR_PROPS_EL = ["color", "background-color", "border-color"];
-
-function ElementPickerPanel({
-  picked, overrides, onOverride,
+function InspectorPanel({
+  picked, overrides, onOverride, onPickAnother,
 }: {
   picked: { blockIndex: number; blockId: string; selector: string; computedStyles: Record<string, string>; tagName: string; };
   overrides: Record<string, Record<string, string>>;
   onOverride: (selector: string, property: string, value: string) => void;
+  onPickAnother: () => void;
 }) {
   const currentOverrides = overrides[picked.selector] ?? {};
+  const overrideCount = Object.keys(currentOverrides).length;
 
   return (
-    <div style={{ marginTop: 10 }}>
-      <div style={{
-        padding: "6px 10px", borderRadius: 6,
-        background: "rgba(240,168,74,0.06)", border: "1px solid rgba(240,168,74,0.18)",
-        marginBottom: 10, display: "flex", alignItems: "center", gap: 8,
-      }}>
-        <span style={{ fontSize: 11 }}>◎</span>
-        <code style={{ fontSize: 10, color: "#F0A84A", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {picked.tagName}{picked.selector !== picked.tagName ? ` ${picked.selector}` : ""}
-        </code>
-        {Object.keys(currentOverrides).length > 0 && (
+    <div style={{ padding: "12px 16px 20px" }}>
+      {/* Actions row */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+        <button
+          onClick={onPickAnother}
+          style={{
+            display: "flex", alignItems: "center", gap: 6,
+            padding: "5px 12px", borderRadius: 6, border: "1px solid rgba(240,168,74,0.25)",
+            background: "rgba(240,168,74,0.08)", color: "#F0A84A",
+            fontSize: 11, fontWeight: 700, cursor: "pointer",
+          }}
+        >
+          <span>◎</span> Selecionar outro
+        </button>
+        {overrideCount > 0 && (
           <button
             onClick={() => Object.keys(currentOverrides).forEach((p) => onOverride(picked.selector, p, ""))}
-            style={{ background: "none", border: "none", color: "#E05260", cursor: "pointer", fontSize: 9, fontWeight: 700, flexShrink: 0 }}
-          >LIMPAR</button>
+            style={{ padding: "5px 12px", borderRadius: 6, border: "1px solid rgba(224,82,96,0.2)", background: "rgba(224,82,96,0.07)", color: "#E05260", fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+          >
+            Limpar {overrideCount} override{overrideCount !== 1 ? "s" : ""}
+          </button>
         )}
       </div>
-      {STYLE_GROUPS_EL.map(({ label, props }) => {
-        const visible = props.filter((p) => picked.computedStyles[p] || currentOverrides[p]);
+
+      {/* Style groups */}
+      {INSPECTOR_GROUPS.map(({ label, props, grid }) => {
+        const visible = props.filter((p) => picked.computedStyles[p.prop] || currentOverrides[p.prop]);
         if (visible.length === 0) return null;
+
         return (
-          <div key={label} style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#3A3850", marginBottom: 5 }}>{label}</div>
-            {visible.map((prop) => {
-              const computed = picked.computedStyles[prop];
-              const override = currentOverrides[prop] ?? "";
-              const isColor = COLOR_PROPS_EL.includes(prop);
-              return (
-                <div key={prop} style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
-                  <span style={{ fontSize: 9, color: "#55526A", minWidth: 60, flexShrink: 0, textTransform: "uppercase" as const, letterSpacing: "0.04em" }}>
-                    {PROP_LABELS[prop] ?? prop}
-                  </span>
-                  <div style={{
-                    flex: 1, display: "flex", alignItems: "center", height: 24,
-                    background: "#16161F",
-                    border: `1px solid ${override ? "rgba(240,168,74,0.4)" : "rgba(255,255,255,0.06)"}`,
-                    borderRadius: 5, overflow: "hidden",
-                  }}>
-                    {isColor && (
-                      <label style={{ position: "relative", width: 24, height: 24, flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <div style={{ width: 12, height: 12, borderRadius: 2, background: override || computed || "#000", border: "1px solid rgba(255,255,255,0.15)" }} />
-                        <input type="color"
-                          value={override || computed || "#000000"}
-                          onChange={(e) => onOverride(picked.selector, prop, e.target.value)}
-                          style={{ position: "absolute", opacity: 0, inset: 0, cursor: "pointer", width: "100%", height: "100%" }}
-                        />
-                      </label>
-                    )}
-                    <input
-                      type="text"
-                      value={override}
-                      onChange={(e) => onOverride(picked.selector, prop, e.target.value)}
-                      placeholder={computed ?? "—"}
-                      style={{
-                        flex: 1, background: "none", border: "none", outline: "none",
-                        color: override ? "#F0A84A" : "#3A3850",
-                        fontSize: 10, padding: "0 5px", height: 24,
-                        fontFamily: "monospace",
-                      }}
-                    />
-                    {override && (
-                      <button
-                        onClick={() => onOverride(picked.selector, prop, "")}
-                        style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 10, padding: "0 5px", flexShrink: 0 }}
-                      >✕</button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          <div key={label} style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.12em", color: "#3A3850", marginBottom: 8, paddingBottom: 4, borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+              {label}
+            </div>
+            {grid ? (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 4 }}>
+                {visible.map((p) => (
+                  <InspectorRow key={p.prop} prop={p.prop} label={p.label} color={p.color}
+                    computed={picked.computedStyles[p.prop]}
+                    override={currentOverrides[p.prop]}
+                    selector={picked.selector} onOverride={onOverride} />
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                {visible.map((p) => (
+                  <InspectorRow key={p.prop} prop={p.prop} label={p.label} color={p.color}
+                    computed={picked.computedStyles[p.prop]}
+                    override={currentOverrides[p.prop]}
+                    selector={picked.selector} onOverride={onOverride} />
+                ))}
+              </div>
+            )}
           </div>
         );
       })}
+
+      {/* All properties are unset hint */}
+      {INSPECTOR_GROUPS.every(({ props }) => props.every((p) => !picked.computedStyles[p.prop] && !currentOverrides[p.prop])) && (
+        <div style={{ fontSize: 11, color: "#3A3850", textAlign: "center", padding: "20px 0" }}>
+          Nenhuma propriedade CSS relevante detectada neste elemento.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InspectorRow({ prop, label, color, computed, override, selector, onOverride }: {
+  prop: string; label: string; color?: boolean;
+  computed?: string; override?: string;
+  selector: string; onOverride: (selector: string, property: string, value: string) => void;
+}) {
+  const isSet = !!override;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <span style={{ fontSize: 9, color: "#55526A", minWidth: 70, flexShrink: 0, textTransform: "uppercase" as const, letterSpacing: "0.04em" }}>
+        {label}
+      </span>
+      <div style={{
+        flex: 1, display: "flex", alignItems: "center", height: 26,
+        background: "#16161F",
+        border: `1px solid ${isSet ? "rgba(240,168,74,0.45)" : "rgba(255,255,255,0.07)"}`,
+        borderRadius: 5, overflow: "hidden",
+      }}>
+        {color && (
+          <label style={{ position: "relative", width: 26, height: 26, flexShrink: 0, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", borderRight: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{
+              width: 13, height: 13, borderRadius: 2,
+              background: override || computed || "#888",
+              border: "1px solid rgba(255,255,255,0.15)",
+            }} />
+            <input type="color"
+              value={override || computed || "#888888"}
+              onChange={(e) => onOverride(selector, prop, e.target.value)}
+              style={{ position: "absolute", opacity: 0, inset: 0, cursor: "pointer", width: "100%", height: "100%" }}
+            />
+          </label>
+        )}
+        <input
+          type="text"
+          value={override ?? ""}
+          onChange={(e) => onOverride(selector, prop, e.target.value)}
+          placeholder={computed ?? "—"}
+          style={{
+            flex: 1, background: "none", border: "none", outline: "none",
+            color: isSet ? "#F0A84A" : "#3A3850",
+            fontSize: 11, padding: "0 6px", height: 26,
+            fontFamily: "monospace",
+          }}
+        />
+        {isSet && (
+          <button
+            onClick={() => onOverride(selector, prop, "")}
+            style={{ background: "none", border: "none", color: "#55526A", cursor: "pointer", fontSize: 11, padding: "0 6px", flexShrink: 0, lineHeight: 1 }}
+          >✕</button>
+        )}
+      </div>
     </div>
   );
 }
