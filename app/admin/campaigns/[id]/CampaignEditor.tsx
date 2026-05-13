@@ -39,10 +39,11 @@ type BlockStyle = {
   borderRadius?: number;
   opacity?: number;
 };
-type Analytics  = { ga4?: string; metaPixel?: string; gtm?: string; tiktokPixel?: string };
-type Meta       = { title?: string; description?: string; analytics?: Analytics };
-type Block      = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
-type Version    = { id: string; ts: number; label: string; blocks: Block[] };
+type Analytics    = { ga4?: string; metaPixel?: string; gtm?: string; tiktokPixel?: string };
+type Meta         = { title?: string; description?: string; analytics?: Analytics };
+type Block        = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
+type Version      = { id: string; ts: number; label: string; blocks: Block[] };
+type BlockElement = { selector: string; tagName: string; computedStyles: Record<string, string> };
 
 const BLOCK_SOURCE: Record<string, string> = {
   nav: "components/blocks/Nav.tsx", hero: "components/blocks/Hero.tsx",
@@ -199,6 +200,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const [pricingOpen, setPricingOpen]         = useState(false);
   const [mediaOpen, setMediaOpen]             = useState(false);
   const [periodsOpen, setPeriodsOpen]         = useState(false);
+  const [blockElements, setBlockElements]     = useState<BlockElement[]>([]);
   const [pickerActive, setPickerActive]       = useState(false);
   const [inspectorMode, setInspectorMode]     = useState(false);
   const [pickedElement, setPickedElement]     = useState<{
@@ -248,7 +250,12 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   useEffect(() => {
     function onMessage(e: MessageEvent) {
       if (e.data?.type === "block-hover") setHoveredIdx(e.data.blockIndex ?? null);
-      if (e.data?.type === "block-click") { setSelectedIdx(e.data.blockIndex ?? null); setDrawerOpen(true); }
+      if (e.data?.type === "block-click") {
+        setSelectedIdx(e.data.blockIndex ?? null);
+        setDrawerOpen(true);
+        setBlockElements(e.data.elements ?? []);
+      }
+      if (e.data?.type === "block-computed-styles") setBlockElements(e.data.elements ?? []);
       if (e.data?.type === "preview-ready") { sendToPreview(blocks); sendThemeToPreview(theme); }
       if (e.data?.type === "element-selected") {
         setPickerActive(false);
@@ -274,6 +281,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     setPickedElement(null);
     setPickerActive(false);
     setInspectorMode(false);
+    setBlockElements([]);
     iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
   }, [selectedIdx]);
 
@@ -960,7 +968,13 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                         style={selectedBlock._style}
                         blockType={selectedBlock.type}
                         theme={theme}
+                        elements={blockElements}
                         onChange={(patch) => updateBlockStyle(patch)}
+                        onInspectElement={(el) => setPickedElement({
+                          ...el,
+                          blockIndex: selectedIdx ?? 0,
+                          blockId: selectedBlock._id ?? "",
+                        })}
                       />
                     </div>
                   )}
@@ -1255,11 +1269,13 @@ function ArrayField({ value, path, brandId, onChange }: {
 
 
 /* ── BlockStylePanel ────────────────────────────────── */
-function BlockStylePanel({ style, onChange, blockType, theme }: {
+function BlockStylePanel({ style, onChange, blockType, theme, elements, onInspectElement }: {
   style?: BlockStyle;
   onChange: (patch: Partial<BlockStyle>) => void;
   blockType: string;
   theme?: Record<string, string>;
+  elements?: BlockElement[];
+  onInspectElement?: (el: BlockElement) => void;
 }) {
   const s: BlockStyle = style ?? {};
 
@@ -1287,6 +1303,61 @@ function BlockStylePanel({ style, onChange, blockType, theme }: {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
+
+      {/* ── ELEMENTOS DO BLOCO (computed styles do preview) ── */}
+      {elements && elements.length > 0 && (
+        <StyleSection title="Elementos do bloco">
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {elements.map((el) => {
+              const hasOverride = !!(style?.elementOverrides?.[el.selector]);
+              const color = el.computedStyles["color"];
+              const bg    = el.computedStyles["background-color"];
+              const fs    = el.computedStyles["font-size"];
+              const fw    = el.computedStyles["font-weight"];
+              return (
+                <div
+                  key={el.selector}
+                  style={{
+                    display: "flex", alignItems: "center", gap: 8,
+                    padding: "6px 8px", borderRadius: 6, cursor: "pointer",
+                    background: hasOverride ? "rgba(240,168,74,0.06)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${hasOverride ? "rgba(240,168,74,0.2)" : "rgba(255,255,255,0.06)"}`,
+                    transition: "border-color 0.1s",
+                  }}
+                  onClick={() => onInspectElement?.(el)}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(166,124,255,0.35)"; e.currentTarget.style.background = "rgba(166,124,255,0.06)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = hasOverride ? "rgba(240,168,74,0.2)" : "rgba(255,255,255,0.06)"; e.currentTarget.style.background = hasOverride ? "rgba(240,168,74,0.06)" : "rgba(255,255,255,0.02)"; }}
+                >
+                  {/* Swatches de cor */}
+                  <div style={{ display: "flex", gap: 2, flexShrink: 0 }}>
+                    {color && <div title={`color: ${color}`} style={{ width: 10, height: 10, borderRadius: "50%", background: color, border: "1px solid rgba(255,255,255,0.15)" }} />}
+                    {bg    && <div title={`background: ${bg}`}  style={{ width: 10, height: 10, borderRadius: "50%", background: bg,    border: "1px solid rgba(255,255,255,0.15)" }} />}
+                  </div>
+                  {/* Selector */}
+                  <code style={{ fontSize: 10, color: "#C4AEFF", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {el.tagName}{el.selector !== el.tagName ? `  ${el.selector}` : ""}
+                  </code>
+                  {/* Font summary */}
+                  {fs && <span style={{ fontSize: 9, color: "#55526A", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{fs}{fw && fw !== "400" ? ` / ${fw}` : ""}</span>}
+                  {/* Editar arrow */}
+                  <span style={{ fontSize: 10, color: hasOverride ? "#F0A84A" : "#3A3850", flexShrink: 0 }}>
+                    {hasOverride ? "✦" : "→"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ fontSize: 9, color: "#3A3850", marginTop: 6, lineHeight: 1.5 }}>
+            Clique para abrir o inspector e editar os estilos desse elemento.
+          </div>
+        </StyleSection>
+      )}
+
+      {elements && elements.length === 0 && (
+        <div style={{ fontSize: 10, color: "#3A3850", textAlign: "center", padding: "12px 0 8px", lineHeight: 1.6 }}>
+          Clique no bloco no preview para carregar os elementos.
+        </div>
+      )}
 
       {/* Overrides de elemento existentes */}
       {style?.elementOverrides && Object.keys(style.elementOverrides).length > 0 && (

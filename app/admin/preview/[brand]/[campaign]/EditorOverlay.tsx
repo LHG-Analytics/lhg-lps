@@ -95,6 +95,41 @@ export function EditorOverlay() {
       if (lblEl) lblEl.style.display = "none";
     }
 
+    /* ── captura computed styles dos elementos do bloco ── */
+    function captureBlockElements(root: Element) {
+      const results: { selector: string; tagName: string; computedStyles: Record<string, string> }[] = [];
+      const seen = new Set<string>();
+
+      function walk(el: Element, depth: number) {
+        if (depth > 5 || results.length >= 18) return;
+        const tag = el.tagName.toLowerCase();
+        const hasBem = Array.from(el.classList).some(
+          (c) => (c.includes("__") || c.includes("--")) && !SKIP_CLASS.test(c)
+        );
+        const isInteresting = hasBem || /^h[1-6]$/.test(tag) || /^(p|a|button|span|em|strong|li|label)$/.test(tag);
+
+        if (isInteresting) {
+          const selector = getSelectorPath(el, root);
+          if (!seen.has(selector)) {
+            seen.add(selector);
+            const cs = window.getComputedStyle(el);
+            const styles: Record<string, string> = {};
+            CAPTURE.forEach((p) => {
+              const v = cs.getPropertyValue(p).trim();
+              if (v && v !== "none" && v !== "normal" && v !== "auto" && v !== "0px" && v !== "rgba(0, 0, 0, 0)") styles[p] = v;
+            });
+            if (Object.keys(styles).length >= 2) {
+              results.push({ selector, tagName: tag, computedStyles: styles });
+            }
+          }
+        }
+        for (const child of Array.from(el.children)) walk(child, depth + 1);
+      }
+
+      walk(root, 0);
+      return results;
+    }
+
     /* ── normal block hover/click ── */
     function onBlockMouseOver(e: MouseEvent) {
       if (pickerActive) return;
@@ -108,7 +143,13 @@ export function EditorOverlay() {
       if (!el) return;
       selected?.classList.remove("editor-selected");
       selected = el; el.classList.add("editor-selected");
-      window.parent?.postMessage({ type: "block-click", blockType: el.getAttribute("data-block-type"), blockIndex: Number(el.getAttribute("data-block-index")) }, "*");
+      const elements = captureBlockElements(el);
+      window.parent?.postMessage({
+        type: "block-click",
+        blockType: el.getAttribute("data-block-type"),
+        blockIndex: Number(el.getAttribute("data-block-index")),
+        elements,
+      }, "*");
     }
 
     /* ── element picker ── */
@@ -201,6 +242,8 @@ export function EditorOverlay() {
         selected?.classList.remove("editor-selected"); selected = el;
         el.classList.add("editor-selected");
         el.scrollIntoView({ behavior: "smooth", block: "center" });
+        const elements = captureBlockElements(el);
+        window.parent?.postMessage({ type: "block-computed-styles", blockIndex: e.data.blockIndex, elements }, "*");
       }
       if (e.data?.type === "enable-element-picker") {
         const isGlobal = e.data.blockIndex === -1;
