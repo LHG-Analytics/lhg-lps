@@ -34,13 +34,13 @@ export function Hero({
   const decorativeMark = brand.name.charAt(0);
   const posterSrc = poster ? asset(poster) : undefined;
 
-  // Vídeo só renderiza em desktop (≥769px) — em mobile o LCP element é o
-  // next/image poster (preloaded), evitando download do vídeo no 4G lento.
+  // Vídeo monta 1500ms após o primeiro render — a next/image poster (preloaded)
+  // é o LCP element; o vídeo entra apenas depois que o LCP já disparou.
   const [showVideo, setShowVideo] = useState(false);
   useEffect(() => {
-    if (video && !window.matchMedia("(max-width: 768px)").matches) {
-      setShowVideo(true);
-    }
+    if (!video) return;
+    const t = setTimeout(() => setShowVideo(true), 1500);
+    return () => clearTimeout(t);
   }, [video]);
 
   return (
