@@ -277,10 +277,6 @@ section { padding: 96px 0; position: relative; }
   pointer-events: none;
   opacity: 0.78;
 }
-/* Vídeo hero oculto em mobile: evita download competindo com o LCP */
-@media (max-width: 767px) {
-  .hero__video { display: none; }
-}
 .hero__bg {
   position: absolute; inset: 0; z-index: 1;
   background:

@@ -45,9 +45,7 @@ export function Hero({
     if (!video) return;
     const el = videoRef.current;
     if (!el) return;
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      el.play().catch(() => {});
-    }
+    el.play().catch(() => {});
   }, [video]);
 
   return (
