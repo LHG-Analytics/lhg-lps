@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Brand, HeroBlockProps } from "@/lib/schema";
 import { asset } from "@/lib/asset";
 
@@ -35,15 +36,16 @@ export function Hero({
 
   return (
     <section className="hero" id="top">
-      {posterSrc && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={posterSrc}
+      {poster && (
+        <Image
+          src={poster}
           alt=""
           aria-hidden="true"
-          fetchPriority="high"
-          decoding="sync"
+          fill
+          priority
+          sizes="100vw"
           className="hero__poster"
+          style={{ objectFit: "cover", pointerEvents: "none" }}
         />
       )}
       {video && (

@@ -807,10 +807,10 @@ section { padding: 96px 0; position: relative; }
 .lote b { color: #fff; font-weight: 600; letter-spacing: 0.12em; }
 .lote .dot-live {
   width: 6px; height: 6px; border-radius: 999px; background: var(--emerald-soft);
-  box-shadow: 0 0 0 0 rgba(123,211,172,0.7);
   animation: loteblink 1.8s ease infinite;
+  will-change: opacity;
 }
-@keyframes loteblink { 50% { box-shadow: 0 0 0 6px rgba(123,211,172,0); } }
+@keyframes loteblink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 /* Hint de cupom logo abaixo do badge de lote (passo 2) */
 .wizard__coupon-hint {
@@ -1163,7 +1163,7 @@ section { padding: 96px 0; position: relative; }
   border-radius: inherit;
   padding: 1.5px;
   background: conic-gradient(
-    from var(--neon-angle, 0deg),
+    from 0deg,
     color-mix(in srgb, var(--lav) 95%, transparent) 0%,
     color-mix(in srgb, var(--lav) 15%, transparent) 18%,
     color-mix(in srgb, var(--emerald) 15%, transparent) 32%,
@@ -1178,6 +1178,7 @@ section { padding: 96px 0; position: relative; }
           mask-composite: exclude;
   pointer-events: none;
   animation: neonSpin 8s linear infinite;
+  will-change: transform;
   filter: drop-shadow(0 0 6px color-mix(in srgb, var(--lav) 45%, transparent)) drop-shadow(0 0 10px color-mix(in srgb, var(--emerald) 35%, transparent));
 }
 .offer__inner::after {
@@ -1186,19 +1187,16 @@ section { padding: 96px 0; position: relative; }
   border-radius: inherit;
   pointer-events: none;
   box-shadow:
-    0 0 24px -4px color-mix(in srgb, var(--lav) 35%, transparent),
-    0 0 48px -8px color-mix(in srgb, var(--emerald) 25%, transparent);
+    0 0 36px -2px color-mix(in srgb, var(--lav) 55%, transparent),
+    0 0 72px -6px color-mix(in srgb, var(--emerald) 45%, transparent);
+  opacity: 0.6;
   animation: neonPulse 4s ease-in-out infinite;
+  will-change: opacity;
 }
-@property --neon-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
-}
-@keyframes neonSpin { to { --neon-angle: 360deg; } }
+@keyframes neonSpin { to { transform: rotate(360deg); } }
 @keyframes neonPulse {
-  0%, 100% { box-shadow: 0 0 24px -4px color-mix(in srgb, var(--lav) 35%, transparent), 0 0 48px -8px color-mix(in srgb, var(--emerald) 25%, transparent); }
-  50%      { box-shadow: 0 0 36px -2px color-mix(in srgb, var(--lav) 55%, transparent), 0 0 72px -6px color-mix(in srgb, var(--emerald) 45%, transparent); }
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .offer__inner::before,
