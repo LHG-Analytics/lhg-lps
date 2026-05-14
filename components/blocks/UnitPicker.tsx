@@ -156,6 +156,7 @@ export function UnitPicker({
                 data-unit-id={unitId}
                 onMouseEnter={() => handleEnter(unitId)}
                 onMouseLeave={handleLeave}
+                onClick={() => { if (!isFocused) handleLock(unitId); }}
               >
                 <div className="unit__img">
                   <span className="unit__corner">
