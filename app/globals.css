@@ -1079,10 +1079,6 @@ section { padding: 96px 0; position: relative; }
   box-shadow: 0 0 0 1px var(--lav) inset, 0 20px 40px -24px rgba(201,167,245,0.45);
 }
 .cat:has(input:checked) .cat__arrow { opacity: 1; color: var(--lav); transform: translateX(2px); }
-.cat--hero {
-  background: linear-gradient(135deg, rgba(201,167,245,0.14), rgba(201,167,245,0.04));
-  border-color: rgba(201,167,245,0.35);
-}
 .cat--hero .cat__name { font-size: 22px; }
 
 /* -------------------------------------------------------------
