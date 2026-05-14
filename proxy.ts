@@ -71,7 +71,8 @@ export async function proxy(request: NextRequest) {
   const hostname = (request.headers.get("host") ?? "").split(":")[0] ?? "";
 
   /* 1. Roteamento por domínio/subdiretório (antes do auth check) */
-  if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api")) {
+  const isStaticAsset = /\.[a-zA-Z0-9]{2,5}$/.test(pathname);
+  if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api") && !isStaticAsset) {
     const { domainMap, pathMap } = await getRouteMap();
 
     // Subdomínio: hostname exato
