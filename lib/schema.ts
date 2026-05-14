@@ -181,8 +181,9 @@ const HeroMeta = z.object({
 const HeroBlock = z.object({
   type: z.literal("hero"),
   props: z.object({
-    video: z.string(),
-    /** Frame estático para LCP — exibido enquanto o vídeo carrega. */
+    /** Ausente quando o hero usa imagem estática em vez de vídeo. */
+    video: z.string().optional(),
+    /** Imagem de fundo estática (LCP) — obrigatória quando video está ausente. */
     poster: z.string().optional(),
     eyebrow: z.string(),
     headlineFull: z.string(),

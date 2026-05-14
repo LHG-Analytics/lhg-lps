@@ -46,19 +46,21 @@ export function Hero({
           className="hero__poster"
         />
       )}
-      <video
-        className="hero__video"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="none"
-        poster={posterSrc}
-        aria-hidden="true"
-      >
-        <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
-        <source src={asset(video)} type="video/mp4" />
-      </video>
+      {video && (
+        <video
+          className="hero__video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="none"
+          poster={posterSrc}
+          aria-hidden="true"
+        >
+          <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
+          <source src={asset(video)} type="video/mp4" />
+        </video>
+      )}
       <div className="hero__bg" />
       <div className="hero__grain" />
       <span className="hero__mark" aria-hidden="true">
