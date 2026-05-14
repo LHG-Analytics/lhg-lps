@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { LogoutButton } from "./LogoutButton";
+import { NavigationProgress } from "./NavigationProgress";
 
 const NAV = [
   { href: "/admin",           label: "Dashboard"  },
@@ -22,6 +23,7 @@ export function AdminShell({ userEmail, children }: { userEmail: string; childre
 
   return (
     <div className="admin-shell">
+      <NavigationProgress />
       <aside className="admin-sidebar">
         <div className="admin-sidebar__logo">
           <Image

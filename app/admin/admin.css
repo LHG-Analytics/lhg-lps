@@ -374,6 +374,25 @@
 .status-published { background: color-mix(in srgb, #2EB87A 15%, transparent); color: #2EB87A; }
 .status-archived  { background: color-mix(in srgb, #E05260 15%, transparent); color: #E05260; }
 
+/* ── SKELETON / SHIMMER ─────────────────────────────────── */
+@keyframes adm-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.adm-skeleton {
+  background: linear-gradient(
+    90deg,
+    #16161F 0%,
+    #222230 45%,
+    #2A2A3A 55%,
+    #16161F 100%
+  );
+  background-size: 200% 100%;
+  animation: adm-shimmer 1.6s ease-in-out infinite;
+  display: block;
+}
+
 /* ── EMPTY ──────────────────────────────────────────────── */
 .admin-empty {
   color: var(--adm-ink-dim);
