@@ -54,7 +54,12 @@ export function Hero({
           priority
           sizes="100vw"
           className="hero__poster"
-          style={{ objectFit: "cover", pointerEvents: "none" }}
+          style={{
+            objectFit: "cover",
+            pointerEvents: "none",
+            opacity: showVideo ? 0 : 1,
+            transition: "opacity 0.8s ease",
+          }}
         />
       )}
       {showVideo && video && (
