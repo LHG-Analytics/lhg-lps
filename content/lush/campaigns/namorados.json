@@ -4,7 +4,8 @@
   "lang": "pt-BR",
   "meta": {
     "title": "Lush — Dia dos Namorados",
-    "description": "Dia dos Namorados Lush: 11 a 14 de junho, com 3 horas e pernoite em todas as categorias. Curadoria gastronômica, buquê de rosas e suítes exclusivas em Ipiranga e Lapa."
+    "description": "Dia dos Namorados Lush: 11 a 14 de junho, com 3 horas e pernoite em todas as categorias. Curadoria gastronômica, buquê de rosas e suítes exclusivas em Ipiranga e Lapa.",
+    "analytics": { "gtm": "GTM-TBNLRMJ" }
   },
   "campaign": {
     "name": "Dia dos Namorados 2026",
@@ -18,10 +19,10 @@
       "target": "2026-06-12T23:59:59-03:00"
     },
     "lots": [
-      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 20, "coupon": "NAMORADOS20", "from": "2026-05-13", "to": "2026-05-22" },
-      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADOS15", "from": "2026-05-23", "to": "2026-05-31" },
-      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADOS10", "from": "2026-06-01", "to": "2026-06-05" },
-      { "id": "pre-abre",   "name": "Primeiro lote · abre 13/05", "discountPct": 20, "coupon": "NAMORADOS20", "before": "2026-05-13" },
+      { "id": "lote-1",     "name": "Primeiro lote",              "discountPct": 20, "coupon": "NAMORADO20", "from": "2026-05-13", "to": "2026-05-22" },
+      { "id": "lote-2",     "name": "Segundo lote",               "discountPct": 15, "coupon": "NAMORADO15", "from": "2026-05-23", "to": "2026-05-31" },
+      { "id": "lote-final", "name": "Lote final",                 "discountPct": 10, "coupon": "NAMORADO10", "from": "2026-06-01", "to": "2026-06-05" },
+      { "id": "pre-abre",   "name": "Primeiro lote · abre 13/05", "discountPct": 20, "coupon": "NAMORADO20", "before": "2026-05-13" },
       { "id": "encerrado",  "name": "Lote encerrado",             "discountPct": 0,  "after": "2026-06-11" }
     ],
     "periods": [
