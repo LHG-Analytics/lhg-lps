@@ -1,8 +1,5 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-/** Remetente padrão — configurar domínio verificado no painel Resend. */
 const FROM = process.env.RESEND_FROM ?? "LHG CMS <cms@lushmotel.com.br>";
 
 export async function sendInviteEmail({
@@ -17,6 +14,7 @@ export async function sendInviteEmail({
   loginUrl: string;
 }) {
   if (!process.env.RESEND_API_KEY) return;
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
   const roleLabel = role === "admin" ? "Administrador" : "Editor";
 

@@ -88,6 +88,12 @@ function SerpPreview({ title, description, slug, brandId }: {
   );
 }
 
+/* eslint-disable @next/next/no-img-element */
+function OgImg({ src }: { src: string }) {
+  return <img src={src} alt="" style={{ width: "100%", aspectRatio: "1200/630", objectFit: "cover", display: "block" }} />;
+}
+/* eslint-enable @next/next/no-img-element */
+
 /* ── WhatsApp / OG Preview ──────────────────────────── */
 function SocialPreview({ title, description, ogImage, brandId }: {
   title?: string; description?: string; ogImage?: string; brandId: string;
@@ -100,7 +106,7 @@ function SocialPreview({ title, description, ogImage, brandId }: {
     <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)", background: "#1B2836", fontFamily: "system-ui, -apple-system, sans-serif" }}>
       {/* imagem */}
       {ogImage ? (
-        <img src={ogImage} alt="" style={{ width: "100%", aspectRatio: "1200/630", objectFit: "cover", display: "block" }} />
+        <OgImg src={ogImage} />
       ) : (
         <div style={{
           width: "100%", aspectRatio: "1200/630", background: "linear-gradient(135deg,#111820 0%,#1B2836 100%)",
@@ -271,7 +277,7 @@ export function SeoPanel({ meta, slug, brandId, onChange, onSave, saving }: Prop
                 placeholder="https://lushmotel.com.br/pt-BR/diadosnamorados2026"
               />
               <Hint>
-                Indica ao Google a URL "oficial" desta LP. Importante quando a mesma página é acessada por múltiplas URLs (ex: CloudFront + Vercel). Deixe vazio se não aplicável.
+                Indica ao Google a URL &ldquo;oficial&rdquo; desta LP. Importante quando a mesma página é acessada por múltiplas URLs (ex: CloudFront + Vercel). Deixe vazio se não aplicável.
               </Hint>
             </div>
           </div>
