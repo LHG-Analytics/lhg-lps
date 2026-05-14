@@ -167,6 +167,14 @@ section { padding: 96px 0; position: relative; }
     linear-gradient(90deg, color-mix(in srgb, #0A1A10 85%, transparent) 0%, color-mix(in srgb, #0A1A10 35%, transparent) 45%, transparent 70%),
     linear-gradient(180deg, transparent 60%, color-mix(in srgb, #0A1A10 50%, transparent) 100%);
 }
+[data-brand="andardecima"] .hero {
+  background: var(--emerald-deep);
+}
+[data-brand="andardecima"] .hero__bg {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, #060E16 85%, transparent) 0%, color-mix(in srgb, #060E16 35%, transparent) 45%, transparent 70%),
+    linear-gradient(180deg, transparent 60%, color-mix(in srgb, #060E16 50%, transparent) 100%);
+}
 [data-brand="andardecima"] .nav {
   background: color-mix(in srgb, var(--emerald-deep) 82%, transparent);
 }
