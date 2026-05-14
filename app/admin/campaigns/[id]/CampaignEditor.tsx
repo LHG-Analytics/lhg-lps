@@ -21,6 +21,7 @@ import { PricingPanel } from "./PricingPanel";
 import { MediaLibrary } from "./MediaLibrary";
 import { PeriodsPanel } from "./PeriodsPanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
+import { SeoPanel, type SeoMeta } from "./SeoPanel";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -39,8 +40,7 @@ type BlockStyle = {
   borderRadius?: number;
   opacity?: number;
 };
-type Analytics    = { ga4?: string; metaPixel?: string; gtm?: string; tiktokPixel?: string };
-type Meta         = { title?: string; description?: string; analytics?: Analytics };
+type Meta = SeoMeta;
 type Block        = { type: string; props: Record<string, unknown>; _id?: string; _style?: BlockStyle };
 type Version      = { id: string; ts: number; label: string; blocks: Block[] };
 type BlockElement = { selector: string; tagName: string; computedStyles: Record<string, string> };
@@ -706,84 +706,14 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           ) : sidebarTab === "theme" ? (
             <ThemePanel theme={theme} onChange={updateTheme} saving={themeSaving} onSave={saveTheme} />
           ) : (
-            /* ── SEO + Analytics panel ──────────────── */
-            <div style={{ flex: 1, overflowY: "auto", padding: 12 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-
-                {/* SEO básico */}
-                <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#55526A" }}>SEO</div>
-                <div>
-                  <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Título da página</label>
-                  <input
-                    type="text"
-                    value={meta.title ?? ""}
-                    onChange={(e) => setMeta({ ...meta, title: e.target.value })}
-                    style={fieldStyle}
-                    placeholder="Título SEO"
-                  />
-                  <div style={{ fontSize: 10, color: (meta.title?.length ?? 0) > 60 ? "#E05260" : "#3A3850", marginTop: 3, textAlign: "right" }}>
-                    {meta.title?.length ?? 0}/60
-                  </div>
-                </div>
-                <div>
-                  <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Descrição</label>
-                  <textarea
-                    value={meta.description ?? ""}
-                    onChange={(e) => setMeta({ ...meta, description: e.target.value })}
-                    style={{ ...fieldStyle, resize: "vertical" }}
-                    rows={3}
-                    placeholder="Descrição para mecanismos de busca"
-                  />
-                  <div style={{ fontSize: 10, color: (meta.description?.length ?? 0) > 160 ? "#E05260" : "#3A3850", marginTop: 3, textAlign: "right" }}>
-                    {meta.description?.length ?? 0}/160
-                  </div>
-                </div>
-
-                {/* Analytics */}
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 12, marginTop: 2 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#55526A", marginBottom: 10 }}>Analytics</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-                    {(
-                      [
-                        { key: "ga4",         label: "Google Analytics 4", placeholder: "G-XXXXXXXXXX" },
-                        { key: "gtm",         label: "Google Tag Manager", placeholder: "GTM-XXXXXXX" },
-                        { key: "metaPixel",   label: "Meta Pixel (Facebook)", placeholder: "1234567890" },
-                        { key: "tiktokPixel", label: "TikTok Pixel", placeholder: "CXXXXXXXXXXXXXXXX" },
-                      ] as const
-                    ).map(({ key, label, placeholder }) => (
-                      <div key={key}>
-                        <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 3, textTransform: "uppercase", letterSpacing: "0.07em" }}>{label}</label>
-                        <input
-                          type="text"
-                          value={meta.analytics?.[key] ?? ""}
-                          onChange={(e) => setMeta({
-                            ...meta,
-                            analytics: { ...meta.analytics, [key]: e.target.value || undefined },
-                          })}
-                          style={{ ...fieldStyle, fontSize: 12, fontFamily: "monospace" }}
-                          placeholder={placeholder}
-                        />
-                      </div>
-                    ))}
-                    <div style={{ fontSize: 10, color: "#3A3850", lineHeight: 1.5 }}>
-                      Deixe em branco para herdar as configurações globais do projeto.
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => saveMeta(meta)}
-                  disabled={metaSaving}
-                  style={{
-                    background: "#A67CFF", color: "#fff", border: "none", borderRadius: 6,
-                    padding: "8px 0", fontSize: 12, fontWeight: 700, cursor: metaSaving ? "wait" : "pointer",
-                    opacity: metaSaving ? 0.6 : 1,
-                  }}
-                >
-                  {metaSaving ? "Salvando…" : "Salvar SEO & Analytics"}
-                </button>
-              </div>
-            </div>
+            <SeoPanel
+              meta={meta}
+              slug={slug}
+              brandId={brandId}
+              onChange={setMeta}
+              onSave={() => saveMeta(meta)}
+              saving={metaSaving}
+            />
           )}
         </aside>
 

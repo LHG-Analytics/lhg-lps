@@ -33,20 +33,26 @@ export async function generateMetadata({
   const data = await safeLoad(brand, campaign);
   if (!data) return {};
 
-  const { title, description, ogImage } = data.campaign.meta;
-  const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: title }] : [];
+  const { title, description, ogTitle, ogDescription, ogImage, canonical, robots } = data.campaign.meta;
+  const effectiveOgTitle = ogTitle || title;
+  const effectiveOgDesc  = ogDescription || description;
+  const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: effectiveOgTitle ?? title }] : [];
 
   return {
     title,
     description,
+    ...(canonical && { alternates: { canonical } }),
+    robots: robots === "noindex"
+      ? { index: false, follow: false, googleBot: { index: false } }
+      : { index: true,  follow: true },
     icons: {
       icon: data.brand.favicon,
       shortcut: data.brand.favicon,
       apple: data.brand.favicon,
     },
     openGraph: {
-      title,
-      description,
+      title: effectiveOgTitle,
+      description: effectiveOgDesc,
       type: "website",
       locale: data.campaign.lang.replace("-", "_"),
       siteName: data.brand.name,
@@ -54,8 +60,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: images.length > 0 ? "summary_large_image" : "summary",
-      title,
-      description,
+      title: effectiveOgTitle,
+      description: effectiveOgDesc,
       ...(images.length > 0 && { images: [ogImage!] }),
     },
   };
@@ -117,7 +123,7 @@ async function safeLoad(brandId: string, campaignSlug: string) {
         }
       }
       if (row?.meta && typeof row.meta === "object") {
-        const incoming = row.meta as { title?: string; description?: string; ogImage?: string };
+        const incoming = row.meta as { title?: string; description?: string; ogTitle?: string; ogDescription?: string; ogImage?: string; canonical?: string; robots?: "index" | "noindex"; analytics?: Record<string, string> };
         campaign = { ...campaign, meta: { ...campaign.meta, ...incoming } };
       }
     } catch { /* Supabase indisponível → mantém JSON */ }
