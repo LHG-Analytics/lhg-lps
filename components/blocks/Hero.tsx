@@ -34,6 +34,15 @@ export function Hero({
   const decorativeMark = brand.name.charAt(0);
   const posterSrc = poster ? asset(poster) : undefined;
 
+  // Vídeo só renderiza em desktop (≥769px) — em mobile o LCP element é o
+  // next/image poster (preloaded), evitando download do vídeo no 4G lento.
+  const [showVideo, setShowVideo] = useState(false);
+  useEffect(() => {
+    if (video && !window.matchMedia("(max-width: 768px)").matches) {
+      setShowVideo(true);
+    }
+  }, [video]);
+
   return (
     <section className="hero" id="top">
       {poster && (
@@ -48,7 +57,7 @@ export function Hero({
           style={{ objectFit: "cover", pointerEvents: "none" }}
         />
       )}
-      {video && (
+      {showVideo && video && (
         <video
           className="hero__video"
           autoPlay
