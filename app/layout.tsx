@@ -11,24 +11,24 @@ const sans = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
-  display: "swap",
+  display: "fallback",
 });
 
 const serif = Fraunces({
   subsets: ["latin"],
   weight: "variable",
   axes: ["opsz", "SOFT"],
-  style: ["normal", "italic"],
+  style: ["normal"],
   variable: "--font-serif",
-  display: "swap",
+  display: "fallback",
 });
 
 const display = Cormorant_Garamond({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-display",
-  display: "swap",
+  display: "fallback",
 });
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;

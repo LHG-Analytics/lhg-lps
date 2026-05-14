@@ -163,7 +163,13 @@ function useTypewriter(full: string, emphasis: string, enabled: boolean) {
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
+    // Desativa em touch/mobile: (hover: none) significa ausência de hover real.
+    // Sem isso, o efeito apaga o texto SSR e redigita após a hidratação,
+    // tornando cada caractere um candidato LCP progressivo → LCP ≈ TTI no Lighthouse.
+    const hoverCapable =
+      typeof window !== "undefined" &&
+      window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (reduced || !hoverCapable) {
       setText(initialFullState(full, emphasis));
       setDone(true);
       return;
