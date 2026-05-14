@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -9,6 +9,23 @@ export function NavigationProgress() {
   const [progress, setProgress] = useState(0);
   const prevPath = useRef(pathname);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const start = useCallback(() => {
+    if (timer.current) clearInterval(timer.current);
+    setVisible(true);
+    setProgress(12);
+    let p = 12;
+    timer.current = setInterval(() => {
+      p += (88 - p) * 0.12;
+      setProgress(Math.min(p, 82));
+    }, 180);
+  }, []);
+
+  const finish = useCallback(() => {
+    if (timer.current) { clearInterval(timer.current); timer.current = null; }
+    setProgress(100);
+    setTimeout(() => { setVisible(false); setProgress(0); }, 380);
+  }, []);
 
   useEffect(() => {
     function onLinkClick(e: MouseEvent) {
@@ -23,31 +40,14 @@ export function NavigationProgress() {
     }
     document.addEventListener("click", onLinkClick);
     return () => document.removeEventListener("click", onLinkClick);
-  }, [pathname]);
+  }, [pathname, start]);
 
   useEffect(() => {
     if (prevPath.current !== pathname) {
       prevPath.current = pathname;
       finish();
     }
-  }, [pathname]);
-
-  function start() {
-    if (timer.current) clearInterval(timer.current);
-    setVisible(true);
-    setProgress(12);
-    let p = 12;
-    timer.current = setInterval(() => {
-      p += (88 - p) * 0.12;
-      setProgress(Math.min(p, 82));
-    }, 180);
-  }
-
-  function finish() {
-    if (timer.current) { clearInterval(timer.current); timer.current = null; }
-    setProgress(100);
-    setTimeout(() => { setVisible(false); setProgress(0); }, 380);
-  }
+  }, [pathname, finish]);
 
   return (
     <AnimatePresence>
