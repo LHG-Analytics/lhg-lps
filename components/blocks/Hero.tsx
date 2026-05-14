@@ -35,8 +35,20 @@ export function Hero({
   const posterSrc = poster ? asset(poster) : undefined;
 
   // videoActive flipa para true no onPlay do <video> — só então o poster some.
-  // preload="none" garante que o browser não baixa o vídeo antes do LCP disparar.
   const [videoActive, setVideoActive] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Inicia o vídeo via JS apenas em desktop (≥768px).
+  // Sem autoPlay no HTML: browser não baixa o vídeo antes do LCP disparar.
+  // preload="none" reforça que não há download passivo.
+  useEffect(() => {
+    if (!video) return;
+    const el = videoRef.current;
+    if (!el) return;
+    if (window.matchMedia("(min-width: 768px)").matches) {
+      el.play().catch(() => {});
+    }
+  }, [video]);
 
   return (
     <section className="hero" id="top">
@@ -60,8 +72,8 @@ export function Hero({
       )}
       {video && (
         <video
+          ref={videoRef}
           className="hero__video"
-          autoPlay
           muted
           loop
           playsInline
