@@ -79,24 +79,42 @@ export default async function CampaignPage({ params }: { params: Params }) {
 
   const analytics = data.campaign.meta.analytics as Analytics | undefined;
 
+  // Preload manual do poster do hero — Next.js 15+/16 App Router não gera
+  // <link rel="preload"> automaticamente a partir de <Image priority>.
+  const heroBlock = data.campaign.blocks.find(
+    (b): b is Extract<Block, { type: "hero" }> => b.type === "hero"
+  );
+  const heroPoster = heroBlock?.props?.poster as string | undefined;
+
   return (
-    <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
-      {analytics?.gtm && <GtmNoscript id={analytics.gtm} />}
-      <BlockRenderer
-        brand={data.brand}
-        campaign={data.campaign}
-        blocks={data.campaign.blocks}
-      />
-      {data.brand.concierge ? (
-        <Concierge24h
-          label={data.brand.concierge.label}
-          href={data.brand.concierge.href}
+    <>
+      {heroPoster && (
+        <link
+          rel="preload"
+          as="image"
+          href={heroPoster}
+          fetchPriority="high"
+          {...(heroPoster.endsWith(".webp") && { type: "image/webp" })}
         />
-      ) : null}
-      <RevealManager />
-      <JsonLd brand={data.brand} campaign={data.campaign} />
-      <AnalyticsScripts analytics={analytics} id={`${brandId}-${campaignSlug}`} />
-    </div>
+      )}
+      <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
+        {analytics?.gtm && <GtmNoscript id={analytics.gtm} />}
+        <BlockRenderer
+          brand={data.brand}
+          campaign={data.campaign}
+          blocks={data.campaign.blocks}
+        />
+        {data.brand.concierge ? (
+          <Concierge24h
+            label={data.brand.concierge.label}
+            href={data.brand.concierge.href}
+          />
+        ) : null}
+        <RevealManager />
+        <JsonLd brand={data.brand} campaign={data.campaign} />
+        <AnalyticsScripts analytics={analytics} id={`${brandId}-${campaignSlug}`} />
+      </div>
+    </>
   );
 }
 

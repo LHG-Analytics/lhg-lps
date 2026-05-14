@@ -34,14 +34,9 @@ export function Hero({
   const decorativeMark = brand.name.charAt(0);
   const posterSrc = poster ? asset(poster) : undefined;
 
-  // Vídeo monta 1500ms após o primeiro render — a next/image poster (preloaded)
-  // é o LCP element; o vídeo entra apenas depois que o LCP já disparou.
-  const [showVideo, setShowVideo] = useState(false);
-  useEffect(() => {
-    if (!video) return;
-    const t = setTimeout(() => setShowVideo(true), 1500);
-    return () => clearTimeout(t);
-  }, [video]);
+  // videoActive flipa para true no onPlay do <video> — só então o poster some.
+  // preload="none" garante que o browser não baixa o vídeo antes do LCP disparar.
+  const [videoActive, setVideoActive] = useState(false);
 
   return (
     <section className="hero" id="top">
@@ -57,12 +52,12 @@ export function Hero({
           style={{
             objectFit: "cover",
             pointerEvents: "none",
-            opacity: showVideo ? 0 : 1,
+            opacity: videoActive ? 0 : 1,
             transition: "opacity 0.8s ease",
           }}
         />
       )}
-      {showVideo && video && (
+      {video && (
         <video
           className="hero__video"
           autoPlay
@@ -72,6 +67,7 @@ export function Hero({
           preload="none"
           poster={posterSrc}
           aria-hidden="true"
+          onPlay={() => setVideoActive(true)}
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
           <source src={asset(video)} type="video/mp4" />
