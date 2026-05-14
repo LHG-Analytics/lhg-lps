@@ -1,12 +1,15 @@
 import type { Brand, Campaign, Block } from "@/lib/schema";
+import dynamic from "next/dynamic";
 import { Nav } from "@/components/blocks/Nav";
 import { Hero } from "@/components/blocks/Hero";
-import { Benefits } from "@/components/blocks/Benefits";
-import { UnitPicker } from "@/components/blocks/UnitPicker";
-import { Offer } from "@/components/blocks/Offer";
-import { FAQ } from "@/components/blocks/FAQ";
-import { Footer } from "@/components/blocks/Footer";
-import { StickyCta } from "@/components/blocks/StickyCta";
+
+// Blocos below-the-fold carregados sob demanda — reduz TBT e bundle inicial
+const Benefits  = dynamic(() => import("@/components/blocks/Benefits").then(m => m.Benefits));
+const UnitPicker = dynamic(() => import("@/components/blocks/UnitPicker").then(m => m.UnitPicker));
+const Offer     = dynamic(() => import("@/components/blocks/Offer").then(m => m.Offer));
+const FAQ       = dynamic(() => import("@/components/blocks/FAQ").then(m => m.FAQ));
+const Footer    = dynamic(() => import("@/components/blocks/Footer").then(m => m.Footer));
+const StickyCta = dynamic(() => import("@/components/blocks/StickyCta").then(m => m.StickyCta));
 
 export type BlockContext = {
   brand: Brand;

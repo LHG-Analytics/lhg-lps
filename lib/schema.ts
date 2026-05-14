@@ -182,6 +182,8 @@ const HeroBlock = z.object({
   type: z.literal("hero"),
   props: z.object({
     video: z.string(),
+    /** Frame estático para LCP — exibido enquanto o vídeo carrega. */
+    poster: z.string().optional(),
     eyebrow: z.string(),
     headlineFull: z.string(),
     headlineEmphasis: z.string(),

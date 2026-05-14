@@ -19,6 +19,7 @@ type TwState = { before: string; em: string; after: string };
  */
 export function Hero({
   video,
+  poster,
   eyebrow,
   headlineFull,
   headlineEmphasis,
@@ -30,16 +31,29 @@ export function Hero({
 }: Props) {
   const tw = useTypewriter(headlineFull, headlineEmphasis, typewriter ?? false);
   const decorativeMark = brand.name.charAt(0);
+  const posterSrc = poster ? asset(poster) : undefined;
 
   return (
     <section className="hero" id="top">
+      {posterSrc && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={posterSrc}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="sync"
+          className="hero__poster"
+        />
+      )}
       <video
         className="hero__video"
         autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="none"
+        poster={posterSrc}
         aria-hidden="true"
       >
         <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />

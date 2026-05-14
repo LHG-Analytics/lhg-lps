@@ -13,8 +13,9 @@ function getIp(req: NextRequest): string {
 /* ── Cache de rotas dinâmicas (sobrevive warm invocations) ─────────────── */
 type RouteEntry = { brandId: string; slug: string };
 type RouteCache = {
-  domainMap: Map<string, RouteEntry>;
-  pathMap: Map<string, RouteEntry>;
+  domainMap: Map<string, RouteEntry>;          // custom_domain → LP
+  pathMap:   Map<string, RouteEntry>;          // base_path     → LP
+  brandSlugMap: Map<string, string | null>;    // "brand/slug"  → custom_domain
   ts: number;
 };
 
@@ -26,8 +27,9 @@ async function getRouteMap(): Promise<RouteCache> {
   if (routeCache && now - routeCache.ts < CACHE_TTL) return routeCache;
 
   try {
+    // Busca todas as campanhas publicadas (com ou sem domínio/path)
     const url = new URL(
-      "/rest/v1/campaigns?select=brand_id,slug,custom_domain,base_path&status=eq.published&or=(custom_domain.not.is.null,base_path.not.is.null)",
+      "/rest/v1/campaigns?select=brand_id,slug,custom_domain,base_path&status=eq.published",
       process.env.NEXT_PUBLIC_SUPABASE_URL
     );
     const res = await fetch(url.toString(), {
@@ -47,19 +49,20 @@ async function getRouteMap(): Promise<RouteCache> {
       base_path: string | null;
     }>;
 
-    const domainMap = new Map<string, RouteEntry>();
-    const pathMap   = new Map<string, RouteEntry>();
+    const domainMap    = new Map<string, RouteEntry>();
+    const pathMap      = new Map<string, RouteEntry>();
+    const brandSlugMap = new Map<string, string | null>();
 
     for (const row of rows) {
       if (row.custom_domain) domainMap.set(row.custom_domain, { brandId: row.brand_id, slug: row.slug });
       if (row.base_path)     pathMap.set(row.base_path.replace(/\/$/, ""), { brandId: row.brand_id, slug: row.slug });
+      brandSlugMap.set(`${row.brand_id}/${row.slug}`, row.custom_domain);
     }
 
-    routeCache = { domainMap, pathMap, ts: now };
+    routeCache = { domainMap, pathMap, brandSlugMap, ts: now };
   } catch {
-    // mantém cache anterior ou cria vazio — nunca quebra o middleware
-    if (!routeCache) routeCache = { domainMap: new Map(), pathMap: new Map(), ts: now };
-    else routeCache = { ...routeCache, ts: now }; // renova TTL p/ evitar flood
+    if (!routeCache) routeCache = { domainMap: new Map(), pathMap: new Map(), brandSlugMap: new Map(), ts: now };
+    else routeCache = { ...routeCache, ts: now };
   }
 
   return routeCache;
@@ -73,9 +76,9 @@ export async function proxy(request: NextRequest) {
   /* 1. Roteamento por domínio/subdiretório (antes do auth check) */
   const isStaticAsset = /\.[a-zA-Z0-9]{2,5}$/.test(pathname);
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api") && !isStaticAsset) {
-    const { domainMap, pathMap } = await getRouteMap();
+    const { domainMap, pathMap, brandSlugMap } = await getRouteMap();
 
-    // Subdomínio: hostname exato
+    // Subdomínio: hostname exato → rewrite transparente
     if (domainMap.has(hostname)) {
       const { brandId, slug } = domainMap.get(hostname)!;
       const url = request.nextUrl.clone();
@@ -83,13 +86,23 @@ export async function proxy(request: NextRequest) {
       return NextResponse.rewrite(url);
     }
 
-    // Subdiretório: prefixo de path
+    // Subdiretório: prefixo de path → rewrite transparente
     for (const [basePath, entry] of pathMap) {
       if (pathname === basePath || pathname.startsWith(basePath + "/")) {
         const { brandId, slug } = entry;
         const url = request.nextUrl.clone();
         url.pathname = `/${brandId}/${slug}${pathname.slice(basePath.length)}`;
         return NextResponse.rewrite(url);
+      }
+    }
+
+    // 308 redirect: acesso direto pelo domínio Vercel (/brand/slug)
+    // se a campanha tem custom_domain, manda para lá permanentemente.
+    const pathKey = pathname.replace(/^\//, "").replace(/\/$/, ""); // "brand/slug"
+    if (brandSlugMap.has(pathKey)) {
+      const customDomain = brandSlugMap.get(pathKey);
+      if (customDomain) {
+        return NextResponse.redirect(`https://${customDomain}`, { status: 308 });
       }
     }
   }

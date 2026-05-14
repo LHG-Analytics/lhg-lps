@@ -99,6 +99,7 @@
       "type": "hero",
       "props": {
         "video": "/brands/lush/namorados/hero-cascata.mp4",
+        "poster": "/brands/lush/namorados/hero-poster.jpg",
         "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
         "headlineFull": "O presente perfeito não se embrulha. Se vive.",
         "headlineEmphasis": "vive",

@@ -86,6 +86,7 @@
       "type": "hero",
       "props": {
         "video": "/brands/tout/namorados/hero-video.mp4",
+        "poster": "/brands/tout/namorados/hero-poster.jpg",
         "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
         "headlineFull": "O presente perfeito não se embrulha. Se vive.",
         "headlineEmphasis": "vive.",
