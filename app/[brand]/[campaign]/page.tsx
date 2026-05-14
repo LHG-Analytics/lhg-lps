@@ -6,7 +6,7 @@ import { themeStyle } from "@/lib/theme";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
-import { AnalyticsScripts, type Analytics } from "@/components/AnalyticsScripts";
+import { AnalyticsScripts, GtmNoscript, type Analytics } from "@/components/AnalyticsScripts";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient as createSupabasePublic } from "@supabase/supabase-js";
 import type { Block } from "@/lib/schema";
@@ -38,10 +38,20 @@ export async function generateMetadata({
   const effectiveOgDesc  = ogDescription || description;
   const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: effectiveOgTitle ?? title }] : [];
 
+  // URL canônica: JSON sobrescreve; se ausente, monta a partir de SITE_URL + BASE_PATH.
+  const siteUrl  = (process.env.NEXT_PUBLIC_SITE_URL  ?? "").replace(/\/$/, "");
+  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+  const autoCanonical = basePath
+    ? `${siteUrl}${basePath}`
+    : siteUrl
+      ? `${siteUrl}/${brand}/${campaign}`
+      : undefined;
+  const resolvedCanonical = canonical || autoCanonical;
+
   return {
     title,
     description,
-    ...(canonical && { alternates: { canonical } }),
+    ...(resolvedCanonical && { alternates: { canonical: resolvedCanonical } }),
     robots: robots === "noindex"
       ? { index: false, follow: false, googleBot: { index: false } }
       : { index: true,  follow: true },
@@ -56,6 +66,7 @@ export async function generateMetadata({
       type: "website",
       locale: data.campaign.lang.replace("-", "_"),
       siteName: data.brand.name,
+      ...(resolvedCanonical && { url: resolvedCanonical }),
       ...(images.length > 0 && { images }),
     },
     twitter: {
@@ -76,6 +87,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
 
   return (
     <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
+      {analytics?.gtm && <GtmNoscript id={analytics.gtm} />}
       <BlockRenderer
         brand={data.brand}
         campaign={data.campaign}

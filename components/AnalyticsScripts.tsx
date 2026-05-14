@@ -7,6 +7,20 @@ export interface Analytics {
   tiktokPixel?: string;
 }
 
+/** Tag <noscript> do GTM — deve ser renderizada como primeiro filho do <body>. */
+export function GtmNoscript({ id }: { id: string }) {
+  return (
+    <noscript>
+      <iframe
+        src={`https://www.googletagmanager.com/ns.html?id=${id}`}
+        height="0"
+        width="0"
+        style={{ display: "none", visibility: "hidden" }}
+      />
+    </noscript>
+  );
+}
+
 export function AnalyticsScripts({ analytics, id }: { analytics?: Analytics; id?: string }) {
   if (!analytics) return null;
   const uid = id ?? "cmp";
