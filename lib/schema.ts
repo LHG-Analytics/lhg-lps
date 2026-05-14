@@ -369,10 +369,14 @@ export const CampaignSchema = z.object({
   meta: z.object({
     title: z.string(),
     description: z.string(),
+    ogTitle:       z.string().optional(),
+    ogDescription: z.string().optional(),
     /** URL absoluta da imagem para compartilhamento (og:image / twitter:image).
      * Recomendado: 1200×630 px. Se ausente, sem preview de imagem. */
-    ogImage: z.string().optional(),
-    analytics: AnalyticsSchema,
+    ogImage:    z.string().optional(),
+    canonical:  z.string().optional(),
+    robots:     z.enum(["index", "noindex"]).optional(),
+    analytics:  AnalyticsSchema,
   }),
   campaign: z.object({
     name: z.string(),
