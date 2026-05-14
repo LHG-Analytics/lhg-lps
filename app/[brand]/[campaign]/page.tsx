@@ -38,15 +38,9 @@ export async function generateMetadata({
   const effectiveOgDesc  = ogDescription || description;
   const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: effectiveOgTitle ?? title }] : [];
 
-  // URL canônica: JSON sobrescreve; se ausente, monta a partir de SITE_URL + BASE_PATH.
-  const siteUrl  = (process.env.NEXT_PUBLIC_SITE_URL  ?? "").replace(/\/$/, "");
-  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
-  const autoCanonical = basePath
-    ? `${siteUrl}${basePath}`
-    : siteUrl
-      ? `${siteUrl}/${brand}/${campaign}`
-      : undefined;
-  const resolvedCanonical = canonical || autoCanonical;
+  // URL canônica vem do campo meta.canonical do JSON/Supabase.
+  // Cada campanha declara a URL pública real (ex: lushmotel.com.br/pt-BR/diadosnamorados2026).
+  const resolvedCanonical = canonical ?? undefined;
 
   return {
     title,
