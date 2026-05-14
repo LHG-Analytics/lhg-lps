@@ -137,17 +137,46 @@ export function EditorOverlay() {
       if (!el) return;
       window.parent?.postMessage({ type: "block-hover", blockIndex: Number(el.getAttribute("data-block-index")) }, "*");
     }
+    const INLINE_TAGS = /^(h[1-6]|p|span|a|em|strong|button|label|li|small|cite|figcaption)$/;
+
     function onBlockClick(e: MouseEvent) {
       if (pickerActive) return;
-      const el = (e.target as HTMLElement).closest("[data-block-type]");
-      if (!el) return;
+      const blockEl = (e.target as HTMLElement).closest("[data-block-type]");
+      if (!blockEl) return;
       selected?.classList.remove("editor-selected");
-      selected = el; el.classList.add("editor-selected");
-      const elements = captureBlockElements(el);
+      selected = blockEl; blockEl.classList.add("editor-selected");
+      const elements = captureBlockElements(blockEl);
+      const blockIndex = Number(blockEl.getAttribute("data-block-index"));
+
+      // Direct click on a text element — send unified message for inline toolbar
+      const target = e.target as HTMLElement;
+      if (target !== blockEl && INLINE_TAGS.test(target.tagName.toLowerCase())) {
+        const selector = getSelectorPath(target, blockEl);
+        const cs = window.getComputedStyle(target);
+        const styles: Record<string, string> = {};
+        CAPTURE.forEach((p) => {
+          const v = cs.getPropertyValue(p).trim();
+          if (v && v !== "none" && v !== "normal" && v !== "auto" && v !== "0px" && v !== "rgba(0, 0, 0, 0)") styles[p] = v;
+        });
+        const r = target.getBoundingClientRect();
+        window.parent?.postMessage({
+          type: "block-and-element-click",
+          blockType: blockEl.getAttribute("data-block-type"),
+          blockIndex,
+          elements,
+          blockId: blockEl.getAttribute("data-block-id") ?? "",
+          selector,
+          tagName: target.tagName.toLowerCase(),
+          computedStyles: styles,
+          rect: { top: r.top, left: r.left, right: r.right, bottom: r.bottom, width: r.width, height: r.height },
+        }, "*");
+        return;
+      }
+
       window.parent?.postMessage({
         type: "block-click",
-        blockType: el.getAttribute("data-block-type"),
-        blockIndex: Number(el.getAttribute("data-block-index")),
+        blockType: blockEl.getAttribute("data-block-type"),
+        blockIndex,
         elements,
       }, "*");
     }
@@ -195,12 +224,14 @@ export function EditorOverlay() {
         const v = cs.getPropertyValue(p).trim();
         if (v && v !== "none" && v !== "normal" && v !== "auto" && v !== "0px" && v !== "rgba(0, 0, 0, 0)") styles[p] = v;
       });
+      const r = target.getBoundingClientRect();
       window.parent?.postMessage({
         type: "element-selected",
         blockIndex: resolvedBlockIndex,
         blockId: root.getAttribute("data-block-id") ?? "",
         selector, computedStyles: styles,
         tagName: target.tagName.toLowerCase(),
+        rect: { top: r.top, left: r.left, right: r.right, bottom: r.bottom, width: r.width, height: r.height },
       }, "*");
       disablePicker();
     }

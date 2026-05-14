@@ -40,28 +40,95 @@ export default async function AdminDashboard() {
     <AdminShell userEmail={user.email!}>
       <header className="admin-header">
         <h1>Dashboard</h1>
-        <Link href="/admin/campaigns/new" className="admin-btn-primary">
-          + Nova campanha
-        </Link>
       </header>
 
-      {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 32 }}>
-        {[
-          { label: "Marcas",     value: brands?.length ?? 0,     icon: "◈", color: "#A67CFF" },
-          { label: "Campanhas",  value: totalCampaigns ?? 0,     icon: "◉", color: "#8E8AA8" },
-          { label: "Publicadas", value: publishedCampaigns ?? 0, icon: "●", color: "#2EB87A" },
-          { label: "Usuários",   value: totalUsers ?? 0,         icon: "◎", color: "#F0A84A" },
-        ].map((s) => (
-          <div key={s.label} style={{
-            background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: 10, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 6,
-          }}>
-            <span style={{ fontSize: 18, color: s.color }}>{s.icon}</span>
-            <span style={{ fontSize: 28, fontWeight: 700, color: "#F0EEF8", lineHeight: 1 }}>{s.value}</span>
-            <span style={{ fontSize: 11, color: "#55526A", textTransform: "uppercase" as const, letterSpacing: "0.06em" }}>{s.label}</span>
-          </div>
-        ))}
+      {/* Bento stats */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1.4fr 1fr 1fr",
+        gridTemplateRows: "auto auto",
+        gap: 10,
+        marginBottom: 32,
+      }}>
+        {/* Featured: Publicadas */}
+        {(() => {
+          const total = totalCampaigns ?? 0;
+          const pub   = publishedCampaigns ?? 0;
+          const pct   = total > 0 ? Math.round((pub / total) * 100) : 0;
+          return (
+            <div style={{
+              gridRow: "1 / 3",
+              background: "linear-gradient(135deg, rgba(46,184,122,0.07) 0%, rgba(22,22,31,0.9) 60%)",
+              border: "1px solid rgba(46,184,122,0.18)",
+              borderRadius: 12, padding: "22px 24px",
+              display: "flex", flexDirection: "column", gap: 8, position: "relative", overflow: "hidden",
+            }}>
+              {/* glow */}
+              <div style={{ position: "absolute", top: -30, right: -30, width: 100, height: 100, borderRadius: "50%", background: "radial-gradient(circle, rgba(46,184,122,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
+              <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#2EB87A" }}>● Publicadas</span>
+              <span style={{ fontSize: 48, fontWeight: 800, color: "#F0EEF8", lineHeight: 1, letterSpacing: "-0.03em" }}>
+                {pub}
+              </span>
+              <span style={{ fontSize: 12, color: "#55526A" }}>{total} campanhas no total</span>
+              {/* progress bar */}
+              <div style={{ marginTop: "auto", paddingTop: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                  <span style={{ fontSize: 10, color: "#55526A" }}>Taxa de publicação</span>
+                  <span style={{ fontSize: 10, color: "#2EB87A", fontWeight: 700 }}>{pct}%</span>
+                </div>
+                <div style={{ height: 4, borderRadius: 99, background: "rgba(255,255,255,0.06)" }}>
+                  <div style={{ height: "100%", width: `${pct}%`, borderRadius: 99, background: "linear-gradient(to right, #2EB87A, #5EE8A8)", transition: "width 0.6s ease" }} />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Marcas */}
+        <div style={{
+          background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 12, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 4,
+        }}>
+          <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#A67CFF" }}>◈ Marcas</span>
+          <span style={{ fontSize: 36, fontWeight: 800, color: "#F0EEF8", lineHeight: 1.1, letterSpacing: "-0.02em" }}>{brands?.length ?? 0}</span>
+          <span style={{ fontSize: 11, color: "#55526A", marginTop: "auto" }}>ativas no CMS</span>
+        </div>
+
+        {/* Usuários */}
+        <div style={{
+          background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 12, padding: "18px 20px", display: "flex", flexDirection: "column", gap: 4,
+        }}>
+          <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#F0A84A" }}>◎ Usuários</span>
+          <span style={{ fontSize: 36, fontWeight: 800, color: "#F0EEF8", lineHeight: 1.1, letterSpacing: "-0.02em" }}>{totalUsers ?? 0}</span>
+          <span style={{ fontSize: 11, color: "#55526A", marginTop: "auto" }}>com acesso admin</span>
+        </div>
+
+        {/* Campanhas (rascunhos) */}
+        {(() => {
+          const drafts = (totalCampaigns ?? 0) - (publishedCampaigns ?? 0);
+          return (
+            <div style={{
+              gridColumn: "2 / 4",
+              background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: 12, padding: "16px 20px",
+              display: "flex", alignItems: "center", gap: 20,
+            }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#8E8AA8" }}>◉ Campanhas</span>
+                <span style={{ fontSize: 30, fontWeight: 800, color: "#F0EEF8", lineHeight: 1, letterSpacing: "-0.02em" }}>{totalCampaigns ?? 0}</span>
+              </div>
+              <div style={{ width: 1, height: 40, background: "rgba(255,255,255,0.06)" }} />
+              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.1em", color: "#55526A" }}>Rascunhos</span>
+                <span style={{ fontSize: 30, fontWeight: 800, color: "#8E8AA8", lineHeight: 1, letterSpacing: "-0.02em" }}>{drafts}</span>
+              </div>
+              <Link href="/admin/campaigns/new" style={{ marginLeft: "auto", fontSize: 12, fontWeight: 600, color: "#A67CFF", textDecoration: "none", whiteSpace: "nowrap", padding: "8px 14px", border: "1px solid rgba(166,124,255,0.3)", borderRadius: 7 }}>
+                + Nova campanha
+              </Link>
+            </div>
+          );
+        })()}
       </div>
 
       {/* LPs publicadas */}

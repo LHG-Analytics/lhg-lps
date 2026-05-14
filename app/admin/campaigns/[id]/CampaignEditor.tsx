@@ -22,6 +22,7 @@ import { MediaLibrary } from "./MediaLibrary";
 import { PeriodsPanel } from "./PeriodsPanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
 import { SeoPanel, type SeoMeta } from "./SeoPanel";
+import { FloatingInspector } from "./FloatingInspector";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
@@ -207,11 +208,15 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     blockIndex: number; blockId: string; selector: string;
     computedStyles: Record<string, string>; tagName: string;
   } | null>(null);
+  const [pickedRect, setPickedRect]           = useState<{
+    top: number; left: number; right: number; bottom: number; width: number; height: number;
+  } | null>(null);
 
-  const iframeRef   = useRef<HTMLIFrameElement>(null);
-  const saveTimer   = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const divDragRef  = useRef<{ startY: number; startH: number } | null>(null);
-  const monacoRef   = useRef<any>(null);
+  const iframeRef        = useRef<HTMLIFrameElement>(null);
+  const saveTimer        = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const divDragRef       = useRef<{ startY: number; startH: number } | null>(null);
+  const monacoRef        = useRef<any>(null);
+  const skipPickResetRef = useRef(false);
 
   // ── história de undo/redo via refs (sem stale closure)
   const histRef     = useRef({ stack: [initialBlocks] as Block[][], idx: 0 });
@@ -260,6 +265,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
       if (e.data?.type === "element-selected") {
         setPickerActive(false);
         setInspectorMode(false);
+        skipPickResetRef.current = true;
         setSelectedIdx(e.data.blockIndex);
         setDrawerOpen(true);
         setPickedElement({
@@ -269,6 +275,21 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           computedStyles: e.data.computedStyles,
           tagName: e.data.tagName,
         });
+        setPickedRect(e.data.rect ?? null);
+      }
+      if (e.data?.type === "block-and-element-click") {
+        skipPickResetRef.current = true;
+        setSelectedIdx(e.data.blockIndex);
+        setDrawerOpen(true);
+        setBlockElements(e.data.elements ?? []);
+        setPickedElement({
+          blockIndex: e.data.blockIndex,
+          blockId: e.data.blockId,
+          selector: e.data.selector,
+          computedStyles: e.data.computedStyles,
+          tagName: e.data.tagName,
+        });
+        setPickedRect(e.data.rect ?? null);
       }
       if (e.data?.type === "picker-cancelled") { setPickerActive(false); setInspectorMode(false); }
     }
@@ -278,11 +299,16 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
 
   useEffect(() => {
     iframeRef.current?.contentWindow?.postMessage({ type: "select-block", blockIndex: selectedIdx }, "*");
-    setPickedElement(null);
-    setPickerActive(false);
-    setInspectorMode(false);
-    setBlockElements([]);
-    iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
+    if (skipPickResetRef.current) {
+      skipPickResetRef.current = false;
+    } else {
+      setPickedElement(null);
+      setPickedRect(null);
+      setPickerActive(false);
+      setInspectorMode(false);
+      setBlockElements([]);
+      iframeRef.current?.contentWindow?.postMessage({ type: "disable-element-picker" }, "*");
+    }
   }, [selectedIdx]);
 
   /* ── undo / redo ────────────────────────────────── */
@@ -799,6 +825,17 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                 onLoad={() => { sendToPreview(blocks); sendThemeToPreview(theme); }}
               />
             </DeviceFrame>
+            {/* Floating inline toolbar — aparece ao clicar em texto no preview */}
+            {pickedElement && pickedRect && (
+              <FloatingInspector
+                picked={pickedElement}
+                rect={pickedRect}
+                iframeRef={iframeRef}
+                overrides={selectedBlock?._style?.elementOverrides ?? {}}
+                onOverride={updateElementOverride}
+                onClose={() => { setPickedElement(null); setPickedRect(null); }}
+              />
+            )}
             {!drawerOpen && (
               <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", background: "rgba(13,13,18,0.9)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "6px 16px", fontSize: 11, color: "#8E8AA8", pointerEvents: "none", zIndex: 10 }}>
                 Clique em qualquer bloco para editar
