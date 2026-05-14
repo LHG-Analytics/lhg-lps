@@ -38,14 +38,15 @@ export function Hero({
   const [videoActive, setVideoActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Inicia o vídeo via JS apenas em desktop (≥768px).
-  // Sem autoPlay no HTML: browser não baixa o vídeo antes do LCP disparar.
-  // preload="none" reforça que não há download passivo.
+  // Atrasa o play() para garantir que o poster (LCP candidate) seja registrado
+  // antes do primeiro frame do vídeo substituí-lo como LCP element.
+  // 1.5s é suficiente para o poster ser pintado em conexões lentas (Lighthouse 4G).
   useEffect(() => {
     if (!video) return;
     const el = videoRef.current;
     if (!el) return;
-    el.play().catch(() => {});
+    const t = setTimeout(() => el.play().catch(() => {}), 1500);
+    return () => clearTimeout(t);
   }, [video]);
 
   return (
