@@ -92,7 +92,7 @@ export function Hero({
       </span>
 
       <div className="wrap hero__inner">
-        <div className="hero__copy fade-up">
+        <div className="hero__copy hero__copy--animate">
           <span className="eyebrow">{eyebrow}</span>
           <h1 className="display">
             <span
