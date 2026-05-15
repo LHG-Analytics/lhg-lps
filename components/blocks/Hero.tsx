@@ -169,7 +169,12 @@ function useTypewriter(full: string, emphasis: string, enabled: boolean) {
     const hoverCapable =
       typeof window !== "undefined" &&
       window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    if (reduced || !hoverCapable) {
+    // Lighthouse mobile simulation corre em Chrome desktop → hover:hover retorna true
+    // mesmo com viewport 375px. Checar largura do viewport captura ambos: real mobile
+    // e Lighthouse. Abaixo de 768px o efeito limparia o texto SSR e causaria LCP≈TTI.
+    const isMobileViewport =
+      typeof window !== "undefined" && window.innerWidth < 768;
+    if (reduced || !hoverCapable || isMobileViewport) {
       setText(initialFullState(full, emphasis));
       setDone(true);
       return;
