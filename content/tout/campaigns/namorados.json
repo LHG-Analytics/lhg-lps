@@ -49,12 +49,12 @@
         "id": "pernoite",
         "label": "Pernoite",
         "shortLabel": "Pernoite",
-        "meta": "Buquê de rosas · Espumante Pedrucci · Café da manhã",
+        "meta": "Buquê de rosas · Espumante com morangos e chantilly · Café da manhã",
         "scope": "Todas as categorias",
         "scopeKey": "all",
         "featured": true,
         "featuredTag": "★ Experiência completa",
-        "inclusos": "Buquê de rosas · Espumante Pedrucci · Café da manhã"
+        "inclusos": "Buquê de rosas · Espumante com morangos e chantilly · Café da manhã"
       }
     ],
     "dates": [
@@ -118,8 +118,8 @@
           },
           {
             "icon": "champagne",
-            "title": "Espumante Pedrucci",
-            "body": "No pernoite chega uma garrafa de espumante Pedrucci acompanhada de café da manhã completo para começar a manhã juntos."
+            "title": "Espumante com morangos e chantilly",
+            "body": "No pernoite chega espumante com morangos e chantilly acompanhado de café da manhã completo para começar a manhã juntos."
           },
           {
             "icon": "clock",
@@ -214,7 +214,7 @@
           },
           {
             "q": "O que está incluso no pernoite?",
-            "a": "Buquê de rosas, garrafa de espumante Pedrucci e café da manhã completo. Uma experiência pensada para ser a noite mais especial do casal."
+            "a": "Buquê de rosas, espumante com morangos e chantilly e café da manhã completo. Uma experiência pensada para ser a noite mais especial do casal."
           },
           {
             "q": "Como funciona o cupom de desconto?",

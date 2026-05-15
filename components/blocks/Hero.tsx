@@ -31,6 +31,7 @@ export function Hero({
   brand,
 }: Props) {
   const tw = useTypewriter(headlineFull, headlineEmphasis, typewriter ?? false);
+  const ghostState = initialFullState(headlineFull, headlineEmphasis);
   const decorativeMark = brand.name.charAt(0);
   const posterSrc = poster ? asset(poster) : undefined;
 
@@ -94,7 +95,12 @@ export function Hero({
       <div className="wrap hero__inner">
         <div className="hero__copy hero__copy--animate">
           <span className="eyebrow">{eyebrow}</span>
-          <h1 className="display">
+          <h1 className="display typewriter-stack">
+            <span className="typewriter-ghost" aria-hidden="true">
+              {ghostState.before}
+              {ghostState.em ? <em>{ghostState.em}</em> : null}
+              {ghostState.after}
+            </span>
             <span
               className={`typewriter${tw.done ? " done" : ""}`}
               aria-label={headlineFull}
@@ -163,18 +169,7 @@ function useTypewriter(full: string, emphasis: string, enabled: boolean) {
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Desativa em touch/mobile: (hover: none) significa ausência de hover real.
-    // Sem isso, o efeito apaga o texto SSR e redigita após a hidratação,
-    // tornando cada caractere um candidato LCP progressivo → LCP ≈ TTI no Lighthouse.
-    const hoverCapable =
-      typeof window !== "undefined" &&
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    // Lighthouse mobile simulation corre em Chrome desktop → hover:hover retorna true
-    // mesmo com viewport 375px. Checar largura do viewport captura ambos: real mobile
-    // e Lighthouse. Abaixo de 768px o efeito limparia o texto SSR e causaria LCP≈TTI.
-    const isMobileViewport =
-      typeof window !== "undefined" && window.innerWidth < 768;
-    if (reduced || !hoverCapable || isMobileViewport) {
+    if (reduced) {
       setText(initialFullState(full, emphasis));
       setDone(true);
       return;
