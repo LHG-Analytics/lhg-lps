@@ -11,7 +11,7 @@ const sans = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-sans",
-  display: "fallback",
+  display: "swap",
 });
 
 const serif = Fraunces({
@@ -20,7 +20,7 @@ const serif = Fraunces({
   axes: ["opsz", "SOFT"],
   style: ["normal"],
   variable: "--font-serif",
-  display: "fallback",
+  display: "swap",
 });
 
 const display = Cormorant_Garamond({
@@ -28,7 +28,7 @@ const display = Cormorant_Garamond({
   weight: ["400", "500", "600"],
   style: ["normal", "italic"],
   variable: "--font-display",
-  display: "fallback",
+  display: "swap",
 });
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
