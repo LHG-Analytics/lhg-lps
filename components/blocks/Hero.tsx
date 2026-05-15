@@ -39,14 +39,13 @@ export function Hero({
   const [videoActive, setVideoActive] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Atrasa o play() para garantir que o poster (LCP candidate) seja registrado
-  // antes do primeiro frame do vídeo substituí-lo como LCP element.
-  // 1.5s é suficiente para o poster ser pintado em conexões lentas (Lighthouse 4G).
+  // Fallback JS play() para browsers que ignoram o atributo autoPlay.
+  // Delay curto apenas para deixar o poster ser pintado antes do primeiro frame.
   useEffect(() => {
     if (!video) return;
     const el = videoRef.current;
     if (!el) return;
-    const t = setTimeout(() => el.play().catch(() => {}), 1500);
+    const t = setTimeout(() => el.play().catch(() => {}), 300);
     return () => clearTimeout(t);
   }, [video]);
 
@@ -74,6 +73,7 @@ export function Hero({
         <video
           ref={videoRef}
           className="hero__video"
+          autoPlay
           muted
           loop
           playsInline
