@@ -221,6 +221,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const skipPickResetRef   = useRef(false);
   const selectedIdxRef     = useRef<number | null>(null);
   const deleteBlockRef     = useRef<(idx: number) => void>(() => {});
+  const pickedElementRef   = useRef<typeof pickedElement>(null);
 
   // ── história de undo/redo via refs (sem stale closure)
   const histRef     = useRef({ stack: [initialBlocks] as Block[][], idx: 0 });
@@ -243,8 +244,9 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   }
 
   // Manter refs em sync — não disparam re-render
-  selectedIdxRef.current = selectedIdx;
-  deleteBlockRef.current = deleteBlock;
+  selectedIdxRef.current   = selectedIdx;
+  deleteBlockRef.current   = deleteBlock;
+  pickedElementRef.current = pickedElement;
 
   const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] ?? null : null;
   const isDirty = JSON.stringify(blocks) !== JSON.stringify(publishedBlocks);
@@ -357,6 +359,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         const tgt = e.target as HTMLElement;
         // Não interfere com inputs, textareas ou o Monaco (contenteditable)
         if (tgt.tagName === "INPUT" || tgt.tagName === "TEXTAREA" || tgt.isContentEditable) return;
+        // Elemento inspecionado selecionado — não apaga o bloco inteiro
+        if (pickedElementRef.current) return;
         const idx = selectedIdxRef.current;
         if (idx === null) return;
         e.preventDefault();
