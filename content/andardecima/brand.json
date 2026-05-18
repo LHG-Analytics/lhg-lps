@@ -116,8 +116,8 @@
   "booking": {
     "periodIds": {
       "pernoite": "13272a31-4ecd-4314-94c7-b7a02fc6f392",
-      "3h-18":    "be7de322-a0a1-4ec4-8316-7f18d1828c71",
-      "3h-22":    "be7de322-a0a1-4ec4-8316-7f18d1828c71"
+      "3h-18":    "b91a615f-189b-4644-b684-40c35d19982c",
+      "3h-22":    "9501e2c1-e9f8-46a4-94ee-524a162d2165"
     },
     "urlTemplate": "https://andardecimasuites.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
   },

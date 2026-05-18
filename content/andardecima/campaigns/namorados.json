@@ -5,7 +5,7 @@
   "meta": {
     "title": "Andar de Cima — Dia dos Namorados",
     "description": "Dia dos Namorados no Andar de Cima: 11 a 14 de junho, com 3 horas e pernoite em todas as suítes. Buquê de rosas, jantar especial e espumante no coração de São Paulo.",
-    "canonical": "https://namorados.andardecimasuites.com.br",
+    "canonical": "https://diadosnamorados.andardecimasuites.com.br",
     "analytics": { "gtm": "GTM-W5XMTBTX" }
   },
   "campaign": {
@@ -28,7 +28,7 @@
     ],
     "periods": [
       {
-        "id": "b91a615f-189b-4644-b684-40c35d19982c",
+        "id": "3h-18",
         "label": "3 horas · 18:00 – 21:00",
         "shortLabel": "3 horas",
         "meta": "Pacote gastronômico",
@@ -37,7 +37,7 @@
         "inclusos": "Jantar (1 couvert e 2 pratos principais)"
       },
       {
-        "id": "9501e2c1-e9f8-46a4-94ee-524a162d2165",
+        "id": "3h-22",
         "label": "3 horas · 22:00 – 01:00",
         "shortLabel": "3 horas",
         "meta": "Pacote gastronômico",
@@ -67,13 +67,13 @@
       "currency": "BRL",
       "units": {
         "sao-paulo": {
-          "cubo":         { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  52400, "regular":  46700 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  55400, "regular":  49700 }, "pernoite": { "premium":  90900, "regular":  90900 } },
-          "pop":          { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  54400, "regular":  48300 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  57400, "regular":  51300 }, "pernoite": { "premium":  96000, "regular":  96000 } },
-          "love":         { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  55700, "regular":  49300 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  58700, "regular":  52300 }, "pernoite": { "premium":  98500, "regular":  98500 } },
-          "pop-copan":    { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  57000, "regular":  50300 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  60000, "regular":  53300 }, "pernoite": { "premium": 100900, "regular": 100900 } },
-          "espuma":       { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  63500, "regular":  55300 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  66500, "regular":  58300 }, "pernoite": { "premium": 125600, "regular": 125600 } },
-          "espuma-lounge":{ "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  64800, "regular":  56300 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  67800, "regular":  59300 }, "pernoite": { "premium": 133400, "regular": 133400 } },
-          "espuma-copan": { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  73200, "regular":  62700 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  76200, "regular":  65700 }, "pernoite": { "premium": 160700, "regular": 160700 } }
+          "cubo":         { "3h-18": { "premium":  52400, "regular":  46700 }, "3h-22": { "premium":  55400, "regular":  49700 }, "pernoite": { "premium":  90900, "regular":  90900 } },
+          "pop":          { "3h-18": { "premium":  54400, "regular":  48300 }, "3h-22": { "premium":  57400, "regular":  51300 }, "pernoite": { "premium":  96000, "regular":  96000 } },
+          "love":         { "3h-18": { "premium":  55700, "regular":  49300 }, "3h-22": { "premium":  58700, "regular":  52300 }, "pernoite": { "premium":  98500, "regular":  98500 } },
+          "pop-copan":    { "3h-18": { "premium":  57000, "regular":  50300 }, "3h-22": { "premium":  60000, "regular":  53300 }, "pernoite": { "premium": 100900, "regular": 100900 } },
+          "espuma":       { "3h-18": { "premium":  63500, "regular":  55300 }, "3h-22": { "premium":  66500, "regular":  58300 }, "pernoite": { "premium": 125600, "regular": 125600 } },
+          "espuma-lounge":{ "3h-18": { "premium":  64800, "regular":  56300 }, "3h-22": { "premium":  67800, "regular":  59300 }, "pernoite": { "premium": 133400, "regular": 133400 } },
+          "espuma-copan": { "3h-18": { "premium":  73200, "regular":  62700 }, "3h-22": { "premium":  76200, "regular":  65700 }, "pernoite": { "premium": 160700, "regular": 160700 } }
         }
       }
     }

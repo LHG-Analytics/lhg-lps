@@ -35,8 +35,8 @@ const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
 export const metadata: Metadata = {
-  title: { default: "Lush Hotel Group", template: "%s · Lush Hotel Group" },
-  description: "Landing pages do Lush Hotel Group.",
+  title: { default: "Lush Hospitality Group", template: "%s · Lush Hospitality Group" },
+  description: "Landing pages do Lush Hospitality Group.",
   robots: { index: true, follow: true },
   // Default por enquanto (única brand = Lush). Cada rota /[brand]/...
   // sobrescreve via generateMetadata lendo brand.favicon.

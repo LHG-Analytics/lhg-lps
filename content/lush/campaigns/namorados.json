@@ -5,7 +5,7 @@
   "meta": {
     "title": "Lush — Dia dos Namorados",
     "description": "Dia dos Namorados Lush: 11 a 14 de junho, com 3 horas e pernoite em todas as categorias. Curadoria gastronômica, buquê de rosas e suítes exclusivas em Ipiranga e Lapa.",
-    "canonical": "https://namorados.lushmotel.com.br",
+    "canonical": "https://diadosnamorados.lushmotel.com.br",
     "analytics": { "gtm": "GTM-TBNLRMJ" }
   },
   "campaign": {
@@ -28,7 +28,7 @@
     ],
     "periods": [
       {
-        "id": "b91a615f-189b-4644-b684-40c35d19982c",
+        "id": "3h-18",
         "label": "3 horas · 18:00 – 21:00",
         "shortLabel": "3 horas",
         "meta": "Buquê de rosas · Pacote gastronômico",
@@ -37,7 +37,7 @@
         "inclusos": "Buquê de rosas · Pacote gastronômico"
       },
       {
-        "id": "9501e2c1-e9f8-46a4-94ee-524a162d2165",
+        "id": "3h-22",
         "label": "3 horas · 22:00 – 01:00",
         "shortLabel": "3 horas",
         "meta": "Buquê de rosas · Pacote gastronômico",
@@ -67,23 +67,23 @@
       "currency": "BRL",
       "units": {
         "lapa": {
-          "lush":         { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  72800, "regular":  65750 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  75800, "regular":  68750 }, "pernoite": { "premium": 134000, "regular": 109400 } },
-          "hidro":        { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  85800, "regular":  75750 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  88800, "regular":  78750 }, "pernoite": { "premium": 170700, "regular": 132300 } },
-          "lounge-hidro": { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  96720, "regular":  84150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  99720, "regular":  87150 }, "pernoite": { "premium": 190300, "regular": 148200 } },
-          "spa":          { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 103220, "regular":  89150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 106220, "regular":  92150 }, "pernoite": { "premium": 200800, "regular": 156900 } },
-          "splash":       { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 121420, "regular": 103150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 124420, "regular": 106150 }, "pernoite": { "premium": 232200, "regular": 182800 } },
-          "spa-splash":   { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 130520, "regular": 110150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 133520, "regular": 113150 }, "pernoite": { "premium": 256100, "regular": 197300 } }
+          "lush":         { "3h-18": { "premium":  72800, "regular":  65750 }, "3h-22": { "premium":  75800, "regular":  68750 }, "pernoite": { "premium": 134000, "regular": 109400 } },
+          "hidro":        { "3h-18": { "premium":  85800, "regular":  75750 }, "3h-22": { "premium":  88800, "regular":  78750 }, "pernoite": { "premium": 170700, "regular": 132300 } },
+          "lounge-hidro": { "3h-18": { "premium":  96720, "regular":  84150 }, "3h-22": { "premium":  99720, "regular":  87150 }, "pernoite": { "premium": 190300, "regular": 148200 } },
+          "spa":          { "3h-18": { "premium": 103220, "regular":  89150 }, "3h-22": { "premium": 106220, "regular":  92150 }, "pernoite": { "premium": 200800, "regular": 156900 } },
+          "splash":       { "3h-18": { "premium": 121420, "regular": 103150 }, "3h-22": { "premium": 124420, "regular": 106150 }, "pernoite": { "premium": 232200, "regular": 182800 } },
+          "spa-splash":   { "3h-18": { "premium": 130520, "regular": 110150 }, "3h-22": { "premium": 133520, "regular": 113150 }, "pernoite": { "premium": 256100, "regular": 197300 } }
         },
         "ipiranga": {
-          "pop":          { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  68100, "regular":  62150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  71120, "regular":  65150 }, "pernoite": { "premium": 164200, "regular": 140100 } },
-          "lush":         { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  75900, "regular":  68150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  78920, "regular":  71150 }, "pernoite": { "premium": 190700, "regular": 165100 } },
-          "hidro":        { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  86300, "regular":  76150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  89320, "regular":  79150 }, "pernoite": { "premium": 223900, "regular": 190500 } },
-          "lounge":       { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  94100, "regular":  82150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  97120, "regular":  85150 }, "pernoite": { "premium": 235500, "regular": 192100 } },
-          "cine":         { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  94100, "regular":  82150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  97120, "regular":  85150 }, "pernoite": { "premium": 235500, "regular": 192100 } },
-          "spa":          { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 100600, "regular":  87150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 103620, "regular":  90150 }, "pernoite": { "premium": 272500, "regular": 207300 } },
-          "splash":       { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 131800, "regular": 111150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 134820, "regular": 114150 }, "pernoite": { "premium": 348800, "regular": 248800 } },
-          "spa-splash":   { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 146100, "regular": 122150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 149120, "regular": 125150 }, "pernoite": { "premium": 379000, "regular": 272900 } },
-          "casa-lush":    { "b91a615f-189b-4644-b684-40c35d19982c": { "premium": 215000, "regular": 175150 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium": 218020, "regular": 178150 }, "pernoite": { "premium": 523800, "regular": 342600 } }
+          "pop":          { "3h-18": { "premium":  68100, "regular":  62150 }, "3h-22": { "premium":  71120, "regular":  65150 }, "pernoite": { "premium": 164200, "regular": 140100 } },
+          "lush":         { "3h-18": { "premium":  75900, "regular":  68150 }, "3h-22": { "premium":  78920, "regular":  71150 }, "pernoite": { "premium": 190700, "regular": 165100 } },
+          "hidro":        { "3h-18": { "premium":  86300, "regular":  76150 }, "3h-22": { "premium":  89320, "regular":  79150 }, "pernoite": { "premium": 223900, "regular": 190500 } },
+          "lounge":       { "3h-18": { "premium":  94100, "regular":  82150 }, "3h-22": { "premium":  97120, "regular":  85150 }, "pernoite": { "premium": 235500, "regular": 192100 } },
+          "cine":         { "3h-18": { "premium":  94100, "regular":  82150 }, "3h-22": { "premium":  97120, "regular":  85150 }, "pernoite": { "premium": 235500, "regular": 192100 } },
+          "spa":          { "3h-18": { "premium": 100600, "regular":  87150 }, "3h-22": { "premium": 103620, "regular":  90150 }, "pernoite": { "premium": 272500, "regular": 207300 } },
+          "splash":       { "3h-18": { "premium": 131800, "regular": 111150 }, "3h-22": { "premium": 134820, "regular": 114150 }, "pernoite": { "premium": 348800, "regular": 248800 } },
+          "spa-splash":   { "3h-18": { "premium": 146100, "regular": 122150 }, "3h-22": { "premium": 149120, "regular": 125150 }, "pernoite": { "premium": 379000, "regular": 272900 } },
+          "casa-lush":    { "3h-18": { "premium": 215000, "regular": 175150 }, "3h-22": { "premium": 218020, "regular": 178150 }, "pernoite": { "premium": 523800, "regular": 342600 } }
         }
       }
     }

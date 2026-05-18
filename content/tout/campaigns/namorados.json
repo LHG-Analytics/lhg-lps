@@ -5,7 +5,7 @@
   "meta": {
     "title": "Tout — Dia dos Namorados",
     "description": "Dia dos Namorados no Tout: 11 a 14 de junho, com 3 horas e pernoite. Buquê de rosas, jantar especial e espumante em Campinas.",
-    "canonical": "https://namorados.toutmotel.com.br",
+    "canonical": "https://diadosnamorados.toutmotel.com.br",
     "analytics": { "gtm": "GTM-KV5LWS2" }
   },
   "campaign": {
@@ -28,7 +28,7 @@
     ],
     "periods": [
       {
-        "id": "b91a615f-189b-4644-b684-40c35d19982c",
+        "id": "3h-18",
         "label": "3 horas · 18:00 – 21:00",
         "shortLabel": "3 horas",
         "meta": "Pacote gastronômico",
@@ -37,7 +37,7 @@
         "inclusos": "Jantar (1 couvert e 2 pratos principais)"
       },
       {
-        "id": "9501e2c1-e9f8-46a4-94ee-524a162d2165",
+        "id": "3h-22",
         "label": "3 horas · 22:00 – 01:00",
         "shortLabel": "3 horas",
         "meta": "Pacote gastronômico",
@@ -67,12 +67,12 @@
       "currency": "BRL",
       "units": {
         "campinas": {
-          "suite-a": { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  35600, "regular":  30900 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  38600, "regular":  33900 }, "pernoite": { "premium": 103400, "regular": 103400 } },
-          "hidro":   { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  41400, "regular":  35400 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  44400, "regular":  38400 }, "pernoite": { "premium": 114400, "regular": 114400 } },
-          "glam":    { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  44000, "regular":  37400 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  47000, "regular":  40400 }, "pernoite": { "premium": 119500, "regular": 119500 } },
-          "relax":   { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  45300, "regular":  38400 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  48300, "regular":  41400 }, "pernoite": { "premium": 123800, "regular": 123800 } },
-          "sublime": { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  55700, "regular":  46400 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  58700, "regular":  49400 }, "pernoite": { "premium": 138000, "regular": 138000 } },
-          "club":    { "b91a615f-189b-4644-b684-40c35d19982c": { "premium":  96000, "regular":  77400 }, "9501e2c1-e9f8-46a4-94ee-524a162d2165": { "premium":  99000, "regular":  80400 }, "pernoite": { "premium": 247200, "regular": 247200 } }
+          "suite-a": { "3h-18": { "premium":  35600, "regular":  30900 }, "3h-22": { "premium":  38600, "regular":  33900 }, "pernoite": { "premium": 103400, "regular": 103400 } },
+          "hidro":   { "3h-18": { "premium":  41400, "regular":  35400 }, "3h-22": { "premium":  44400, "regular":  38400 }, "pernoite": { "premium": 114400, "regular": 114400 } },
+          "glam":    { "3h-18": { "premium":  44000, "regular":  37400 }, "3h-22": { "premium":  47000, "regular":  40400 }, "pernoite": { "premium": 119500, "regular": 119500 } },
+          "relax":   { "3h-18": { "premium":  45300, "regular":  38400 }, "3h-22": { "premium":  48300, "regular":  41400 }, "pernoite": { "premium": 123800, "regular": 123800 } },
+          "sublime": { "3h-18": { "premium":  55700, "regular":  46400 }, "3h-22": { "premium":  58700, "regular":  49400 }, "pernoite": { "premium": 138000, "regular": 138000 } },
+          "club":    { "3h-18": { "premium":  96000, "regular":  77400 }, "3h-22": { "premium":  99000, "regular":  80400 }, "pernoite": { "premium": 247200, "regular": 247200 } }
         }
       }
     }
