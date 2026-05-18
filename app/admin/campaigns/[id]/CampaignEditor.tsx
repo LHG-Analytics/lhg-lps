@@ -222,6 +222,9 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   const selectedIdxRef     = useRef<number | null>(null);
   const deleteBlockRef     = useRef<(idx: number) => void>(() => {});
   const pickedElementRef   = useRef<typeof pickedElement>(null);
+  const copiedBlockRef     = useRef<Block | null>(null);
+  const blocksRef          = useRef<Block[]>(blocks);
+  const pasteBlockRef      = useRef<() => void>(() => {});
 
   // ── história de undo/redo via refs (sem stale closure)
   const histRef     = useRef({ stack: [initialBlocks] as Block[][], idx: 0 });
@@ -247,6 +250,8 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   selectedIdxRef.current   = selectedIdx;
   deleteBlockRef.current   = deleteBlock;
   pickedElementRef.current = pickedElement;
+  blocksRef.current        = blocks;
+  pasteBlockRef.current    = pasteBlock;
 
   const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] ?? null : null;
   const isDirty = JSON.stringify(blocks) !== JSON.stringify(publishedBlocks);
@@ -353,6 +358,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
       if (mod) {
         if (e.key === "z" && !e.shiftKey) { e.preventDefault(); undoFn(); }
         if (e.key === "y" || (e.key === "z" && e.shiftKey)) { e.preventDefault(); redoFn(); }
+        const tgt = e.target as HTMLElement;
+        const inInput = tgt.tagName === "INPUT" || tgt.tagName === "TEXTAREA" || tgt.isContentEditable;
+        if (!inInput && !pickedElementRef.current) {
+          if (e.key === "c") {
+            const idx = selectedIdxRef.current;
+            const b = idx !== null ? blocksRef.current[idx] : null;
+            if (b) { copiedBlockRef.current = JSON.parse(JSON.stringify(b)); }
+          }
+          if (e.key === "v" && copiedBlockRef.current) {
+            e.preventDefault();
+            pasteBlockRef.current();
+          }
+        }
         return;
       }
       if (e.key === "Delete" || e.key === "Backspace") {
@@ -513,6 +531,19 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     if (selectedIdx === idx) { setSelectedIdx(null); setDrawerOpen(false); }
     else if (selectedIdx !== null && selectedIdx > idx) setSelectedIdx(selectedIdx - 1);
     updateBlocks(next);
+  }
+
+  function pasteBlock() {
+    const copied = copiedBlockRef.current;
+    if (!copied) return;
+    const idx = selectedIdxRef.current;
+    const insertAt = idx !== null ? idx + 1 : blocksRef.current.length;
+    const clone = { ...JSON.parse(JSON.stringify(copied)) as Block, _id: crypto.randomUUID() };
+    const next = [...blocksRef.current.slice(0, insertAt), clone, ...blocksRef.current.slice(insertAt)];
+    updateBlocks(next);
+    setSelectedIdx(insertAt);
+    setDrawerOpen(true);
+    iframeRef.current?.contentWindow?.postMessage({ type: "select-block", blockIndex: insertAt }, "*");
   }
 
   function duplicateBlock(idx: number) {
