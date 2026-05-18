@@ -267,6 +267,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         setSelectedIdx(e.data.blockIndex ?? null);
         setDrawerOpen(true);
         setBlockElements(e.data.elements ?? []);
+        window.focus();
       }
       if (e.data?.type === "block-computed-styles") setBlockElements(e.data.elements ?? []);
       if (e.data?.type === "preview-ready") { sendToPreview(blocks); sendThemeToPreview(theme); }
@@ -284,6 +285,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           tagName: e.data.tagName,
         });
         setPickedRect(e.data.rect ?? null);
+        window.focus();
       }
       if (e.data?.type === "block-and-element-click") {
         skipPickResetRef.current = true;
@@ -298,6 +300,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           tagName: e.data.tagName,
         });
         setPickedRect(e.data.rect ?? null);
+        window.focus();
       }
       if (e.data?.type === "picker-cancelled") { setPickerActive(false); setInspectorMode(false); }
     }
