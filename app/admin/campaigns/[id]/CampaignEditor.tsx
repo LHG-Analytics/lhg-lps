@@ -212,11 +212,15 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     top: number; left: number; right: number; bottom: number; width: number; height: number;
   } | null>(null);
 
-  const iframeRef        = useRef<HTMLIFrameElement>(null);
-  const saveTimer        = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const divDragRef       = useRef<{ startY: number; startH: number } | null>(null);
-  const monacoRef        = useRef<any>(null);
-  const skipPickResetRef = useRef(false);
+  const [blankInput, setBlankInput]            = useState<string | null>(null);
+
+  const iframeRef          = useRef<HTMLIFrameElement>(null);
+  const saveTimer          = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const divDragRef         = useRef<{ startY: number; startH: number } | null>(null);
+  const monacoRef          = useRef<any>(null);
+  const skipPickResetRef   = useRef(false);
+  const selectedIdxRef     = useRef<number | null>(null);
+  const deleteBlockRef     = useRef<(idx: number) => void>(() => {});
 
   // ── história de undo/redo via refs (sem stale closure)
   const histRef     = useRef({ stack: [initialBlocks] as Block[][], idx: 0 });
@@ -237,6 +241,10 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
     setCanUndo(h.idx > 0);
     setCanRedo(false);
   }
+
+  // Manter refs em sync — não disparam re-render
+  selectedIdxRef.current = selectedIdx;
+  deleteBlockRef.current = deleteBlock;
 
   const selectedBlock = selectedIdx !== null ? blocks[selectedIdx] ?? null : null;
   const isDirty = JSON.stringify(blocks) !== JSON.stringify(publishedBlocks);
@@ -337,9 +345,20 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const mod = e.ctrlKey || e.metaKey;
-      if (!mod) return;
-      if (e.key === "z" && !e.shiftKey) { e.preventDefault(); undoFn(); }
-      if (e.key === "y" || (e.key === "z" && e.shiftKey)) { e.preventDefault(); redoFn(); }
+      if (mod) {
+        if (e.key === "z" && !e.shiftKey) { e.preventDefault(); undoFn(); }
+        if (e.key === "y" || (e.key === "z" && e.shiftKey)) { e.preventDefault(); redoFn(); }
+        return;
+      }
+      if (e.key === "Delete" || e.key === "Backspace") {
+        const tgt = e.target as HTMLElement;
+        // Não interfere com inputs, textareas ou o Monaco (contenteditable)
+        if (tgt.tagName === "INPUT" || tgt.tagName === "TEXTAREA" || tgt.isContentEditable) return;
+        const idx = selectedIdxRef.current;
+        if (idx === null) return;
+        e.preventDefault();
+        deleteBlockRef.current(idx);
+      }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -726,6 +745,45 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                       {BLOCK_ICON[type]} {type}
                     </button>
                   ))}
+
+                  {/* Bloco em branco — type personalizado */}
+                  {blankInput === null ? (
+                    <button onClick={() => setBlankInput("")} style={{
+                      background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(166,124,255,0.3)",
+                      borderRadius: 5, padding: "3px 7px", fontSize: 10, color: "#6B5FA0", cursor: "pointer",
+                    }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(166,124,255,0.1)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.03)")}
+                    >
+                      + em branco
+                    </button>
+                  ) : (
+                    <input
+                      autoFocus
+                      value={blankInput}
+                      placeholder="tipo…"
+                      onChange={(e) => setBlankInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          const t = blankInput.trim();
+                          if (t) addBlock(t);
+                          setBlankInput(null);
+                        }
+                        if (e.key === "Escape") setBlankInput(null);
+                      }}
+                      onBlur={() => {
+                        const t = blankInput.trim();
+                        if (t) addBlock(t);
+                        setBlankInput(null);
+                      }}
+                      style={{
+                        background: "rgba(166,124,255,0.08)", border: "1px solid rgba(166,124,255,0.4)",
+                        borderRadius: 5, padding: "3px 7px", fontSize: 10, color: "#C4AEFF",
+                        outline: "none", width: 90,
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </>
