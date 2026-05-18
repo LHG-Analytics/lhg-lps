@@ -126,6 +126,30 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
     }
   }
 
+  async function resendInvite(inv: Invite) {
+    setBusy(inv.id); setError(""); setInviteOk("");
+    try {
+      // Remove o expirado e cria um novo
+      await fetch(`/api/admin/invites/${inv.id}`, { method: "DELETE" });
+      const res = await fetch("/api/admin/invites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inv.email, inviteRole: inv.role }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setInvites((prev) => prev.map((i) =>
+        i.id === inv.id
+          ? { ...i, created_at: new Date().toISOString(), expires_at: null }
+          : i
+      ));
+      setInviteOk(`Convite reenviado para ${inv.email}.`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erro ao reenviar convite.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
 
@@ -251,9 +275,16 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
                       )}
                     </td>
                     <td style={{ ...tdStyle, textAlign: "right" }}>
-                      <ActionBtn onClick={() => cancelInvite(inv)} disabled={isBusy} danger>
-                        Cancelar
-                      </ActionBtn>
+                      <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                        {expired && (
+                          <ActionBtn onClick={() => resendInvite(inv)} disabled={isBusy}>
+                            Reenviar
+                          </ActionBtn>
+                        )}
+                        <ActionBtn onClick={() => cancelInvite(inv)} disabled={isBusy} danger>
+                          Cancelar
+                        </ActionBtn>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -325,10 +356,10 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
                       {p.last_sign_in_at ? (
                         <>
                           <div style={{ color: "#C4BFDE" }}>
-                            {new Date(p.last_sign_in_at).toLocaleDateString("pt-BR")}
+                            {new Date(p.last_sign_in_at).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
                           </div>
                           <div style={{ color: "#55526A", fontSize: 11 }}>
-                            {new Date(p.last_sign_in_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                            {new Date(p.last_sign_in_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo" })}
                           </div>
                         </>
                       ) : (
