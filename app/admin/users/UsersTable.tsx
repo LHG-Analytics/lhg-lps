@@ -7,6 +7,7 @@ interface Profile {
   email: string | null;
   role: "admin" | "editor";
   created_at: string;
+  last_sign_in_at: string | null;
 }
 
 interface Invite {
@@ -201,7 +202,7 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                {["E-mail", "Role", "Enviado em", ""].map((h) => (
+                {["E-mail", "Role", "Status", "Enviado em", ""].map((h) => (
                   <th key={h} style={{ ...tdStyle, fontSize: 10, color: "#55526A", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", padding: "8px 16px" }}>
                     {h}
                   </th>
@@ -224,17 +225,23 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
                         }}>
                           {inv.email[0]?.toUpperCase()}
                         </div>
-                        <div>
-                          <div style={{ fontSize: 13 }}>{inv.email}</div>
-                          {expired && (
-                            <div style={{ fontSize: 10, color: "#E05260", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                              Expirado
-                            </div>
-                          )}
-                        </div>
+                        <div style={{ fontSize: 13 }}>{inv.email}</div>
                       </div>
                     </td>
                     <td style={tdStyle}><span style={pill(inv.role)}>{inv.role}</span></td>
+                    <td style={tdStyle}>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: 5,
+                        padding: "2px 8px", borderRadius: 99, fontSize: 10, fontWeight: 700,
+                        letterSpacing: "0.06em", textTransform: "uppercase",
+                        background: expired ? "rgba(224,82,96,0.1)" : "rgba(251,191,36,0.1)",
+                        color:      expired ? "#E05260"              : "#FBB924",
+                        border:     `1px solid ${expired ? "rgba(224,82,96,0.25)" : "rgba(251,191,36,0.25)"}`,
+                      }}>
+                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "currentColor", flexShrink: 0 }} />
+                        {expired ? "Expirado" : "Aguardando aceite"}
+                      </span>
+                    </td>
                     <td style={{ ...tdStyle, color: "#55526A", fontSize: 12 }}>
                       <div>{new Date(inv.created_at).toLocaleDateString("pt-BR")}</div>
                       {inv.expires_at && (
@@ -272,7 +279,7 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                {["Usuário", "Role", "Desde", ""].map((h) => (
+                {["Usuário", "Role", "Desde", "Último acesso", ""].map((h) => (
                   <th key={h} style={{ ...tdStyle, fontSize: 10, color: "#55526A", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", padding: "8px 16px" }}>
                     {h}
                   </th>
@@ -312,6 +319,21 @@ export function UsersTable({ profiles: initial, initialInvites, currentUserId }:
 
                     <td style={{ ...tdStyle, color: "#55526A", fontSize: 12 }}>
                       {new Date(p.created_at).toLocaleDateString("pt-BR")}
+                    </td>
+
+                    <td style={{ ...tdStyle, fontSize: 12 }}>
+                      {p.last_sign_in_at ? (
+                        <>
+                          <div style={{ color: "#C4BFDE" }}>
+                            {new Date(p.last_sign_in_at).toLocaleDateString("pt-BR")}
+                          </div>
+                          <div style={{ color: "#55526A", fontSize: 11 }}>
+                            {new Date(p.last_sign_in_at).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                        </>
+                      ) : (
+                        <span style={{ color: "#3A3750" }}>—</span>
+                      )}
                     </td>
 
                     <td style={{ ...tdStyle, textAlign: "right" }}>

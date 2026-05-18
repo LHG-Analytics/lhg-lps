@@ -13,10 +13,7 @@ export default async function UsersPage() {
   if (role !== "admin") redirect("/admin");
 
   const [{ data: profiles }, { data: invites }] = await Promise.all([
-    supabase
-      .from("admin_profiles")
-      .select("id, name, email, role, created_at")
-      .order("created_at", { ascending: true }),
+    supabase.rpc("get_admin_profiles_with_last_seen"),
     supabase
       .from("admin_invites")
       .select("id, email, role, created_at, expires_at")
