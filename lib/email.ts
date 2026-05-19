@@ -13,12 +13,12 @@ export async function sendInviteEmail({
   invitedByEmail: string | undefined;
   loginUrl: string;
 }) {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY) return { error: "RESEND_API_KEY não configurada." };
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   const roleLabel = role === "admin" ? "Administrador" : "Editor";
 
-  await resend.emails.send({
+  return resend.emails.send({
     from: FROM,
     to,
     subject: "Você foi convidado para o LHG CMS",
@@ -66,3 +66,4 @@ export async function sendInviteEmail({
 </html>`,
   });
 }
+

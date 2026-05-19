@@ -60,12 +60,17 @@ export async function POST(request: NextRequest) {
   });
 
   const loginUrl = `${request.nextUrl.origin}/admin/login`;
-  void sendInviteEmail({
+  const emailResult = await sendInviteEmail({
     to: email,
     role: inviteRole as "admin" | "editor",
     invitedByEmail: user.email ?? undefined,
     loginUrl,
   });
+
+  if (emailResult?.error) {
+    console.error("[invites] Resend error:", emailResult.error);
+    return new NextResponse(`Convite salvo, mas falha ao enviar e-mail: ${JSON.stringify(emailResult.error)}`, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true }, { status: 201 });
 }
