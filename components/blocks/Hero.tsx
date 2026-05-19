@@ -35,9 +35,17 @@ export function Hero({
   const decorativeMark = brand.name.charAt(0);
   const posterSrc = poster ? asset(poster) : undefined;
 
-  // videoActive flipa para true no onPlay do <video> — só então o poster some.
+  // videoActive flipa para true no onCanPlay/onPlay do <video>.
+  // posterHidden remove o elemento do DOM após a transição (evita artefato de compositing).
   const [videoActive, setVideoActive] = useState(false);
+  const [posterHidden, setPosterHidden] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!videoActive) return;
+    const t = setTimeout(() => setPosterHidden(true), 900); // 0.8s transition + margem
+    return () => clearTimeout(t);
+  }, [videoActive]);
 
   // Fallback JS play() para browsers que ignoram o atributo autoPlay.
   // Delay curto apenas para deixar o poster ser pintado antes do primeiro frame.
@@ -51,7 +59,7 @@ export function Hero({
 
   return (
     <section className="hero" id="top">
-      {poster && (
+      {poster && !posterHidden && (
         <Image
           src={poster}
           alt=""
@@ -77,7 +85,7 @@ export function Hero({
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           aria-hidden="true"
           onCanPlay={() => setVideoActive(true)}
           onPlay={() => setVideoActive(true)}
