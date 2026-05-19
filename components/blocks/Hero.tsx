@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import type { Brand, HeroBlockProps } from "@/lib/schema";
 import { asset } from "@/lib/asset";
 
@@ -8,19 +7,8 @@ type Props = HeroBlockProps & { brand: Brand };
 
 type TwState = { before: string; em: string; after: string };
 
-/**
- * Hero — vídeo de fundo + typewriter no h1 com ciclo de 4s.
- *
- * Comportamento espelha o HTML original:
- *   - SSR renderiza o texto completo (acessibilidade + no-JS).
- *   - Em hover-capable + sem reduce-motion, useEffect zera o texto e
- *     digita char por char (85±45ms), destacando a palavra `headlineEmphasis`
- *     com `<em>` (gradient lavanda do CSS .display em).
- *   - Após escrever, espera 4s e reinicia o ciclo.
- */
 export function Hero({
   video,
-  poster,
   eyebrow,
   headlineFull,
   headlineEmphasis,
@@ -33,65 +21,18 @@ export function Hero({
   const tw = useTypewriter(headlineFull, headlineEmphasis, typewriter ?? false);
   const ghostState = initialFullState(headlineFull, headlineEmphasis);
   const decorativeMark = brand.name.charAt(0);
-  const posterSrc = poster ? asset(poster) : undefined;
-
-  // videoActive flipa para true no onCanPlay/onPlay do <video>.
-  // posterHidden remove o elemento do DOM após a transição (evita artefato de compositing).
-  const [videoActive, setVideoActive] = useState(false);
-  const [posterHidden, setPosterHidden] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (!videoActive) return;
-    const t = setTimeout(() => setPosterHidden(true), 900); // 0.8s transition + margem
-    return () => clearTimeout(t);
-  }, [videoActive]);
-
-  // Fallback JS play() — só tenta se autoPlay não arrancou sozinho.
-  // Espera canplay (dados suficientes) antes de chamar play(),
-  // evitando interromper o autoPlay em andamento ou falhar por falta de buffer.
-  useEffect(() => {
-    if (!video) return;
-    const el = videoRef.current;
-    if (!el) return;
-    const tryPlay = () => { if (el.paused) el.play().catch(() => {}); };
-    if (el.readyState >= 3) { tryPlay(); return; }
-    el.addEventListener("canplay", tryPlay, { once: true });
-    return () => el.removeEventListener("canplay", tryPlay);
-  }, [video]);
 
   return (
     <section className="hero" id="top">
-      {poster && !posterHidden && (
-        <Image
-          src={poster}
-          alt=""
-          aria-hidden="true"
-          fill
-          priority
-          unoptimized
-          sizes="100vw"
-          className="hero__poster"
-          style={{
-            objectFit: "cover",
-            pointerEvents: "none",
-            opacity: videoActive ? 0 : 1,
-            transition: "opacity 0.8s ease",
-          }}
-        />
-      )}
       {video && (
         <video
-          ref={videoRef}
           className="hero__video"
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           aria-hidden="true"
-          onCanPlay={() => setVideoActive(true)}
-          onPlay={() => setVideoActive(true)}
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
           <source src={asset(video)} type="video/mp4" />
