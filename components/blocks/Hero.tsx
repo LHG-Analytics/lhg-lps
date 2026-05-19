@@ -78,8 +78,8 @@ export function Hero({
           loop
           playsInline
           preload="none"
-          poster={posterSrc}
           aria-hidden="true"
+          onCanPlay={() => setVideoActive(true)}
           onPlay={() => setVideoActive(true)}
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
