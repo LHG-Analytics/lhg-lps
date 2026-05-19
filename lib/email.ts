@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const FROM = process.env.RESEND_FROM ?? "LHG CMS <cms@lushmotel.com.br>";
+const FROM = process.env.RESEND_FROM ?? "LHG CMS <cms@lhgmoteis.com.br>";
 
 export async function sendInviteEmail({
   to,
