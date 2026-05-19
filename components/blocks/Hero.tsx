@@ -47,14 +47,17 @@ export function Hero({
     return () => clearTimeout(t);
   }, [videoActive]);
 
-  // Fallback JS play() para browsers que ignoram o atributo autoPlay.
-  // Delay curto apenas para deixar o poster ser pintado antes do primeiro frame.
+  // Fallback JS play() — só tenta se autoPlay não arrancou sozinho.
+  // Espera canplay (dados suficientes) antes de chamar play(),
+  // evitando interromper o autoPlay em andamento ou falhar por falta de buffer.
   useEffect(() => {
     if (!video) return;
     const el = videoRef.current;
     if (!el) return;
-    const t = setTimeout(() => el.play().catch(() => {}), 300);
-    return () => clearTimeout(t);
+    const tryPlay = () => { if (el.paused) el.play().catch(() => {}); };
+    if (el.readyState >= 3) { tryPlay(); return; }
+    el.addEventListener("canplay", tryPlay, { once: true });
+    return () => el.removeEventListener("canplay", tryPlay);
   }, [video]);
 
   return (
