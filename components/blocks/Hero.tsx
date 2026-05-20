@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import type { Brand, HeroBlockProps } from "@/lib/schema";
 import { asset } from "@/lib/asset";
 
@@ -9,6 +10,7 @@ type TwState = { before: string; em: string; after: string };
 
 export function Hero({
   video,
+  poster,
   eyebrow,
   headlineFull,
   headlineEmphasis,
@@ -24,6 +26,20 @@ export function Hero({
 
   return (
     <section className="hero" id="top">
+      {/* Imagem estática de fundo — só quando não há vídeo (ex: Andar de Cima) */}
+      {poster && !video && (
+        <Image
+          src={poster}
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          unoptimized
+          sizes="100vw"
+          className="hero__poster"
+          style={{ objectFit: "cover", pointerEvents: "none" }}
+        />
+      )}
       {video && (
         <video
           className="hero__video"
