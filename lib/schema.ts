@@ -203,7 +203,7 @@ const BenefitsBlock = z.object({
     headlineEmphasis: z.string(),
     items: z.array(
       z.object({
-        icon: z.enum(["heart", "calendar", "champagne", "clock"]),
+        icon: z.enum(["heart", "calendar", "champagne", "clock", "check", "utensils", "dollar", "lock", "shield", "star", "gift", "bed", "wifi", "pin", "car", "coffee", "percent", "tag", "home", "users", "phone", "sun", "award", "smile", "leaf", "zap", "eye", "music"]),
         title: z.string(),
         body: z.string(),
       })

@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { BENEFIT_ICON_KEYS, BENEFIT_ICON_LABELS, BENEFIT_ICON_PATHS, type BenefitIconKey } from "@/lib/benefit-icons";
 import { z } from "zod";
 
 const BlockShapeSchema = z.array(
@@ -1114,7 +1115,6 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
 /* ── PropForm ───────────────────────────────────────── */
 const ENUM_OPTIONS: Record<string, string[]> = {
   variant:  ["gold", "emerald", "red", "ghost"],
-  icon:     ["heart", "calendar", "champagne", "clock"],
   tier:     ["regular", "premium"],
   scopeKey: ["3h", "all"],
 };
@@ -1200,6 +1200,94 @@ function deepKeyMatch(val: unknown, f: string): boolean {
   return false;
 }
 
+/* ── IconPickerField ────────────────────────────────── */
+function IconPickerField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return BENEFIT_ICON_KEYS as readonly BenefitIconKey[];
+    return BENEFIT_ICON_KEYS.filter((k) =>
+      k.includes(q) || BENEFIT_ICON_LABELS[k].toLowerCase().includes(q)
+    );
+  }, [search]);
+
+  const current = value as BenefitIconKey;
+
+  return (
+    <div style={{ position: "relative" }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          ...fieldStyle,
+          display: "flex", alignItems: "center", gap: 8,
+          cursor: "pointer", textAlign: "left",
+        }}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}
+          style={{ width: 16, height: 16, flexShrink: 0 }}>
+          {BENEFIT_ICON_PATHS[current]}
+        </svg>
+        <span style={{ flex: 1, fontSize: 12 }}>{BENEFIT_ICON_LABELS[current] ?? current}</span>
+        <span style={{ fontSize: 10, color: "#55526A" }}>▾</span>
+      </button>
+
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 4px)", left: 0, right: 0, zIndex: 200,
+          background: "#1C1B27", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8,
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5)", padding: 10,
+        }}>
+          <input
+            autoFocus
+            placeholder="Buscar ícone…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ ...fieldStyle, marginBottom: 8, width: "100%", boxSizing: "border-box" }}
+          />
+          <div style={{
+            display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 4,
+            maxHeight: 260, overflowY: "auto",
+          }}>
+            {filtered.map((k) => (
+              <button
+                key={k}
+                type="button"
+                title={BENEFIT_ICON_LABELS[k]}
+                onClick={() => { onChange(k); setOpen(false); setSearch(""); }}
+                style={{
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                  padding: "6px 4px", borderRadius: 6, cursor: "pointer", border: "none",
+                  background: k === current ? "rgba(166,124,255,0.18)" : "transparent",
+                  outline: k === current ? "1px solid rgba(166,124,255,0.5)" : "none",
+                  transition: "background 0.15s",
+                }}
+                onMouseEnter={(e) => { if (k !== current) (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.06)"; }}
+                onMouseLeave={(e) => { if (k !== current) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}
+                  style={{ width: 18, height: 18, color: k === current ? "#A67CFF" : "#8E8AA8" }}>
+                  {BENEFIT_ICON_PATHS[k]}
+                </svg>
+                <span style={{ fontSize: 9, color: "#55526A", textAlign: "center", lineHeight: 1.2 }}>
+                  {BENEFIT_ICON_LABELS[k]}
+                </span>
+              </button>
+            ))}
+            {filtered.length === 0 && (
+              <div style={{ gridColumn: "span 5", fontSize: 11, color: "#3A3850", textAlign: "center", padding: 12 }}>
+                Nenhum ícone encontrado
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PropForm({
   data, path, brandId, onChange, filter,
 }: {
@@ -1230,7 +1318,10 @@ function PropForm({
               {labelify(key)}
             </label>
 
-            {ENUM_OPTIONS[key] ? (
+            {key === "icon" ? (
+              <IconPickerField value={String(val ?? "heart")} onChange={(v) => onChange(fullPath, v)} />
+
+            ) : ENUM_OPTIONS[key] ? (
               <select value={String(val ?? "")} onChange={(e) => onChange(fullPath, e.target.value)} style={fieldStyle}>
                 {ENUM_OPTIONS[key].map((opt) => <option key={opt} value={opt}>{opt}</option>)}
               </select>
