@@ -1,6 +1,8 @@
 import { getBrand, getCampaign } from "@/lib/content";
+import { createClient } from "@/lib/supabase/server";
 import { LivePreviewClient } from "./LivePreviewClient";
 import { notFound } from "next/navigation";
+import type { Campaign } from "@/lib/schema";
 
 export default async function PreviewPage({
   params,
@@ -9,14 +11,46 @@ export default async function PreviewPage({
 }) {
   const { brand: brandId, campaign: campaignSlug } = await params;
 
-  let brand, campaign;
+  const brand = await getBrand(brandId).catch(() => null);
+  if (!brand) notFound();
+
+  // Campanhas publicadas vivem no JSON; duplicatas/rascunhos só no Supabase
+  let campaign: Campaign;
   try {
-    [brand, campaign] = await Promise.all([
-      getBrand(brandId),
-      getCampaign(brandId, campaignSlug),
-    ]);
+    campaign = await getCampaign(brandId, campaignSlug);
   } catch {
-    notFound();
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("campaigns")
+      .select("slug, lang, meta, campaign_data, blocks")
+      .eq("brand_id", brandId)
+      .eq("slug", campaignSlug)
+      .single();
+
+    if (!data) notFound();
+
+    const cd = (data.campaign_data ?? {}) as Record<string, unknown>;
+    const m  = (data.meta          ?? {}) as Record<string, unknown>;
+
+    campaign = {
+      slug:  data.slug,
+      brand: brandId,
+      lang:  (data.lang as string | null) ?? "pt-BR",
+      meta: {
+        title:       (m.title       as string | undefined) ?? "",
+        description: (m.description as string | undefined) ?? "",
+        analytics:   (m.analytics   as Campaign["meta"]["analytics"] | undefined) ?? {},
+      },
+      campaign: {
+        name:      (cd.name      as string  | undefined) ?? "",
+        range:     (cd.range     as Campaign["campaign"]["range"]    | undefined) ?? { from: "", to: "" },
+        countdown: (cd.countdown as Campaign["campaign"]["countdown"]| undefined) ?? { target: "" },
+        lots:      (cd.lots      as Campaign["campaign"]["lots"]     | undefined) ?? [],
+        periods:   (cd.periods   as Campaign["campaign"]["periods"]  | undefined) ?? [],
+        dates:     (cd.dates     as Campaign["campaign"]["dates"]    | undefined) ?? [],
+      },
+      blocks: (data.blocks as Campaign["blocks"] | null) ?? [],
+    } as Campaign;
   }
 
   return (
