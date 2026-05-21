@@ -4,6 +4,8 @@ import { LivePreviewClient } from "./LivePreviewClient";
 import { notFound } from "next/navigation";
 import type { Campaign } from "@/lib/schema";
 
+type CmsFont = { display?: string; body?: string } | null;
+
 export default async function PreviewPage({
   params,
 }: {
@@ -14,12 +16,13 @@ export default async function PreviewPage({
   const brand = await getBrand(brandId).catch(() => null);
   if (!brand) notFound();
 
+  const supabase = await createClient();
+
   // Campanhas publicadas vivem no JSON; duplicatas/rascunhos só no Supabase
   let campaign: Campaign;
   try {
     campaign = await getCampaign(brandId, campaignSlug);
   } catch {
-    const supabase = await createClient();
     const { data } = await supabase
       .from("campaigns")
       .select("slug, lang, meta, campaign_data, blocks")
@@ -53,11 +56,26 @@ export default async function PreviewPage({
     } as Campaign;
   }
 
+  // Fontes configuradas no CMS (autenticado — sem restrição de RLS)
+  let cmsFont: CmsFont = null;
+  const { data: brandRow } = await supabase
+    .from("brands")
+    .select("fonts")
+    .eq("id", brandId)
+    .maybeSingle();
+  if (brandRow?.fonts && typeof brandRow.fonts === "object") {
+    const f = brandRow.fonts as Record<string, unknown>;
+    const d = typeof f.display === "string" ? f.display : undefined;
+    const b = typeof f.body    === "string" ? f.body    : undefined;
+    if (d ?? b) cmsFont = { display: d, body: b };
+  }
+
   return (
     <LivePreviewClient
       brand={brand}
       campaign={campaign}
       initialBlocks={campaign.blocks}
+      cmsFont={cmsFont}
     />
   );
 }

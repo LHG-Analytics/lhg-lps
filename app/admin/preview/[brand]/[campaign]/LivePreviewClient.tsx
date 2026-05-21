@@ -5,15 +5,17 @@ import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
 import { EditorOverlay } from "./EditorOverlay";
 import { themeStyle } from "@/lib/theme";
+import { buildGoogleFontsUrl, fontVars } from "@/lib/fonts";
 import type { Brand, Campaign, Block } from "@/lib/schema";
 
 interface Props {
   brand: Brand;
   campaign: Campaign;
   initialBlocks: readonly Block[];
+  cmsFont?: { display?: string; body?: string } | null;
 }
 
-export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
+export function LivePreviewClient({ brand, campaign, initialBlocks, cmsFont }: Props) {
   const [blocks, setBlocks] = useState<Block[]>(() =>
     initialBlocks.map((b, i) => ({
       ...b,
@@ -21,6 +23,40 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
     }))
   );
   const [themeOverride, setThemeOverride] = useState<Record<string, string> | null>(null);
+
+  // Injeta Google Fonts para as fontes configuradas no CMS
+  const displayFont = cmsFont?.display ?? brand.fonts.serif.family;
+  const bodyFont    = cmsFont?.body    ?? brand.fonts.sans.family;
+  const fontsUrl    = buildGoogleFontsUrl(displayFont, bodyFont);
+
+  useEffect(() => {
+    if (!fontsUrl) return;
+    if (!document.getElementById("brand-google-fonts-preconnect-gapis")) {
+      const pc1 = document.createElement("link");
+      pc1.id   = "brand-google-fonts-preconnect-gapis";
+      pc1.rel  = "preconnect";
+      pc1.href = "https://fonts.googleapis.com";
+      document.head.appendChild(pc1);
+    }
+    if (!document.getElementById("brand-google-fonts-preconnect-gstatic")) {
+      const pc2 = document.createElement("link");
+      pc2.id          = "brand-google-fonts-preconnect-gstatic";
+      pc2.rel         = "preconnect";
+      pc2.href        = "https://fonts.gstatic.com";
+      pc2.crossOrigin = "";
+      document.head.appendChild(pc2);
+    }
+    const existing = document.getElementById("brand-google-fonts") as HTMLLinkElement | null;
+    if (existing) {
+      existing.href = fontsUrl;
+    } else {
+      const link  = document.createElement("link");
+      link.id     = "brand-google-fonts";
+      link.rel    = "stylesheet";
+      link.href   = fontsUrl;
+      document.head.appendChild(link);
+    }
+  }, [fontsUrl]);
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
@@ -51,7 +87,7 @@ export function LivePreviewClient({ brand, campaign, initialBlocks }: Props) {
 
   // Mescla o tema original com overrides do editor e passa pelo mapeamento correto de CSS vars
   const effectiveTheme = themeOverride ? { ...brand.theme, ...(themeOverride as any) } : brand.theme;
-  const mergedStyle = themeStyle(effectiveTheme);
+  const mergedStyle = { ...themeStyle(effectiveTheme), ...fontVars(displayFont, bodyFont) };
 
   return (
     <>

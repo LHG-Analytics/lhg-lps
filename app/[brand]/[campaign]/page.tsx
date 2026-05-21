@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getAllCampaigns, getBrand, getCampaign } from "@/lib/content";
 import { themeStyle } from "@/lib/theme";
+import { buildGoogleFontsUrl, fontVars } from "@/lib/fonts";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
@@ -86,8 +87,17 @@ export default async function CampaignPage({ params }: { params: Params }) {
   );
   const heroPoster = heroBlock?.props?.poster as string | undefined;
 
+  // Fontes: CMS override (Supabase) → JSON brand.fonts → undefined
+  const displayFont = data.cmsFont?.display ?? data.brand.fonts.serif.family;
+  const bodyFont    = data.cmsFont?.body    ?? data.brand.fonts.sans.family;
+  const fontsUrl    = buildGoogleFontsUrl(displayFont, bodyFont);
+  const fontStyle   = fontVars(displayFont, bodyFont);
+
   return (
     <>
+      {fontsUrl && <link rel="preconnect" href="https://fonts.googleapis.com" />}
+      {fontsUrl && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
+      {fontsUrl && <link rel="stylesheet" href={fontsUrl} />}
       {heroPoster && (
         <link
           rel="preload"
@@ -97,7 +107,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
           {...(heroPoster.endsWith(".webp") && { type: "image/webp" })}
         />
       )}
-      <div style={themeStyle(data.brand.theme)} data-brand={data.brand.id}>
+      <div style={{ ...themeStyle(data.brand.theme), ...fontStyle }} data-brand={data.brand.id}>
         {analytics?.gtm && <GtmNoscript id={analytics.gtm} />}
         <BlockRenderer
           brand={data.brand}
@@ -127,18 +137,27 @@ async function safeLoad(brandId: string, campaignSlug: string) {
 
     // Tenta sobrescrever com dados publicados do CMS (Supabase anon key + RLS)
     let campaign = campaignFromFile;
+    let cmsFont: { display?: string; body?: string } | null = null;
     try {
       const supabase = createSupabasePublic(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
-      const { data: row } = await supabase
-        .from("campaigns")
-        .select("blocks, meta")
-        .eq("brand_id", brandId)
-        .eq("slug", campaignSlug)
-        .eq("status", "published")
-        .maybeSingle();
+
+      const [{ data: row }, { data: brandRow }] = await Promise.all([
+        supabase
+          .from("campaigns")
+          .select("blocks, meta")
+          .eq("brand_id", brandId)
+          .eq("slug", campaignSlug)
+          .eq("status", "published")
+          .maybeSingle(),
+        supabase
+          .from("brands")
+          .select("fonts")
+          .eq("id", brandId)
+          .maybeSingle(),
+      ]);
 
       if (row?.blocks) {
         const parsed = LooseBlockSchema.safeParse(row.blocks);
@@ -150,9 +169,15 @@ async function safeLoad(brandId: string, campaignSlug: string) {
         const incoming = row.meta as { title?: string; description?: string; ogTitle?: string; ogDescription?: string; ogImage?: string; canonical?: string; robots?: "index" | "noindex"; analytics?: Record<string, string> };
         campaign = { ...campaign, meta: { ...campaign.meta, ...incoming } };
       }
+      if (brandRow?.fonts && typeof brandRow.fonts === "object") {
+        const f = brandRow.fonts as Record<string, unknown>;
+        const d = typeof f.display === "string" ? f.display : undefined;
+        const b = typeof f.body    === "string" ? f.body    : undefined;
+        if (d ?? b) cmsFont = { display: d, body: b };
+      }
     } catch { /* Supabase indisponível → mantém JSON */ }
 
-    return { brand, campaign };
+    return { brand, campaign, cmsFont };
   } catch {
     return null;
   }
