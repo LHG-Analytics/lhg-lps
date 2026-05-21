@@ -25,15 +25,28 @@ export function Hero({
   const decorativeMark = brand.name.charAt(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Fallback para browsers que ignoram o atributo autoPlay (iOS Safari, alguns Android).
-  // autoPlay + muted + playsInline é necessário mas não sempre suficiente — o play()
-  // programático garante o início mesmo quando o atributo é ignorado.
   useEffect(() => {
-    if (!video) return;
     const el = videoRef.current;
-    if (!el) return;
-    const t = setTimeout(() => el.play().catch(() => {}), 300);
-    return () => clearTimeout(t);
+    if (!el || !video) return;
+
+    // Só chama play() se o vídeo ainda estiver pausado (não interrompe autoPlay em andamento)
+    const tryPlay = () => { if (el.paused) el.play().catch(() => {}); };
+
+    // Caminho principal: espera canplay (dados suficientes no buffer) antes de tocar
+    if (el.readyState >= 3) {
+      tryPlay();
+    } else {
+      el.addEventListener("canplay", tryPlay, { once: true });
+    }
+
+    // Fallback iOS: Low Power Mode e configurações de dados celulares podem bloquear
+    // autoPlay mesmo em vídeos mutados — o primeiro toque desbloqueia a mídia.
+    document.addEventListener("touchstart", tryPlay, { once: true, passive: true });
+
+    return () => {
+      el.removeEventListener("canplay", tryPlay);
+      document.removeEventListener("touchstart", tryPlay);
+    };
   }, [video]);
 
   return (
