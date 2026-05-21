@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getAllCampaigns, getBrand, getCampaign } from "@/lib/content";
 import { themeStyle } from "@/lib/theme";
-import { buildGoogleFontsUrl, fontVars } from "@/lib/fonts";
+import { resolveFontData, fontVars, type BrandFonts } from "@/lib/fonts";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
@@ -88,16 +88,18 @@ export default async function CampaignPage({ params }: { params: Params }) {
   const heroPoster = heroBlock?.props?.poster as string | undefined;
 
   // Fontes: CMS override (Supabase) → JSON brand.fonts → undefined
-  const displayFont = data.cmsFont?.display ?? data.brand.fonts.serif.family;
-  const bodyFont    = data.cmsFont?.body    ?? data.brand.fonts.sans.family;
-  const fontsUrl    = buildGoogleFontsUrl(displayFont, bodyFont);
-  const fontStyle   = fontVars(displayFont, bodyFont);
+  const { googleFontsUrl, fontFaceCSS, displayFont, bodyFont } = resolveFontData(
+    data.cmsFont,
+    { display: data.brand.fonts.serif.family, body: data.brand.fonts.sans.family }
+  );
+  const fontStyle = fontVars(displayFont, bodyFont);
 
   return (
     <>
-      {fontsUrl && <link rel="preconnect" href="https://fonts.googleapis.com" />}
-      {fontsUrl && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
-      {fontsUrl && <link rel="stylesheet" href={fontsUrl} />}
+      {googleFontsUrl && <link rel="preconnect" href="https://fonts.googleapis.com" />}
+      {googleFontsUrl && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
+      {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
+      {fontFaceCSS && <style dangerouslySetInnerHTML={{ __html: fontFaceCSS }} />}
       {heroPoster && (
         <link
           rel="preload"
@@ -137,7 +139,7 @@ async function safeLoad(brandId: string, campaignSlug: string) {
 
     // Tenta sobrescrever com dados publicados do CMS (Supabase anon key + RLS)
     let campaign = campaignFromFile;
-    let cmsFont: { display?: string; body?: string } | null = null;
+    let cmsFont: BrandFonts | null = null;
     try {
       const supabase = createSupabasePublic(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -171,9 +173,16 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       }
       if (brandRow?.fonts && typeof brandRow.fonts === "object") {
         const f = brandRow.fonts as Record<string, unknown>;
-        const d = typeof f.display === "string" ? f.display : undefined;
-        const b = typeof f.body    === "string" ? f.body    : undefined;
-        if (d ?? b) cmsFont = { display: d, body: b };
+        const str = (k: string) => (typeof f[k] === "string" ? (f[k] as string) : undefined);
+        const fonts: BrandFonts = {
+          display:           str("display"),
+          body:              str("body"),
+          displayCustomUrl:  str("displayCustomUrl"),
+          displayCustomName: str("displayCustomName"),
+          bodyCustomUrl:     str("bodyCustomUrl"),
+          bodyCustomName:    str("bodyCustomName"),
+        };
+        if (Object.values(fonts).some(Boolean)) cmsFont = fonts;
       }
     } catch { /* Supabase indisponível → mantém JSON */ }
 

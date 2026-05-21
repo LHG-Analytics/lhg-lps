@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ThemePanel, type Theme } from "@/app/admin/campaigns/[id]/ThemePanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
+import type { BrandFonts } from "@/lib/fonts";
 
 /* ── tipos ─────────────────────────────────────────── */
 interface Category {
@@ -36,7 +37,7 @@ interface Brand {
   domain?: string;
   favicon?: string;
   logo?: { src?: string; alt?: string };
-  fonts?: Record<string, string>;
+  fonts?: BrandFonts;
   theme?: Record<string, string>;
   booking?: { urlTemplate?: string };
   concierge?: { label?: string; href?: string };
@@ -165,7 +166,8 @@ export function BrandEditor({ initial }: { initial: Brand }) {
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 28, paddingTop: 24 }}>
                 {section("Tipografia")}
                 <TypographyPicker
-                  fonts={(brand.fonts ?? {}) as { display?: string; body?: string }}
+                  fonts={brand.fonts ?? {}}
+                  brandId={brand.id}
                   onChange={(f) => setBrand((b) => ({ ...b, fonts: f }))}
                   saving={saving === "theme"}
                   saved={saved === "theme"}
@@ -554,6 +556,61 @@ function CategoriesEditor({ unit, brandId }: { unit: Unit; brandId: string }) {
   );
 }
 
+/* ── CustomFontUpload ────────────────────────────────── */
+function CustomFontUpload({ label: lbl, customUrl, customName, brandId, onChangeUrl, onChangeName }: {
+  label: string;
+  customUrl: string;
+  customName: string;
+  brandId: string;
+  onChangeUrl: (url: string) => void;
+  onChangeName: (name: string) => void;
+}) {
+  const active = !!customUrl && !!customName;
+  return (
+    <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", marginBottom: 20, paddingTop: 16 }}>
+      <div style={{ fontSize: 10, color: "#55526A", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10 }}>
+        {lbl}
+        {active && (
+          <span style={{ color: "#2EB87A", marginLeft: 8, textTransform: "none" as const }}>
+            ✓ Ativa — sobrepõe seleção do Google
+          </span>
+        )}
+        {customUrl && !customName && (
+          <span style={{ color: "#E8A946", marginLeft: 8, textTransform: "none" as const }}>
+            ⚠ Defina o nome da família
+          </span>
+        )}
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <div>
+          <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 3, textTransform: "uppercase" as const, letterSpacing: "0.07em" }}>
+            Nome da família
+          </div>
+          <input
+            value={customName}
+            onChange={(e) => onChangeName(e.target.value)}
+            style={fld}
+            placeholder="Ex: MinhaFonte"
+          />
+          <div style={{ fontSize: 10, color: "#3A3850", marginTop: 3 }}>Usado como font-family no CSS da LP</div>
+        </div>
+        <div>
+          <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 3, textTransform: "uppercase" as const, letterSpacing: "0.07em" }}>
+            Arquivo (.woff2 .woff .ttf .otf)
+          </div>
+          <ImageUploadField
+            value={customUrl}
+            brandId={brandId}
+            accept=".woff2,.woff,.ttf,.otf"
+            onChange={onChangeUrl}
+            compact
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ── TypographyPicker ────────────────────────────────── */
 const DISPLAY_FONTS = [
   { name: "Fraunces",           label: "Fraunces",           category: "Serif editorial" },
@@ -599,12 +656,13 @@ const GOOGLE_FONTS_URL =
   "&family=Source+Sans+3:wght@300;400" +
   "&display=swap";
 
-function TypographyPicker({ fonts, onChange, saving, saved, onSave }: {
-  fonts: { display?: string; body?: string };
-  onChange: (f: { display?: string; body?: string }) => void;
+function TypographyPicker({ fonts, brandId, onChange, saving, saved, onSave }: {
+  fonts: BrandFonts;
+  brandId: string;
+  onChange: (f: BrandFonts) => void;
   saving: boolean;
   saved: boolean;
-  onSave: (f: { display?: string; body?: string }) => void;
+  onSave: (f: BrandFonts) => void;
 }) {
   const [loaded, setLoaded] = useState(false);
 
@@ -621,13 +679,12 @@ function TypographyPicker({ fonts, onChange, saving, saved, onSave }: {
     setLoaded(true);
   }
 
+  // Ao escolher uma fonte Google, limpa o arquivo customizado do mesmo slot
   function pickDisplay(name: string) {
-    const next = { ...fonts, display: name };
-    onChange(next);
+    onChange({ ...fonts, display: name, displayCustomUrl: undefined, displayCustomName: undefined });
   }
   function pickBody(name: string) {
-    const next = { ...fonts, body: name };
-    onChange(next);
+    onChange({ ...fonts, body: name, bodyCustomUrl: undefined, bodyCustomName: undefined });
   }
 
   const SUGGESTED_PAIRS = [
@@ -647,7 +704,7 @@ function TypographyPicker({ fonts, onChange, saving, saved, onSave }: {
           return (
             <button
               key={pair.label}
-              onClick={() => { loadFonts(); onChange({ display: pair.display, body: pair.body }); }}
+              onClick={() => { loadFonts(); onChange({ ...fonts, display: pair.display, body: pair.body, displayCustomUrl: undefined, displayCustomName: undefined, bodyCustomUrl: undefined, bodyCustomName: undefined }); }}
               style={{
                 padding: "10px 14px", borderRadius: 8, border: `1px solid ${active ? "#A67CFF" : "rgba(255,255,255,0.08)"}`,
                 background: active ? "rgba(166,124,255,0.12)" : "rgba(255,255,255,0.02)",
@@ -705,6 +762,16 @@ function TypographyPicker({ fonts, onChange, saving, saved, onSave }: {
         </div>
       </div>
 
+      {/* Upload de fonte personalizada — Destaque */}
+      <CustomFontUpload
+        label="Fonte de destaque personalizada"
+        customUrl={fonts.displayCustomUrl ?? ""}
+        customName={fonts.displayCustomName ?? ""}
+        brandId={brandId}
+        onChangeUrl={(url) => onChange({ ...fonts, displayCustomUrl: url || undefined, ...(url ? { display: undefined } : {}) })}
+        onChangeName={(name) => onChange({ ...fonts, displayCustomName: name || undefined })}
+      />
+
       {/* Body */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ fontSize: 10, color: "#55526A", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>
@@ -739,21 +806,39 @@ function TypographyPicker({ fonts, onChange, saving, saved, onSave }: {
         </div>
       </div>
 
+      {/* Upload de fonte personalizada — Corpo */}
+      <CustomFontUpload
+        label="Fonte de corpo personalizada"
+        customUrl={fonts.bodyCustomUrl ?? ""}
+        customName={fonts.bodyCustomName ?? ""}
+        brandId={brandId}
+        onChangeUrl={(url) => onChange({ ...fonts, bodyCustomUrl: url || undefined, ...(url ? { body: undefined } : {}) })}
+        onChangeName={(name) => onChange({ ...fonts, bodyCustomName: name || undefined })}
+      />
+
       {/* Preview combinado */}
-      {(fonts.display || fonts.body) && (
+      {(fonts.display || fonts.body || fonts.displayCustomName || fonts.bodyCustomName) && (
         <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "20px 24px", marginBottom: 20 }}>
           <div style={{ fontSize: 9, color: "#3A3850", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 12 }}>Preview combinado</div>
-          <div style={{ fontSize: 26, color: "#F0EEF8", fontFamily: fonts.display ?? "inherit", lineHeight: 1.2, marginBottom: 8 }}>
-            Uma noite inesquecível.
-          </div>
-          <div style={{ fontSize: 13, color: "#8E8AA8", fontFamily: fonts.body ?? "inherit", lineHeight: 1.6, marginBottom: 12 }}>
-            Reserve agora sua experiência exclusiva. Suítes pensadas para quem valoriza privacidade e momentos únicos.
-          </div>
-          <div style={{ fontSize: 11, color: "#55526A", fontFamily: fonts.body ?? "inherit" }}>
-            {fonts.display && <span>Destaque: <b style={{ color: "#8E8AA8" }}>{fonts.display}</b></span>}
-            {fonts.display && fonts.body && <span style={{ margin: "0 8px" }}>·</span>}
-            {fonts.body && <span>Corpo: <b style={{ color: "#8E8AA8" }}>{fonts.body}</b></span>}
-          </div>
+          {(() => {
+            const dName = fonts.displayCustomName ?? fonts.display;
+            const bName = fonts.bodyCustomName    ?? fonts.body;
+            return (
+              <>
+                <div style={{ fontSize: 26, color: "#F0EEF8", fontFamily: dName ?? "inherit", lineHeight: 1.2, marginBottom: 8 }}>
+                  Uma noite inesquecível.
+                </div>
+                <div style={{ fontSize: 13, color: "#8E8AA8", fontFamily: bName ?? "inherit", lineHeight: 1.6, marginBottom: 12 }}>
+                  Reserve agora sua experiência exclusiva. Suítes pensadas para quem valoriza privacidade e momentos únicos.
+                </div>
+                <div style={{ fontSize: 11, color: "#55526A", fontFamily: bName ?? "inherit" }}>
+                  {dName && <span>Destaque: <b style={{ color: fonts.displayCustomName ? "#2EB87A" : "#8E8AA8" }}>{dName}{fonts.displayCustomName ? " ★" : ""}</b></span>}
+                  {dName && bName && <span style={{ margin: "0 8px" }}>·</span>}
+                  {bName && <span>Corpo: <b style={{ color: fonts.bodyCustomName ? "#2EB87A" : "#8E8AA8" }}>{bName}{fonts.bodyCustomName ? " ★" : ""}</b></span>}
+                </div>
+              </>
+            );
+          })()}
         </div>
       )}
 

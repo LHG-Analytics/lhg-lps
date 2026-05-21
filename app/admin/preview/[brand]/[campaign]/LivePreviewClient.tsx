@@ -5,14 +5,14 @@ import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
 import { EditorOverlay } from "./EditorOverlay";
 import { themeStyle } from "@/lib/theme";
-import { buildGoogleFontsUrl, fontVars } from "@/lib/fonts";
+import { resolveFontData, fontVars, type BrandFonts } from "@/lib/fonts";
 import type { Brand, Campaign, Block } from "@/lib/schema";
 
 interface Props {
   brand: Brand;
   campaign: Campaign;
   initialBlocks: readonly Block[];
-  cmsFont?: { display?: string; body?: string } | null;
+  cmsFont?: BrandFonts | null;
 }
 
 export function LivePreviewClient({ brand, campaign, initialBlocks, cmsFont }: Props) {
@@ -24,39 +24,44 @@ export function LivePreviewClient({ brand, campaign, initialBlocks, cmsFont }: P
   );
   const [themeOverride, setThemeOverride] = useState<Record<string, string> | null>(null);
 
-  // Injeta Google Fonts para as fontes configuradas no CMS
-  const displayFont = cmsFont?.display ?? brand.fonts.serif.family;
-  const bodyFont    = cmsFont?.body    ?? brand.fonts.sans.family;
-  const fontsUrl    = buildGoogleFontsUrl(displayFont, bodyFont);
+  // Resolve fontes: CMS override → JSON brand.fonts
+  const { googleFontsUrl, fontFaceCSS, displayFont, bodyFont } = resolveFontData(
+    cmsFont ?? null,
+    { display: brand.fonts.serif.family, body: brand.fonts.sans.family }
+  );
 
   useEffect(() => {
-    if (!fontsUrl) return;
-    if (!document.getElementById("brand-google-fonts-preconnect-gapis")) {
-      const pc1 = document.createElement("link");
-      pc1.id   = "brand-google-fonts-preconnect-gapis";
-      pc1.rel  = "preconnect";
-      pc1.href = "https://fonts.googleapis.com";
-      document.head.appendChild(pc1);
+    // Google Fonts
+    if (googleFontsUrl) {
+      if (!document.getElementById("brand-gf-preconnect-gapis")) {
+        const pc1 = document.createElement("link");
+        pc1.id = "brand-gf-preconnect-gapis"; pc1.rel = "preconnect";
+        pc1.href = "https://fonts.googleapis.com";
+        document.head.appendChild(pc1);
+      }
+      if (!document.getElementById("brand-gf-preconnect-gstatic")) {
+        const pc2 = document.createElement("link");
+        pc2.id = "brand-gf-preconnect-gstatic"; pc2.rel = "preconnect";
+        pc2.href = "https://fonts.gstatic.com"; pc2.crossOrigin = "";
+        document.head.appendChild(pc2);
+      }
+      const existing = document.getElementById("brand-google-fonts") as HTMLLinkElement | null;
+      if (existing) { existing.href = googleFontsUrl; }
+      else {
+        const link = document.createElement("link");
+        link.id = "brand-google-fonts"; link.rel = "stylesheet"; link.href = googleFontsUrl;
+        document.head.appendChild(link);
+      }
     }
-    if (!document.getElementById("brand-google-fonts-preconnect-gstatic")) {
-      const pc2 = document.createElement("link");
-      pc2.id          = "brand-google-fonts-preconnect-gstatic";
-      pc2.rel         = "preconnect";
-      pc2.href        = "https://fonts.gstatic.com";
-      pc2.crossOrigin = "";
-      document.head.appendChild(pc2);
+    // @font-face para fontes customizadas
+    const styleId = "brand-custom-font-face";
+    document.getElementById(styleId)?.remove();
+    if (fontFaceCSS) {
+      const style = document.createElement("style");
+      style.id = styleId; style.textContent = fontFaceCSS;
+      document.head.appendChild(style);
     }
-    const existing = document.getElementById("brand-google-fonts") as HTMLLinkElement | null;
-    if (existing) {
-      existing.href = fontsUrl;
-    } else {
-      const link  = document.createElement("link");
-      link.id     = "brand-google-fonts";
-      link.rel    = "stylesheet";
-      link.href   = fontsUrl;
-      document.head.appendChild(link);
-    }
-  }, [fontsUrl]);
+  }, [googleFontsUrl, fontFaceCSS]);
 
   useEffect(() => {
     function onMessage(e: MessageEvent) {
@@ -87,7 +92,10 @@ export function LivePreviewClient({ brand, campaign, initialBlocks, cmsFont }: P
 
   // Mescla o tema original com overrides do editor e passa pelo mapeamento correto de CSS vars
   const effectiveTheme = themeOverride ? { ...brand.theme, ...(themeOverride as any) } : brand.theme;
-  const mergedStyle = { ...themeStyle(effectiveTheme), ...fontVars(displayFont, bodyFont) };
+  const mergedStyle = {
+    ...themeStyle(effectiveTheme),
+    ...fontVars(displayFont, bodyFont),
+  };
 
   return (
     <>
