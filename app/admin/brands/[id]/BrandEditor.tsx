@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ThemePanel, type Theme } from "@/app/admin/campaigns/[id]/ThemePanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
-import type { BrandFonts } from "@/lib/fonts";
+import { parseFontFilename, type BrandFonts, type FontFileEntry } from "@/lib/fonts";
 
 /* ── tipos ─────────────────────────────────────────── */
 interface Category {
@@ -557,55 +557,117 @@ function CategoriesEditor({ unit, brandId }: { unit: Unit; brandId: string }) {
 }
 
 /* ── CustomFontUpload ────────────────────────────────── */
-function CustomFontUpload({ label: lbl, customUrl, customName, brandId, onChangeUrl, onChangeName }: {
+function CustomFontUpload({ label: lbl, customFiles, customName, brandId, onChangeFiles, onChangeName }: {
   label: string;
-  customUrl: string;
+  customFiles: FontFileEntry[];
   customName: string;
   brandId: string;
-  onChangeUrl: (url: string) => void;
+  onChangeFiles: (files: FontFileEntry[]) => void;
   onChangeName: (name: string) => void;
 }) {
-  const active = !!customUrl && !!customName;
+  const [uploading, setUploading] = useState(false);
+  const [error, setError]         = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const active = customFiles.length > 0 && !!customName;
+
+  async function handleFiles(fileList: FileList) {
+    setUploading(true);
+    setError("");
+    const files = Array.from(fileList);
+    const results = await Promise.allSettled(
+      files.map(async (file) => {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("brandId", brandId);
+        const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+        if (!res.ok) throw new Error(await res.text());
+        const { path } = (await res.json()) as { path: string };
+        const { weight, style } = parseFontFilename(file.name);
+        const entry: FontFileEntry = { url: path, weight, style, name: file.name };
+        return entry;
+      })
+    );
+    setUploading(false);
+
+    const succeeded = results
+      .filter((r): r is PromiseFulfilledResult<FontFileEntry> => r.status === "fulfilled")
+      .map((r) => r.value);
+    const failCount = results.filter((r) => r.status === "rejected").length;
+
+    if (failCount > 0) setError(`${failCount} arquivo(s) falharam no upload.`);
+    if (succeeded.length > 0) onChangeFiles([...customFiles, ...succeeded]);
+  }
+
+  function removeFile(idx: number) {
+    onChangeFiles(customFiles.filter((_, i) => i !== idx));
+  }
+
+  function onInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files?.length) { handleFiles(e.target.files); e.target.value = ""; }
+  }
+
   return (
     <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", marginBottom: 20, paddingTop: 16 }}>
       <div style={{ fontSize: 10, color: "#55526A", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 10 }}>
         {lbl}
-        {active && (
-          <span style={{ color: "#2EB87A", marginLeft: 8, textTransform: "none" as const }}>
-            ✓ Ativa — sobrepõe seleção do Google
-          </span>
-        )}
-        {customUrl && !customName && (
-          <span style={{ color: "#E8A946", marginLeft: 8, textTransform: "none" as const }}>
-            ⚠ Defina o nome da família
-          </span>
-        )}
+        {active && <span style={{ color: "#2EB87A", marginLeft: 8, textTransform: "none" as const }}>✓ Ativa — sobrepõe seleção do Google</span>}
+        {customFiles.length > 0 && !customName && <span style={{ color: "#E8A946", marginLeft: 8, textTransform: "none" as const }}>⚠ Defina o nome da família</span>}
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <div>
-          <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 3, textTransform: "uppercase" as const, letterSpacing: "0.07em" }}>
-            Nome da família
-          </div>
-          <input
-            value={customName}
-            onChange={(e) => onChangeName(e.target.value)}
-            style={fld}
-            placeholder="Ex: MinhaFonte"
-          />
+          <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 3, textTransform: "uppercase" as const, letterSpacing: "0.07em" }}>Nome da família</div>
+          <input value={customName} onChange={(e) => onChangeName(e.target.value)} style={fld} placeholder="Ex: MatriaExtended" />
           <div style={{ fontSize: 10, color: "#3A3850", marginTop: 3 }}>Usado como font-family no CSS da LP</div>
         </div>
+
         <div>
           <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 3, textTransform: "uppercase" as const, letterSpacing: "0.07em" }}>
-            Arquivo (.woff2 .woff .ttf .otf)
+            Arquivos (.woff2 .woff .ttf .otf) — seleção múltipla
           </div>
-          <ImageUploadField
-            value={customUrl}
-            brandId={brandId}
-            accept=".woff2,.woff,.ttf,.otf"
-            onChange={onChangeUrl}
-            compact
-          />
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => { e.preventDefault(); if (e.dataTransfer.files?.length) handleFiles(e.dataTransfer.files); }}
+            onClick={() => !uploading && inputRef.current?.click()}
+            style={{
+              border: `2px dashed ${uploading ? "rgba(166,124,255,0.4)" : "rgba(255,255,255,0.1)"}`,
+              borderRadius: 8, padding: "14px 16px",
+              cursor: uploading ? "wait" : "pointer",
+              background: "rgba(255,255,255,0.02)",
+              textAlign: "center" as const, fontSize: 11, color: "#55526A",
+              transition: "border-color 0.15s",
+            }}
+          >
+            {uploading ? "Enviando…" : "Clique ou arraste os arquivos de fonte aqui"}
+          </div>
+          <input ref={inputRef} type="file" multiple accept=".woff2,.woff,.ttf,.otf" onChange={onInputChange} style={{ display: "none" }} />
         </div>
+
+        {customFiles.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            <div style={{ fontSize: 9, color: "#3A3850", textTransform: "uppercase" as const, letterSpacing: "0.08em", marginBottom: 2 }}>
+              {customFiles.length} variante(s) carregada(s)
+            </div>
+            {[...customFiles]
+              .map((f, i) => ({ f, i }))
+              .sort((a, b) => a.f.weight - b.f.weight || a.f.style.localeCompare(b.f.style))
+              .map(({ f, i }) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.02)", borderRadius: 5, padding: "4px 8px", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <span style={{ fontSize: 9, color: "#A67CFF", width: 28, flexShrink: 0, textAlign: "right" as const, fontFamily: "monospace" }}>{f.weight}</span>
+                  <span style={{ fontSize: 9, color: "#55526A", width: 38, flexShrink: 0 }}>{f.style}</span>
+                  <span style={{ fontSize: 10, color: "#8E8AA8", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, fontFamily: "monospace" }}>
+                    {f.name ?? f.url.split("/").pop()}
+                  </span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); removeFile(i); }}
+                    style={{ background: "none", border: "none", color: "#E05260", cursor: "pointer", fontSize: 11, padding: "0 4px", flexShrink: 0 }}
+                  >✕</button>
+                </div>
+              ))}
+          </div>
+        )}
+
+        {error && <div style={{ fontSize: 10, color: "#E05260" }}>{error}</div>}
       </div>
     </div>
   );
@@ -681,10 +743,10 @@ function TypographyPicker({ fonts, brandId, onChange, saving, saved, onSave }: {
 
   // Ao escolher uma fonte Google, limpa o arquivo customizado do mesmo slot
   function pickDisplay(name: string) {
-    onChange({ ...fonts, display: name, displayCustomUrl: undefined, displayCustomName: undefined });
+    onChange({ ...fonts, display: name, displayCustomUrl: undefined, displayCustomName: undefined, displayFiles: undefined });
   }
   function pickBody(name: string) {
-    onChange({ ...fonts, body: name, bodyCustomUrl: undefined, bodyCustomName: undefined });
+    onChange({ ...fonts, body: name, bodyCustomUrl: undefined, bodyCustomName: undefined, bodyFiles: undefined });
   }
 
   const SUGGESTED_PAIRS = [
@@ -704,7 +766,7 @@ function TypographyPicker({ fonts, brandId, onChange, saving, saved, onSave }: {
           return (
             <button
               key={pair.label}
-              onClick={() => { loadFonts(); onChange({ ...fonts, display: pair.display, body: pair.body, displayCustomUrl: undefined, displayCustomName: undefined, bodyCustomUrl: undefined, bodyCustomName: undefined }); }}
+              onClick={() => { loadFonts(); onChange({ ...fonts, display: pair.display, body: pair.body, displayCustomUrl: undefined, displayCustomName: undefined, displayFiles: undefined, bodyCustomUrl: undefined, bodyCustomName: undefined, bodyFiles: undefined }); }}
               style={{
                 padding: "10px 14px", borderRadius: 8, border: `1px solid ${active ? "#A67CFF" : "rgba(255,255,255,0.08)"}`,
                 background: active ? "rgba(166,124,255,0.12)" : "rgba(255,255,255,0.02)",
@@ -765,10 +827,10 @@ function TypographyPicker({ fonts, brandId, onChange, saving, saved, onSave }: {
       {/* Upload de fonte personalizada — Destaque */}
       <CustomFontUpload
         label="Fonte de destaque personalizada"
-        customUrl={fonts.displayCustomUrl ?? ""}
+        customFiles={fonts.displayFiles ?? []}
         customName={fonts.displayCustomName ?? ""}
         brandId={brandId}
-        onChangeUrl={(url) => onChange({ ...fonts, displayCustomUrl: url || undefined, ...(url ? { display: undefined } : {}) })}
+        onChangeFiles={(files) => onChange({ ...fonts, displayFiles: files.length ? files : undefined, ...(files.length ? { display: undefined } : {}) })}
         onChangeName={(name) => onChange({ ...fonts, displayCustomName: name || undefined })}
       />
 
@@ -809,10 +871,10 @@ function TypographyPicker({ fonts, brandId, onChange, saving, saved, onSave }: {
       {/* Upload de fonte personalizada — Corpo */}
       <CustomFontUpload
         label="Fonte de corpo personalizada"
-        customUrl={fonts.bodyCustomUrl ?? ""}
+        customFiles={fonts.bodyFiles ?? []}
         customName={fonts.bodyCustomName ?? ""}
         brandId={brandId}
-        onChangeUrl={(url) => onChange({ ...fonts, bodyCustomUrl: url || undefined, ...(url ? { body: undefined } : {}) })}
+        onChangeFiles={(files) => onChange({ ...fonts, bodyFiles: files.length ? files : undefined, ...(files.length ? { body: undefined } : {}) })}
         onChangeName={(name) => onChange({ ...fonts, bodyCustomName: name || undefined })}
       />
 

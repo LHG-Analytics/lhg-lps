@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { LivePreviewClient } from "./LivePreviewClient";
 import { notFound } from "next/navigation";
 import type { Campaign } from "@/lib/schema";
-import type { BrandFonts } from "@/lib/fonts";
+import type { BrandFonts, FontFileEntry } from "@/lib/fonts";
 
 type CmsFont = BrandFonts | null;
 
@@ -67,13 +67,16 @@ export default async function PreviewPage({
   if (brandRow?.fonts && typeof brandRow.fonts === "object") {
     const f = brandRow.fonts as Record<string, unknown>;
     const str = (k: string) => (typeof f[k] === "string" ? (f[k] as string) : undefined);
+    const arr = (k: string) => (Array.isArray(f[k]) ? (f[k] as FontFileEntry[]) : undefined);
     const fonts: BrandFonts = {
       display:           str("display"),
       body:              str("body"),
       displayCustomUrl:  str("displayCustomUrl"),
       displayCustomName: str("displayCustomName"),
+      displayFiles:      arr("displayFiles"),
       bodyCustomUrl:     str("bodyCustomUrl"),
       bodyCustomName:    str("bodyCustomName"),
+      bodyFiles:         arr("bodyFiles"),
     };
     if (Object.values(fonts).some(Boolean)) cmsFont = fonts;
   }

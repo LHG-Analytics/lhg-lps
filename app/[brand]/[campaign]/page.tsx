@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { getAllCampaigns, getBrand, getCampaign } from "@/lib/content";
 import { themeStyle } from "@/lib/theme";
-import { resolveFontData, fontVars, type BrandFonts } from "@/lib/fonts";
+import { resolveFontData, fontVars, type BrandFonts, type FontFileEntry } from "@/lib/fonts";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { RevealManager } from "@/components/RevealManager";
 import { Concierge24h } from "@/components/Concierge24h";
@@ -174,13 +174,16 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       if (brandRow?.fonts && typeof brandRow.fonts === "object") {
         const f = brandRow.fonts as Record<string, unknown>;
         const str = (k: string) => (typeof f[k] === "string" ? (f[k] as string) : undefined);
+        const arr = (k: string) => (Array.isArray(f[k]) ? (f[k] as FontFileEntry[]) : undefined);
         const fonts: BrandFonts = {
           display:           str("display"),
           body:              str("body"),
           displayCustomUrl:  str("displayCustomUrl"),
           displayCustomName: str("displayCustomName"),
+          displayFiles:      arr("displayFiles"),
           bodyCustomUrl:     str("bodyCustomUrl"),
           bodyCustomName:    str("bodyCustomName"),
+          bodyFiles:         arr("bodyFiles"),
         };
         if (Object.values(fonts).some(Boolean)) cmsFont = fonts;
       }
