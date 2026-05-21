@@ -23,6 +23,18 @@ export function Hero({
   const tw = useTypewriter(headlineFull, headlineEmphasis, typewriter ?? false);
   const ghostState = initialFullState(headlineFull, headlineEmphasis);
   const decorativeMark = brand.name.charAt(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Fallback para browsers que ignoram o atributo autoPlay (iOS Safari, alguns Android).
+  // autoPlay + muted + playsInline é necessário mas não sempre suficiente — o play()
+  // programático garante o início mesmo quando o atributo é ignorado.
+  useEffect(() => {
+    if (!video) return;
+    const el = videoRef.current;
+    if (!el) return;
+    const t = setTimeout(() => el.play().catch(() => {}), 300);
+    return () => clearTimeout(t);
+  }, [video]);
 
   return (
     <section className="hero" id="top">
@@ -42,6 +54,7 @@ export function Hero({
       )}
       {video && (
         <video
+          ref={videoRef}
           className="hero__video"
           autoPlay
           muted
