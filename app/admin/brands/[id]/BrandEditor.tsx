@@ -1,9 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ThemePanel, type Theme } from "@/app/admin/campaigns/[id]/ThemePanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
-import { parseFontFilename, type BrandFonts, type FontFileEntry } from "@/lib/fonts";
+import { parseFontFilename, buildFontFaceCSSMulti, buildFontFaceCSS, type BrandFonts, type FontFileEntry } from "@/lib/fonts";
 
 /* ── tipos ─────────────────────────────────────────── */
 interface Category {
@@ -727,6 +727,27 @@ function TypographyPicker({ fonts, brandId, onChange, saving, saved, onSave }: {
   onSave: (f: BrandFonts) => void;
 }) {
   const [loaded, setLoaded] = useState(false);
+
+  // Injeta @font-face das fontes customizadas no <head> do admin para o preview combinado
+  useEffect(() => {
+    const styleId = "admin-custom-font-face";
+    document.getElementById(styleId)?.remove();
+    const faces: string[] = [];
+    if (fonts.displayCustomName) {
+      if (fonts.displayFiles?.length) faces.push(buildFontFaceCSSMulti(fonts.displayCustomName, fonts.displayFiles));
+      else if (fonts.displayCustomUrl) faces.push(buildFontFaceCSS(fonts.displayCustomName, fonts.displayCustomUrl));
+    }
+    if (fonts.bodyCustomName) {
+      if (fonts.bodyFiles?.length) faces.push(buildFontFaceCSSMulti(fonts.bodyCustomName, fonts.bodyFiles));
+      else if (fonts.bodyCustomUrl) faces.push(buildFontFaceCSS(fonts.bodyCustomName, fonts.bodyCustomUrl));
+    }
+    if (faces.length > 0) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = faces.join("");
+      document.head.appendChild(style);
+    }
+  }, [fonts]);
 
   function loadFonts() {
     if (loaded) return;
