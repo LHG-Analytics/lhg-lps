@@ -28,25 +28,11 @@ export function Hero({
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !video) return;
-
-    // Só chama play() se o vídeo ainda estiver pausado (não interrompe autoPlay em andamento)
+    // Só chama play() se ainda estiver pausado — não interrompe autoPlay em andamento
     const tryPlay = () => { if (el.paused) el.play().catch(() => {}); };
-
-    // Caminho principal: espera canplay (dados suficientes no buffer) antes de tocar
-    if (el.readyState >= 3) {
-      tryPlay();
-    } else {
-      el.addEventListener("canplay", tryPlay, { once: true });
-    }
-
-    // Fallback iOS: Low Power Mode e configurações de dados celulares podem bloquear
-    // autoPlay mesmo em vídeos mutados — o primeiro toque desbloqueia a mídia.
-    document.addEventListener("touchstart", tryPlay, { once: true, passive: true });
-
-    return () => {
-      el.removeEventListener("canplay", tryPlay);
-      document.removeEventListener("touchstart", tryPlay);
-    };
+    if (el.readyState >= 3) { tryPlay(); return; }
+    el.addEventListener("canplay", tryPlay, { once: true });
+    return () => el.removeEventListener("canplay", tryPlay);
   }, [video]);
 
   return (
@@ -73,7 +59,7 @@ export function Hero({
           muted
           loop
           playsInline
-          preload="auto"
+          preload="metadata"
           aria-hidden="true"
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
