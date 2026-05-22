@@ -23,18 +23,6 @@ export function Hero({
   const tw = useTypewriter(headlineFull, headlineEmphasis, typewriter ?? false);
   const ghostState = initialFullState(headlineFull, headlineEmphasis);
   const decorativeMark = brand.name.charAt(0);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el || !video) return;
-    const tryPlay = () => { if (el.paused) el.play().catch(() => {}); };
-    // Chama imediatamente — cobre cache, reload e Safari que ignora o atributo autoPlay
-    tryPlay();
-    // canplay garante o play() quando o buffer chega depois do mount
-    el.addEventListener("canplay", tryPlay, { once: true });
-    return () => el.removeEventListener("canplay", tryPlay);
-  }, [video]);
 
   return (
     <section className="hero" id="top">
@@ -54,14 +42,12 @@ export function Hero({
       )}
       {video && (
         <video
-          ref={videoRef}
           className="hero__video"
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
-          poster={poster ? asset(poster) : undefined}
           aria-hidden="true"
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
