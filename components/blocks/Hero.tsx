@@ -28,9 +28,10 @@ export function Hero({
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !video) return;
-    // Só chama play() se ainda estiver pausado — não interrompe autoPlay em andamento
     const tryPlay = () => { if (el.paused) el.play().catch(() => {}); };
-    if (el.readyState >= 3) { tryPlay(); return; }
+    // Chama imediatamente — cobre cache, reload e Safari que ignora o atributo autoPlay
+    tryPlay();
+    // canplay garante o play() quando o buffer chega depois do mount
     el.addEventListener("canplay", tryPlay, { once: true });
     return () => el.removeEventListener("canplay", tryPlay);
   }, [video]);
@@ -59,7 +60,8 @@ export function Hero({
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          poster={poster ? asset(poster) : undefined}
           aria-hidden="true"
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
