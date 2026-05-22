@@ -13,6 +13,19 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
   typedRoutes: true,
+  async headers() {
+    return [
+      {
+        // Garante Accept-Ranges e Content-Type corretos para vídeos MP4
+        // iOS Safari exige suporte a Range requests para autoplay funcionar
+        source: "/:path*.(mp4|webm)",
+        headers: [
+          { key: "Accept-Ranges", value: "bytes" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

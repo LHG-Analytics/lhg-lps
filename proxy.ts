@@ -75,6 +75,13 @@ export async function proxy(request: NextRequest) {
 
   /* 1. Roteamento por domínio/subdiretório (antes do auth check) */
   const isStaticAsset = /\.[a-zA-Z0-9]{2,5}$/.test(pathname);
+
+  // Arquivos estáticos (vídeos, imagens, fontes, etc.) — skip total: sem routing,
+  // sem Supabase call. Range requests do iOS Safari precisam de resposta imediata.
+  if (isStaticAsset && !pathname.startsWith("/admin") && !pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api") && !isStaticAsset) {
     const { domainMap, pathMap, brandSlugMap } = await getRouteMap();
 
