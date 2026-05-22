@@ -8,6 +8,16 @@ type Props = HeroBlockProps & { brand: Brand };
 
 type TwState = { before: string; em: string; after: string };
 
+/**
+ * Hero — vídeo de fundo + typewriter no h1 com ciclo de 4s.
+ *
+ * Comportamento espelha o HTML original:
+ *   - SSR renderiza o texto completo (acessibilidade + no-JS).
+ *   - Em hover-capable + sem reduce-motion, useEffect zera o texto e
+ *     digita char por char (85±45ms), destacando a palavra `headlineEmphasis`
+ *     com `<em>` (gradient lavanda do CSS .display em).
+ *   - Após escrever, espera 4s e reinicia o ciclo.
+ */
 export function Hero({
   video,
   poster,
@@ -23,11 +33,25 @@ export function Hero({
   const tw = useTypewriter(headlineFull, headlineEmphasis, typewriter ?? false);
   const ghostState = initialFullState(headlineFull, headlineEmphasis);
   const decorativeMark = brand.name.charAt(0);
+  const posterSrc = poster ? asset(poster) : undefined;
+
+  // videoActive flipa para true no onPlay do <video> — só então o poster some.
+  const [videoActive, setVideoActive] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Fallback JS play() para browsers que ignoram o atributo autoPlay.
+  // Delay curto apenas para deixar o poster ser pintado antes do primeiro frame.
+  useEffect(() => {
+    if (!video) return;
+    const el = videoRef.current;
+    if (!el) return;
+    const t = setTimeout(() => el.play().catch(() => {}), 300);
+    return () => clearTimeout(t);
+  }, [video]);
 
   return (
     <section className="hero" id="top">
-      {/* Imagem estática de fundo — só quando não há vídeo (ex: Andar de Cima) */}
-      {poster && !video && (
+      {poster && (
         <Image
           src={poster}
           alt=""
@@ -37,18 +61,26 @@ export function Hero({
           unoptimized
           sizes="100vw"
           className="hero__poster"
-          style={{ objectFit: "cover", pointerEvents: "none" }}
+          style={{
+            objectFit: "cover",
+            pointerEvents: "none",
+            opacity: videoActive ? 0 : 1,
+            transition: "opacity 0.8s ease",
+          }}
         />
       )}
       {video && (
         <video
+          ref={videoRef}
           className="hero__video"
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
+          poster={posterSrc}
           aria-hidden="true"
+          onPlay={() => setVideoActive(true)}
         >
           <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
           <source src={asset(video)} type="video/mp4" />
