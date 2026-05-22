@@ -50,6 +50,7 @@ export function Hero({
           preload="auto"
           aria-hidden="true"
         >
+          <source src={asset(video.replace(/\.mp4$/i, ".webm"))} type="video/webm" />
           <source src={asset(video)} type="video/mp4" />
         </video>
       )}
