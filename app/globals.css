@@ -1582,6 +1582,26 @@ section { padding: 96px 0; position: relative; }
 }
 [data-brand="tout"] .footer { background: #200322; }
 
+/* ── Lemon Motel ─────────────────────────────────────────────────────────── */
+[data-brand="lemon"] .hero {
+  background: #030500;
+}
+[data-brand="lemon"] .hero__bg {
+  background:
+    /* Fade left → right para legibilidade do texto */
+    linear-gradient(90deg, color-mix(in srgb, #0A0E00 92%, transparent) 0%, color-mix(in srgb, #0A0E00 55%, transparent) 40%, transparent 65%),
+    /* Vignette inferior */
+    linear-gradient(180deg, transparent 55%, color-mix(in srgb, #030500 70%, transparent) 100%),
+    /* Brilho sutil da cor da marca — canto inferior esquerdo */
+    radial-gradient(ellipse 55% 70% at 0% 95%, color-mix(in srgb, #97D700 10%, transparent) 0%, transparent 70%);
+}
+[data-brand="lemon"] .nav {
+  background: color-mix(in srgb, #030500 82%, transparent);
+}
+[data-brand="lemon"] .nav.scrolled {
+  background: color-mix(in srgb, #030500 96%, transparent);
+}
+
 .concierge-fab:active { transform: translateY(0); }
 .concierge-fab__icon {
   width: 20px; height: 20px;
