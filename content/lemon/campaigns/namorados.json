@@ -47,8 +47,22 @@
     ],
     "dates": [
       { "value": "2026-06-11", "day": "11", "dow": "Quinta", "tier": "regular", "label": "11 de junho · Quinta" },
-      { "value": "2026-06-12", "day": "12", "dow": "Sexta",  "tier": "premium", "label": "12 de junho · Sexta"  }
-    ]
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",  "tier": "regular", "label": "12 de junho · Sexta"  }
+    ],
+    "pricing": {
+      "currency": "BRL",
+      "units": {
+        "piedade": {
+          "lemon":      { "dayuse": { "regular":  69990, "premium":  69990 }, "pernoite": { "regular":  89990, "premium":  89990 } },
+          "majestic":   { "dayuse": { "regular":  79990, "premium":  79990 }, "pernoite": { "regular": 109990, "premium": 109990 } },
+          "lemon-plus": { "dayuse": { "regular":  99990, "premium":  99990 }, "pernoite": { "regular": 129990, "premium": 129990 } }
+        },
+        "afogados": {
+          "lemon-loft": { "dayuse": { "regular":  69990, "premium":  69990 }, "pernoite": { "regular":  89990, "premium":  89990 } },
+          "loft-plus":  { "dayuse": { "regular": 149990, "premium": 149990 }, "pernoite": { "regular": 189990, "premium": 189990 } }
+        }
+      }
+    }
   },
   "blocks": [
     {
@@ -125,7 +139,7 @@
           },
           "date": {
             "title": "Escolha sua data",
-            "hint": "12 de junho é a data oficial do Dia dos Namorados — preço premium. O dia 11 mantém tarifa regular.",
+            "hint": "12 de junho é a data oficial do Dia dos Namorados. O preço é o mesmo nos dois dias.",
             "smallHint": "Vagas limitadas por data. Reserve com antecedência para garantir a sua.",
             "couponHint": ""
           },
@@ -197,7 +211,7 @@
           },
           {
             "q": "E o dia 12/06?",
-            "a": "12 de junho é a data oficial do Dia dos Namorados e opera com tarifa premium. O dia 11 mantém a tarifa regular da campanha — mesma curadoria, mesmos inclusos."
+            "a": "12 de junho é a data oficial do Dia dos Namorados. Os preços são os mesmos nos dois dias — mesma curadoria, mesmos inclusos. Escolha a data que encaixa melhor na agenda de vocês."
           },
           {
             "q": "E se eu reservar perto da data?",
