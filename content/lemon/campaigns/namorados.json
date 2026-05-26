@@ -4,7 +4,7 @@
   "lang": "pt-BR",
   "meta": {
     "title": "Lemon — Dia dos Namorados 2026",
-    "description": "Dia dos Namorados Lemon: 11 e 12 de junho, dayuse e pernoite em todas as categorias. Almoço e jantar romântico com espumante com morangos nas suítes de Piedade e Afogados.",
+    "description": "Dia dos Namorados Lemon: 11 e 12 de junho, dayuse e pernoite em todas as categorias. Almoço e jantar romântico com espumante com morangos nas suítes de Piedade e Lemon Loft.",
     "canonical": "https://campanhas.lemonmotel.com.br/diadosnamorados",
     "analytics": {}
   },
@@ -70,7 +70,7 @@
         "meta": [
           { "label": "Períodos",  "value": "Dayuse · Pernoite",    "highlight": "Pernoite" },
           { "label": "Datas",     "value": "11 e 12 de junho",     "highlight": "12" },
-          { "label": "Unidades",  "value": "Piedade · Afogados" }
+          { "label": "Unidades",  "value": "Piedade · Lemon Loft" }
         ]
       }
     },
@@ -109,7 +109,7 @@
       "props": {
         "id": "unidades",
         "eyebrow": "Escolha sua unidade",
-        "headline": "<em>Piedade</em> ou <em>Afogados</em>: sua noite acontece onde for melhor para vocês.",
+        "headline": "<em>Piedade</em> ou <em>Lemon Loft</em>: sua noite acontece onde for melhor para vocês.",
         "subtitle": "Selecione a unidade mais próxima — escolha o período (dayuse ou pernoite), a data (11 ou 12/06) e a categoria de suíte.",
         "units": ["piedade", "afogados"],
         "wizardSteps": [
@@ -166,7 +166,7 @@
         "countdownTo": "2026-06-12T23:59:59-03:00",
         "ctas": [
           { "label": "Reservar Piedade",  "href": "#unidades", "variant": "gold",    "focusUnit": "piedade"  },
-          { "label": "Reservar Afogados", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
+          { "label": "Reservar Lemon Loft", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
         ],
         "note": "Dayuse · Pernoite · Pagamento seguro · Confirmação imediata"
       }
@@ -192,8 +192,8 @@
             "a": "Sim. Depois de escolher a unidade e o período, você vê em tempo real as suítes disponíveis (Lemon Plus, Lemon, Majestic, Loft Plus, Lemon Loft) e escolhe a que combina com o clima da noite."
           },
           {
-            "q": "Qual a diferença entre Piedade e Afogados?",
-            "a": "<b>Piedade (Jaboatão):</b> suítes Lemon Plus (150m² com piscina), Lemon e Majestic. <b>Afogados (Recife):</b> Loft Plus (500m² com piscina e heliponto) e Lemon Loft. Escolha a mais próxima ou a que combina com o que você quer viver."
+            "q": "Qual a diferença entre Piedade e Lemon Loft?",
+            "a": "<b>Piedade (Jaboatão):</b> suítes Lemon Plus (150m² com piscina), Lemon e Majestic. <b>Lemon Loft (Recife):</b> Loft Plus (500m² com piscina e heliponto) e Lemon Loft. Escolha a mais próxima ou a que combina com o que você quer viver."
           },
           {
             "q": "E o dia 12/06?",
@@ -219,7 +219,7 @@
             "title": "Unidades",
             "links": [
               { "label": "Lemon Piedade",      "href": "#unidades", "focusUnit": "piedade"  },
-              { "label": "Lemon Loft Afogados", "href": "#unidades", "focusUnit": "afogados" }
+              { "label": "Lemon Loft",           "href": "#unidades", "focusUnit": "afogados" }
             ]
           },
           {
@@ -246,7 +246,7 @@
       "props": {
         "ctas": [
           { "label": "Piedade",  "href": "#unidades", "variant": "gold",    "focusUnit": "piedade"  },
-          { "label": "Afogados", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
+          { "label": "Lemon Loft", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
         ]
       }
     }

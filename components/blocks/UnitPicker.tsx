@@ -756,6 +756,8 @@ function Summary({
   }, [lots]);
   const { labels } = summaryCopy;
 
+  // Só exibe linha de lote quando há desconto ou cupom ativo
+  const hasPromoLot = active && (active.discountPct > 0 || !!active.coupon);
   const lotLine: ReactNode = active?.coupon
     ? renderCouponTemplate(summaryCopy.couponLine, active)
     : active
@@ -780,7 +782,7 @@ function Summary({
         <Cell lbl={labels.date} val={dateObj?.label ?? "—"} />
         <Cell lbl={labels.category} val={category?.name ?? "—"} />
         <Cell full lbl={labels.inclusos} val={period?.inclusos ?? "—"} />
-        <Cell full lbl={labels.lot} val={lotLine} />
+        {hasPromoLot && <Cell full lbl={labels.lot} val={lotLine} />}
       </div>
       {priceCents != null ? (
         <div className="summary__price">
