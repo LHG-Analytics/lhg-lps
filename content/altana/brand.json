@@ -1,0 +1,56 @@
+{
+  "id": "altana",
+  "name": "Altana Motel",
+  "domain": "altanamotel.com.br",
+  "logo": {
+    "src": "/brands/altana/logo-altana.webp",
+    "alt": "Altana"
+  },
+  "favicon": "/brands/altana/favicon-altana.png",
+  "fonts": {
+    "display": {
+      "family": "Cormorant Garamond",
+      "google": "Cormorant Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400",
+      "fallback": "'Times New Roman', serif"
+    },
+    "serif": {
+      "family": "Fraunces",
+      "google": "Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500",
+      "fallback": "'Cormorant Garamond', 'Times New Roman', serif"
+    },
+    "sans": {
+      "family": "Inter",
+      "google": "Inter:wght@300;400;500;600;700",
+      "fallback": "system-ui, -apple-system, sans-serif"
+    }
+  },
+  "theme": {
+    "bg": "#0A1A10",
+    "bgElev": "#0E2217",
+    "bgCard": "#112A1C",
+    "line": "rgba(216,191,255,0.16)",
+    "lineSoft": "rgba(255,255,255,0.06)",
+    "ink": "#F2ECFF",
+    "inkMut": "#A8A0BE",
+    "inkDim": "#6E6780",
+    "lavender": "#C9A7F5",
+    "lavenderSoft": "#E0C9FF",
+    "lavenderDeep": "#8E6FB8",
+    "lavenderGrad": "linear-gradient(135deg, #E0C9FF 0%, #C9A7F5 50%, #8E6FB8 100%)",
+    "green": "#143A24",
+    "greenDeep": "#0A1A10",
+    "red": "#E63946",
+    "redDeep": "#B0202C",
+    "emerald": "#4FB48A",
+    "emeraldSoft": "#7BD3AC",
+    "emeraldDeep": "#2E7A5A",
+    "emeraldGrad": "linear-gradient(135deg, #7BD3AC 0%, #4FB48A 50%, #2E7A5A 100%)",
+    "lavBright": "#CB98FF",
+    "inkDeep": "#2F1A46"
+  },
+  "units": [],
+  "booking": {
+    "periodIds": {},
+    "urlTemplate": "https://altanamotel.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+  }
+}

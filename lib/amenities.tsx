@@ -148,6 +148,54 @@ export const AMENITY_ICONS: Record<string, ReactNode> = {
       <path d="M8 21h8M12 17v4" />
     </>
   ),
+  // ── Amenidades Lemon ──────────────────────────────────────────────────────
+  ofuro: (
+    <>
+      <path d="M5 19v-4c0-3.314 3.134-6 7-6s7 2.686 7 6v4" />
+      <path d="M5 19h14" />
+      <path d="M9 9V7a3 3 0 016 0v2" />
+    </>
+  ),
+  heliponto: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9 7v10M15 7v10M9 12h6" />
+    </>
+  ),
+  "garagem-4": (
+    <>
+      <path d="M3 21V9l9-6 9 6v12" />
+      <path d="M7 21v-7h10v7" />
+      <path d="M7 14h10" />
+      <path d="M8 17.5h1M11 17.5h1M14 17.5h1M17 17.5h1" />
+    </>
+  ),
+  "king-2": (
+    <>
+      <path d="M2 18V9M22 18V9M2 14h20M2 18h20" />
+      <rect x="3" y="10" width="7" height="4" rx="1" />
+      <rect x="14" y="10" width="7" height="4" rx="1" />
+      <path d="M12 9v9" />
+    </>
+  ),
+  "king-4": (
+    <>
+      <path d="M1 21V11M23 21V11M1 21h22" />
+      <rect x="2" y="12" width="4" height="9" rx="1" />
+      <rect x="8" y="12" width="4" height="9" rx="1" />
+      <rect x="14" y="12" width="4" height="9" rx="1" />
+      <rect x="20" y="12" width="2" height="9" rx="1" />
+      <path d="M2 17h4M8 17h4M14 17h4" />
+    </>
+  ),
+  "hidro-8": (
+    <>
+      <ellipse cx="12" cy="16" rx="9" ry="4" />
+      <path d="M3 16v-3c0-2.5 4-4.5 9-4.5s9 2 9 4.5v3" />
+      <path d="M6 13c1.5-1.2 3.5-1.8 6-1.8s4.5.6 6 1.8" />
+      <path d="M8 11.5c1-.8 2.5-1.2 4-1.2s3 .4 4 1.2" />
+    </>
+  ),
 };
 
 export const AMENITY_LABELS: Record<string, string> = {
@@ -169,6 +217,13 @@ export const AMENITY_LABELS: Record<string, string> = {
   pcd: "Opção PCD",
   "rooftop-shower": "Ducha c/ teto solar",
   tv: "Smart TV",
+  // ── Amenidades Lemon ──────────────────────────────────────────────────────
+  ofuro: "Ofurô",
+  heliponto: "Heliponto",
+  "garagem-4": "Garagem 4 carros",
+  "king-2": "2 Kings",
+  "king-4": "4 Kings",
+  "hidro-8": "Hidro 8 pessoas",
 };
 
 export function AmenityChip({ keyName }: { keyName: string }) {

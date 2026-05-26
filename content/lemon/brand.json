@@ -1,0 +1,127 @@
+{
+  "id": "lemon",
+  "name": "Lemon Motel",
+  "domain": "lemonmotel.com.br",
+  "logo": {
+    "src": "/brands/lemon/logo-lemon.webp",
+    "alt": "Lemon"
+  },
+  "favicon": "/brands/lemon/favicon-lemon.png",
+  "fonts": {
+    "display": {
+      "family": "Cormorant Garamond",
+      "google": "Cormorant Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400",
+      "fallback": "'Times New Roman', serif"
+    },
+    "serif": {
+      "family": "Fraunces",
+      "google": "Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500",
+      "fallback": "'Cormorant Garamond', 'Times New Roman', serif"
+    },
+    "sans": {
+      "family": "Inter",
+      "google": "Inter:wght@300;400;500;600;700",
+      "fallback": "system-ui, -apple-system, sans-serif"
+    }
+  },
+  "theme": {
+    "bg": "#000000",
+    "bgElev": "#0A0D00",
+    "bgCard": "#111400",
+    "line": "rgba(151,215,0,0.16)",
+    "lineSoft": "rgba(255,255,255,0.06)",
+    "ink": "#FFFFFF",
+    "inkMut": "#B0C478",
+    "inkDim": "#6A7A40",
+    "lavender": "#97D700",
+    "lavenderSoft": "#BAEB3A",
+    "lavenderDeep": "#6B9B00",
+    "lavenderGrad": "linear-gradient(135deg, #CCEE44 0%, #97D700 50%, #6B9B00 100%)",
+    "green": "#0A0E00",
+    "greenDeep": "#000000",
+    "red": "#E63946",
+    "redDeep": "#B0202C",
+    "emerald": "#97D700",
+    "emeraldSoft": "#BAEB3A",
+    "emeraldDeep": "#6B9B00",
+    "emeraldGrad": "linear-gradient(135deg, #CCEE44 0%, #97D700 50%, #6B9B00 100%)",
+    "lavBright": "#97D700",
+    "inkDeep": "#060900"
+  },
+  "units": [
+    {
+      "id": "piedade",
+      "label": "Lemon · Piedade",
+      "name": "Piedade",
+      "address": "Rua General Abreu e Lima, 111 · Piedade, Jaboatão dos Guararapes - PE",
+      "image": "/brands/lemon/units/fachada-piedade.webp",
+      "imageAlt": "Fachada Lemon Motel Piedade",
+      "bookingBaseUrl": "https://lemonmotel.com.br/pt-BR/piedade",
+      "categories": {
+        "all": [
+          {
+            "id": "lemon-plus",
+            "name": "Lemon Plus",
+            "meta": "150m² · Piscina + Hidro 8 pess. + 2 Kings",
+            "slug": "lemon-plus",
+            "hero": true,
+            "amenities": ["piscina", "cascata", "hidro-8", "king-2", "garagem-4", "tv"]
+          },
+          {
+            "id": "lemon",
+            "name": "Lemon",
+            "meta": "60m² · Hidro redonda + Alexa",
+            "slug": "lemon",
+            "amenities": ["hidro", "king", "garagem", "tv"]
+          },
+          {
+            "id": "majestic",
+            "name": "Majestic",
+            "meta": "60m² · Ofurô + Alexa",
+            "slug": "majestic",
+            "amenities": ["ofuro", "king", "garagem", "tv"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "afogados",
+      "label": "Lemon Loft · Afogados",
+      "name": "Lemon Loft",
+      "address": "Rua Firmino de Figueiredo, 350 · Afogados, Recife - PE",
+      "image": "/brands/lemon/units/fachada-afogados.webp",
+      "imageAlt": "Fachada Lemon Loft Afogados",
+      "bookingBaseUrl": "https://lemonmotel.com.br/pt-BR/afogados",
+      "categories": {
+        "all": [
+          {
+            "id": "loft-plus",
+            "name": "Loft Plus",
+            "meta": "500m² · Piscina + 4 Kings + Heliponto",
+            "slug": "loft-plus",
+            "hero": true,
+            "amenities": ["piscina", "cascata", "hidro-8", "king-4", "garagem-4", "heliponto", "tv"]
+          },
+          {
+            "id": "lemon-loft",
+            "name": "Lemon Loft",
+            "meta": "100m² · Hidro + Heliponto + Alexa",
+            "slug": "lemon-loft",
+            "amenities": ["hidro", "king", "garagem", "heliponto", "tv"]
+          }
+        ]
+      }
+    }
+  ],
+  "booking": {
+    "periodIds": {
+      "dayuse": "645e8043-f4b7-49ee-bc3c-b00cb4e19bc4",
+      "pernoite": "8d7700b9-cf52-4dff-9015-2131f4b76f4a"
+    },
+    "urlTemplate": "https://lemonmotel.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+  },
+  "concierge": {
+    "label": "Concierge 24h",
+    "href": "https://wa.me/558194949493"
+  }
+}
