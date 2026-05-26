@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
-import { put } from "@vercel/blob";
+import { put, list } from "@vercel/blob";
 
-/** GET /api/admin/upload — diagnóstico de configuração do Blob Store (apenas admin) */
+/** GET /api/admin/upload — diagnóstico + teste de conexão com o Blob Store (apenas admin) */
 export async function GET() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -10,19 +10,26 @@ export async function GET() {
 
   const token = process.env.BLOB_READ_WRITE_TOKEN ?? "";
   const parts = token.split("_");
-  // Formato esperado: vercel_blob_rw_{storeId}_{secret}
   const storeId = parts[3] ?? "(não encontrado)";
   const prefix  = parts.slice(0, 3).join("_") || "(vazio)";
-  const hasToken = !!token;
+
+  // Testa conexão real com o store via list()
+  let connectionOk = false;
+  let connectionError: string | null = null;
+  try {
+    await list({ limit: 1, token });
+    connectionOk = true;
+  } catch (err) {
+    connectionError = err instanceof Error ? err.message : String(err);
+  }
 
   return NextResponse.json({
-    hasToken,
-    tokenPrefix: prefix,           // "vercel_blob_rw" se correto
-    storeId,                       // ID do Blob Store codificado no token
+    hasToken: !!token,
+    tokenPrefix: prefix,
+    storeId,
     tokenLength: token.length,
-    envVarsPresent: {
-      BLOB_READ_WRITE_TOKEN: hasToken,
-    },
+    connectionOk,
+    connectionError,
   });
 }
 
