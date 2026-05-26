@@ -584,15 +584,20 @@ function LoteBadge({
     setActive(getActiveLot(new Date(), lots));
   }, [lots]);
 
+  // Oculta o badge quando não há desconto nem cupom (ex.: campanha sem lote promocional)
+  const hasPromo = active && (active.discountPct > 0 || !!active.coupon);
+
   return (
     <>
-      <div className="lote">
-        <span className="dot-live" />
-        <span>
-          Lote ativo · <b>{active?.name ?? "—"}</b> ·{" "}
-          <b>{active ? `${active.discountPct}% OFF` : "—"}</b>
-        </span>
-      </div>
+      {hasPromo && (
+        <div className="lote">
+          <span className="dot-live" />
+          <span>
+            Lote ativo · <b>{active.name}</b> ·{" "}
+            <b>{active.discountPct}% OFF</b>
+          </span>
+        </div>
+      )}
       {active?.coupon ? (
         <p className="wizard__coupon-hint">
           {renderCouponTemplate(couponHint, active)}
