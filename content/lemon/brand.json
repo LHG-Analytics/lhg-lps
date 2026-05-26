@@ -54,7 +54,7 @@
       "label": "Lemon · Piedade",
       "name": "Piedade",
       "address": "Rua General Abreu e Lima, 111 · Piedade, Jaboatão dos Guararapes - PE",
-      "image": "/brands/lemon/units/fachada-piedade.webp",
+      "image": "/brands/lemon/units/lemon-piedade-fachada.jpg",
       "imageAlt": "Fachada Lemon Motel Piedade",
       "bookingBaseUrl": "https://lemonmotel.com.br/pt-BR/piedade",
       "categories": {
@@ -89,7 +89,7 @@
       "label": "Lemon Loft · Afogados",
       "name": "Lemon Loft",
       "address": "Rua Firmino de Figueiredo, 350 · Afogados, Recife - PE",
-      "image": "/brands/lemon/units/fachada-afogados.webp",
+      "image": "/brands/lemon/units/lemon-afogados-fachada.jpg",
       "imageAlt": "Fachada Lemon Loft Afogados",
       "bookingBaseUrl": "https://lemonmotel.com.br/pt-BR/afogados",
       "categories": {
