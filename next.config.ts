@@ -11,6 +11,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      // Vercel Blob Store — URLs geradas pelo upload do CMS
+      {
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+    ],
   },
   typedRoutes: true,
   async headers() {
