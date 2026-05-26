@@ -3,10 +3,10 @@
   "name": "Lemon Motel",
   "domain": "lemonmotel.com.br",
   "logo": {
-    "src": "/brands/lemon/logo-lemon.webp",
+    "src": "/brands/lemon/units/logo-lemon.webp",
     "alt": "Lemon"
   },
-  "favicon": "/brands/lemon/favicon-lemon.png",
+  "favicon": "/brands/lemon/units/favicon-lemon.png",
   "fonts": {
     "display": {
       "family": "Cormorant Garamond",
