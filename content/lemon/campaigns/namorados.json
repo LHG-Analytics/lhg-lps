@@ -179,8 +179,8 @@
         "subtitle": "11 e 12 de junho · Dayuse e pernoite. Lotes limitados.",
         "countdownTo": "2026-06-12T23:59:59-03:00",
         "ctas": [
-          { "label": "Reservar Piedade",  "href": "#unidades", "variant": "gold",    "focusUnit": "piedade"  },
-          { "label": "Reservar Lemon Loft", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
+          { "label": "Reservar Piedade",    "href": "#unidades", "variant": "gold",  "focusUnit": "piedade"  },
+          { "label": "Reservar Lemon Loft", "href": "#unidades", "variant": "ghost", "focusUnit": "afogados" }
         ],
         "note": "Dayuse · Pernoite · Pagamento seguro · Confirmação imediata"
       }
