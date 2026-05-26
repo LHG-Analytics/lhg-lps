@@ -1,0 +1,256 @@
+{
+  "slug": "namorados",
+  "brand": "lemon",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Lemon — Dia dos Namorados 2026",
+    "description": "Dia dos Namorados Lemon: 11 e 12 de junho, dayuse e pernoite em todas as categorias. Almoço e jantar romântico com espumante com morangos nas suítes de Piedade e Afogados.",
+    "canonical": "https://campanhas.lemonmotel.com.br/diadosnamorados",
+    "analytics": {}
+  },
+  "campaign": {
+    "name": "Dia dos Namorados 2026",
+    "range": {
+      "start": "2026-06-11",
+      "end": "2026-06-12",
+      "premium": "2026-06-12",
+      "label": "11 e 12 de junho"
+    },
+    "countdown": {
+      "target": "2026-06-12T23:59:59-03:00"
+    },
+    "lots": [
+      { "id": "lote-1",    "name": "Primeiro lote",              "discountPct": 20, "coupon": "LEMON20", "from": "2026-05-26", "to": "2026-05-31" },
+      { "id": "lote-2",    "name": "Segundo lote",               "discountPct": 15, "coupon": "LEMON15", "from": "2026-06-01", "to": "2026-06-08" },
+      { "id": "pre-abre",  "name": "Primeiro lote · em breve",   "discountPct": 20, "coupon": "LEMON20", "before": "2026-05-26" },
+      { "id": "encerrado", "name": "Lote encerrado",             "discountPct": 0,                       "after": "2026-06-12" }
+    ],
+    "periods": [
+      {
+        "id": "dayuse",
+        "label": "Dayuse",
+        "shortLabel": "Dayuse",
+        "meta": "Almoço romântico · Espumante com morangos",
+        "scope": "Todas as categorias",
+        "scopeKey": "all",
+        "inclusos": "Almoço romântico · Espumante com morangos"
+      },
+      {
+        "id": "pernoite",
+        "label": "Pernoite",
+        "shortLabel": "Pernoite",
+        "meta": "Jantar romântico · Espumante com morangos · Café da manhã especial",
+        "scope": "Todas as categorias",
+        "scopeKey": "all",
+        "featured": true,
+        "featuredTag": "★ Experiência completa",
+        "inclusos": "Jantar romântico · Espumante com morangos · Café da manhã especial para o casal"
+      }
+    ],
+    "dates": [
+      { "value": "2026-06-11", "day": "11", "dow": "Quinta", "tier": "regular", "label": "11 de junho · Quinta" },
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",  "tier": "premium", "label": "12 de junho · Sexta"  }
+    ]
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": {
+        "tag": "Pacote · Dia dos Namorados - 2026"
+      }
+    },
+    {
+      "type": "hero",
+      "props": {
+        "poster": "/brands/lemon/namorados/hero-poster.webp",
+        "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
+        "headlineFull": "O presente perfeito não se embrulha. Se vive.",
+        "headlineEmphasis": "vive",
+        "typewriter": true,
+        "subtitle": "Reserve agora sua experiência Lemon.",
+        "primaryCta": { "label": "Escolher unidade", "href": "#unidades" },
+        "meta": [
+          { "label": "Períodos",  "value": "Dayuse · Pernoite",    "highlight": "Pernoite" },
+          { "label": "Datas",     "value": "11 e 12 de junho",     "highlight": "12" },
+          { "label": "Unidades",  "value": "Piedade · Afogados" }
+        ]
+      }
+    },
+    {
+      "type": "benefits",
+      "props": {
+        "eyebrow": "O que está incluso",
+        "headlineFull": "Tudo pensado para vocês dois.",
+        "headlineEmphasis": "vocês dois",
+        "items": [
+          {
+            "icon": "utensils",
+            "title": "Gastronomia inclusa na suíte",
+            "body": "No dayuse: almoço romântico servido diretamente na suíte. No pernoite: jantar romântico completo para o casal — sem dividir espaço com ninguém."
+          },
+          {
+            "icon": "champagne",
+            "title": "Espumante com morangos",
+            "body": "Uma garrafa de espumante gelada com morangos frescos espera vocês na suíte em ambos os períodos. O brinde perfeito para a data."
+          },
+          {
+            "icon": "coffee",
+            "title": "Café da manhã especial",
+            "body": "Exclusivo para o pernoite: café da manhã especial servido para o casal, sem pressa, no melhor estilo Lemon."
+          },
+          {
+            "icon": "clock",
+            "title": "Concierge 24h",
+            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera — vocês pedem, a gente resolve."
+          }
+        ]
+      }
+    },
+    {
+      "type": "unitPicker",
+      "props": {
+        "id": "unidades",
+        "eyebrow": "Escolha sua unidade",
+        "headline": "<em>Piedade</em> ou <em>Afogados</em>: sua noite acontece onde for melhor para vocês.",
+        "subtitle": "Selecione a unidade mais próxima — escolha o período (dayuse ou pernoite), a data (11 ou 12/06) e a categoria de suíte.",
+        "units": ["piedade", "afogados"],
+        "wizardSteps": [
+          { "n": 1, "label": "Período" },
+          { "n": 2, "label": "Data" },
+          { "n": 3, "label": "Categoria" },
+          { "n": 4, "label": "Resumo" }
+        ],
+        "stepCopy": {
+          "period": {
+            "title": "Escolha o período",
+            "hint": "Cada período tem uma curadoria de inclusos. Todas as categorias ficam disponíveis em qualquer escolha."
+          },
+          "date": {
+            "title": "Escolha sua data",
+            "hint": "12 de junho é a data oficial do Dia dos Namorados — preço premium. O dia 11 mantém tarifa regular.",
+            "smallHint": "Após o esgotamento dos lotes promocionais, vagas remanescentes seguem com tarifa cheia.",
+            "couponHint": "Aplique o cupom {coupon} no site oficial para ativar este desconto."
+          },
+          "category": {
+            "title": "Escolha a categoria da suíte",
+            "hint": "Todas as categorias da unidade estão disponíveis no período escolhido.",
+            "hint3hIpiranga": "Todas as categorias da unidade estão disponíveis.",
+            "hint3hLapa": "Todas as categorias da unidade estão disponíveis.",
+            "hintAllPernoite": "Todas as categorias da unidade estão disponíveis para o período escolhido."
+          },
+          "summary": {
+            "title": "Sua reserva no Dia dos Namorados",
+            "hint": "Confirme os detalhes e finalize no nosso site seguro.",
+            "labels": {
+              "unit": "Unidade",
+              "period": "Período",
+              "date": "Data",
+              "category": "Suíte",
+              "inclusos": "Inclusos",
+              "lot": "Lote",
+              "price": "Valor total"
+            },
+            "couponLine": "Insira o cupom {coupon} para obter {discount} OFF.",
+            "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento."
+          }
+        },
+        "openCtaLabel": "Reservar nesta unidade",
+        "confirmCtaLabel": "Confirmar reserva"
+      }
+    },
+    {
+      "type": "offer",
+      "props": {
+        "eyebrow": "Alta demanda · Vagas limitadas",
+        "headlineFull": "Tudo pronto para o 12/06. Só falta vocês.",
+        "headlineHtml": "Tudo pronto para o <em>12/06</em>.<br>Só falta <em>vocês</em>.",
+        "subtitle": "11 e 12 de junho · Dayuse e pernoite. Lotes limitados.",
+        "countdownTo": "2026-06-12T23:59:59-03:00",
+        "ctas": [
+          { "label": "Reservar Piedade",  "href": "#unidades", "variant": "gold",    "focusUnit": "piedade"  },
+          { "label": "Reservar Afogados", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
+        ],
+        "note": "Dayuse · Pernoite · Pagamento seguro · Confirmação imediata"
+      }
+    },
+    {
+      "type": "faq",
+      "props": {
+        "eyebrow": "Dúvidas frequentes",
+        "headlineFull": "Antes da reserva.",
+        "headlineEmphasis": "reserva",
+        "intro": "Se sua pergunta não estiver aqui, o concierge responde em minutos pelo WhatsApp.",
+        "items": [
+          {
+            "q": "Como funciona a reserva?",
+            "a": "Escolha a unidade acima e siga o assistente: período (dayuse ou pernoite), data (11 ou 12/06) e categoria de suíte. Você é levado direto à finalização com tudo já preenchido."
+          },
+          {
+            "q": "O que está incluso no pacote?",
+            "a": "<b>Dayuse:</b> almoço romântico + espumante com morangos. <b>Pernoite:</b> jantar romântico + espumante com morangos + café da manhã especial para o casal. Tudo servido na suíte."
+          },
+          {
+            "q": "Posso escolher a categoria?",
+            "a": "Sim. Depois de escolher a unidade e o período, você vê em tempo real as suítes disponíveis (Lemon Plus, Lemon, Majestic, Loft Plus, Lemon Loft) e escolhe a que combina com o clima da noite."
+          },
+          {
+            "q": "Qual a diferença entre Piedade e Afogados?",
+            "a": "<b>Piedade (Jaboatão):</b> suítes Lemon Plus (150m² com piscina), Lemon e Majestic. <b>Afogados (Recife):</b> Loft Plus (500m² com piscina e heliponto) e Lemon Loft. Escolha a mais próxima ou a que combina com o que você quer viver."
+          },
+          {
+            "q": "E o dia 12/06?",
+            "a": "12 de junho é a data oficial do Dia dos Namorados e opera com tarifa premium. O dia 11 mantém a tarifa regular da campanha — mesma curadoria, mesmos inclusos."
+          },
+          {
+            "q": "E se eu reservar perto da data?",
+            "a": "Os lotes promocionais são limitados e fecham por ordem de chegada. Quando esgotam, ainda pode haver disponibilidade — porém com tarifa cheia, sem desconto. Quanto mais cedo a reserva, melhor o preço."
+          },
+          {
+            "q": "Política de cancelamento?",
+            "a": "O cancelamento pode ser solicitado em até 30 minutos após a confirmação, desde que o check-in ainda não tenha sido realizado. Após o início do uso da suíte, não será possível cancelamento ou reembolso."
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Hospitalidade privada, projetada para casais que buscam privacidade, design e experiências inesquecíveis.",
+        "columns": [
+          {
+            "title": "Unidades",
+            "links": [
+              { "label": "Lemon Piedade",      "href": "#unidades", "focusUnit": "piedade"  },
+              { "label": "Lemon Loft Afogados", "href": "#unidades", "focusUnit": "afogados" }
+            ]
+          },
+          {
+            "title": "Pacotes",
+            "links": [
+              { "label": "Dayuse",   "href": "#unidades" },
+              { "label": "Pernoite", "href": "#unidades" }
+            ]
+          },
+          {
+            "title": "Ajuda",
+            "links": [
+              { "label": "Política de privacidade", "href": "https://lemonmotel.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso",           "href": "https://lemonmotel.com.br/pt-BR/terms"          }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Lemon Motel. Todos os direitos reservados.",
+        "ageNotice": "Experiência para maiores de 18 anos"
+      }
+    },
+    {
+      "type": "stickyCta",
+      "props": {
+        "ctas": [
+          { "label": "Piedade",  "href": "#unidades", "variant": "gold",    "focusUnit": "piedade"  },
+          { "label": "Afogados", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
+        ]
+      }
+    }
+  ]
+}

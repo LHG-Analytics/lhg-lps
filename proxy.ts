@@ -13,9 +13,10 @@ function getIp(req: NextRequest): string {
 /* ── Cache de rotas dinâmicas (sobrevive warm invocations) ─────────────── */
 type RouteEntry = { brandId: string; slug: string };
 type RouteCache = {
-  domainMap: Map<string, RouteEntry>;          // custom_domain → LP
-  pathMap:   Map<string, RouteEntry>;          // base_path     → LP
-  brandSlugMap: Map<string, string | null>;    // "brand/slug"  → custom_domain
+  domainMap:    Map<string, RouteEntry>;          // custom_domain         → LP
+  pathMap:      Map<string, RouteEntry>;          // base_path             → LP
+  campanhasMap: Map<string, RouteEntry>;          // "campanhasHostname:pathSlug" → LP
+  brandSlugMap: Map<string, string | null>;       // "brand/slug"          → custom_domain
   ts: number;
 };
 
@@ -27,9 +28,9 @@ async function getRouteMap(): Promise<RouteCache> {
   if (routeCache && now - routeCache.ts < CACHE_TTL) return routeCache;
 
   try {
-    // Busca todas as campanhas publicadas (com ou sem domínio/path)
+    // Busca todas as campanhas publicadas (com ou sem domínio/path/campanhas_domain)
     const url = new URL(
-      "/rest/v1/campaigns?select=brand_id,slug,custom_domain,base_path&status=eq.published",
+      "/rest/v1/campaigns?select=brand_id,slug,custom_domain,base_path,path_slug,campanhas_domain&status=eq.published",
       process.env.NEXT_PUBLIC_SUPABASE_URL
     );
     const res = await fetch(url.toString(), {
@@ -47,21 +48,30 @@ async function getRouteMap(): Promise<RouteCache> {
       slug: string;
       custom_domain: string | null;
       base_path: string | null;
+      path_slug: string | null;
+      campanhas_domain: string | null;
     }>;
 
     const domainMap    = new Map<string, RouteEntry>();
     const pathMap      = new Map<string, RouteEntry>();
+    const campanhasMap = new Map<string, RouteEntry>();
     const brandSlugMap = new Map<string, string | null>();
 
     for (const row of rows) {
-      if (row.custom_domain) domainMap.set(row.custom_domain, { brandId: row.brand_id, slug: row.slug });
-      if (row.base_path)     pathMap.set(row.base_path.replace(/\/$/, ""), { brandId: row.brand_id, slug: row.slug });
+      const entry: RouteEntry = { brandId: row.brand_id, slug: row.slug };
+      if (row.custom_domain)   domainMap.set(row.custom_domain, entry);
+      if (row.base_path)       pathMap.set(row.base_path.replace(/\/$/, ""), entry);
+      // Roteamento campanhas.{marca}.com.br/{path_slug}
+      // Chave: "{campanhas_domain}:{path_slug}" (ex.: "campanhas.lemonmotel.com.br:diadosnamorados")
+      if (row.campanhas_domain && row.path_slug) {
+        campanhasMap.set(`${row.campanhas_domain}:${row.path_slug}`, entry);
+      }
       brandSlugMap.set(`${row.brand_id}/${row.slug}`, row.custom_domain);
     }
 
-    routeCache = { domainMap, pathMap, brandSlugMap, ts: now };
+    routeCache = { domainMap, pathMap, campanhasMap, brandSlugMap, ts: now };
   } catch {
-    if (!routeCache) routeCache = { domainMap: new Map(), pathMap: new Map(), brandSlugMap: new Map(), ts: now };
+    if (!routeCache) routeCache = { domainMap: new Map(), pathMap: new Map(), campanhasMap: new Map(), brandSlugMap: new Map(), ts: now };
     else routeCache = { ...routeCache, ts: now };
   }
 
@@ -83,14 +93,29 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api") && !isStaticAsset) {
-    const { domainMap, pathMap, brandSlugMap } = await getRouteMap();
+    const { domainMap, pathMap, campanhasMap, brandSlugMap } = await getRouteMap();
 
-    // Subdomínio: hostname exato → rewrite transparente
+    // Subdomínio: hostname exato → rewrite transparente (ex.: diadosnamorados.lushmotel.com.br)
     if (domainMap.has(hostname)) {
       const { brandId, slug } = domainMap.get(hostname)!;
       const url = request.nextUrl.clone();
       url.pathname = `/${brandId}/${slug}`;
       return NextResponse.rewrite(url);
+    }
+
+    // campanhas.{marca}.com.br/{path_slug}/* → rewrite transparente
+    // Ex.: campanhas.lemonmotel.com.br/diadosnamorados → /lemon/namorados
+    if (hostname.startsWith("campanhas.")) {
+      const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "";
+      if (firstSegment) {
+        const cKey = `${hostname}:${firstSegment}`;
+        if (campanhasMap.has(cKey)) {
+          const { brandId, slug } = campanhasMap.get(cKey)!;
+          const url = request.nextUrl.clone();
+          url.pathname = `/${brandId}/${slug}`;
+          return NextResponse.rewrite(url);
+        }
+      }
     }
 
     // Subdiretório: prefixo de path → rewrite transparente
