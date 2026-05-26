@@ -55,6 +55,7 @@ async function getRouteMap(): Promise<RouteCache> {
     const domainMap    = new Map<string, RouteEntry>();
     const pathMap      = new Map<string, RouteEntry>();
     const campanhasMap = new Map<string, RouteEntry>();
+    // "brand/slug" → URL canônica completa para 308 redirect (custom_domain ou campanhas_domain/path_slug)
     const brandSlugMap = new Map<string, string | null>();
 
     for (const row of rows) {
@@ -66,7 +67,13 @@ async function getRouteMap(): Promise<RouteCache> {
       if (row.campanhas_domain && row.path_slug) {
         campanhasMap.set(`${row.campanhas_domain}:${row.path_slug}`, entry);
       }
-      brandSlugMap.set(`${row.brand_id}/${row.slug}`, row.custom_domain);
+      // URL canônica: custom_domain tem prioridade, depois campanhas_domain + path_slug
+      const canonicalUrl = row.custom_domain
+        ? `https://${row.custom_domain}`
+        : row.campanhas_domain && row.path_slug
+          ? `https://${row.campanhas_domain}/${row.path_slug}`
+          : null;
+      brandSlugMap.set(`${row.brand_id}/${row.slug}`, canonicalUrl);
     }
 
     routeCache = { domainMap, pathMap, campanhasMap, brandSlugMap, ts: now };

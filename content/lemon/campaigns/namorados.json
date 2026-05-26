@@ -20,10 +20,8 @@
       "target": "2026-06-12T23:59:59-03:00"
     },
     "lots": [
-      { "id": "lote-1",    "name": "Primeiro lote",              "discountPct": 20, "coupon": "LEMON20", "from": "2026-05-26", "to": "2026-05-31" },
-      { "id": "lote-2",    "name": "Segundo lote",               "discountPct": 15, "coupon": "LEMON15", "from": "2026-06-01", "to": "2026-06-08" },
-      { "id": "pre-abre",  "name": "Primeiro lote · em breve",   "discountPct": 20, "coupon": "LEMON20", "before": "2026-05-26" },
-      { "id": "encerrado", "name": "Lote encerrado",             "discountPct": 0,                       "after": "2026-06-12" }
+      { "id": "ativo",     "name": "Tarifa de campanha", "discountPct": 0, "from": "2026-05-26", "to": "2026-06-12" },
+      { "id": "encerrado", "name": "Encerrado",          "discountPct": 0, "after": "2026-06-12" }
     ],
     "periods": [
       {
@@ -128,8 +126,8 @@
           "date": {
             "title": "Escolha sua data",
             "hint": "12 de junho é a data oficial do Dia dos Namorados — preço premium. O dia 11 mantém tarifa regular.",
-            "smallHint": "Após o esgotamento dos lotes promocionais, vagas remanescentes seguem com tarifa cheia.",
-            "couponHint": "Aplique o cupom {coupon} no site oficial para ativar este desconto."
+            "smallHint": "Vagas limitadas por data. Reserve com antecedência para garantir a sua.",
+            "couponHint": ""
           },
           "category": {
             "title": "Escolha a categoria da suíte",
@@ -150,8 +148,8 @@
               "lot": "Lote",
               "price": "Valor total"
             },
-            "couponLine": "Insira o cupom {coupon} para obter {discount} OFF.",
-            "lotLineNoCoupon": "{name} — sem desconto promocional ativo no momento."
+            "couponLine": "",
+            "lotLineNoCoupon": "{name}"
           }
         },
         "openCtaLabel": "Reservar nesta unidade",
