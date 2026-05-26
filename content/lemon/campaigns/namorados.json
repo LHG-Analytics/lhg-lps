@@ -254,15 +254,6 @@
         "copyright": "© 2026 Lemon Motel. Todos os direitos reservados.",
         "ageNotice": "Experiência para maiores de 18 anos"
       }
-    },
-    {
-      "type": "stickyCta",
-      "props": {
-        "ctas": [
-          { "label": "Piedade",  "href": "#unidades", "variant": "gold",    "focusUnit": "piedade"  },
-          { "label": "Lemon Loft", "href": "#unidades", "variant": "emerald", "focusUnit": "afogados" }
-        ]
-      }
     }
   ]
 }
