@@ -1602,6 +1602,13 @@ section { padding: 96px 0; position: relative; }
   background: color-mix(in srgb, #030500 96%, transparent);
 }
 
+/* ── Altana Motel ────────────────────────────────────────────────────────── */
+[data-brand="altana"] .hero__bg {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, #0A1A10 85%, transparent) 0%, color-mix(in srgb, #0A1A10 35%, transparent) 45%, transparent 70%),
+    linear-gradient(180deg, transparent 60%, color-mix(in srgb, #0A1A10 50%, transparent) 100%);
+}
+
 .concierge-fab:active { transform: translateY(0); }
 .concierge-fab__icon {
   width: 20px; height: 20px;
