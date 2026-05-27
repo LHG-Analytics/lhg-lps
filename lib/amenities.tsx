@@ -196,6 +196,71 @@ export const AMENITY_ICONS: Record<string, ReactNode> = {
       <path d="M8 11.5c1-.8 2.5-1.2 4-1.2s3 .4 4 1.2" />
     </>
   ),
+  // ── Amenidades Altana ─────────────────────────────────────────────────────
+  som: (
+    <>
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M15.54 8.46a5 5 0 010 7.07" />
+    </>
+  ),
+  frigobar: (
+    <>
+      <rect x="6" y="2" width="12" height="20" rx="2" />
+      <line x1="6" y1="9" x2="18" y2="9" />
+      <path d="M11 5v3" />
+    </>
+  ),
+  "ar-central": (
+    <>
+      <rect x="2" y="7" width="20" height="10" rx="2" />
+      <path d="M7 12h10" />
+      <path d="M5 7V4M12 7V4M19 7V4" />
+    </>
+  ),
+  "ar-split": (
+    <>
+      <rect x="2" y="6" width="20" height="8" rx="2" />
+      <path d="M7 10h10" />
+      <path d="M12 14v3M9 17h6" />
+    </>
+  ),
+  "tv-2": (
+    <>
+      <rect x="1" y="5" width="10" height="8" rx="1" />
+      <path d="M5 17H2M4 13v4" />
+      <rect x="13" y="5" width="10" height="8" rx="1" />
+      <path d="M22 17h-3M20 13v4" />
+    </>
+  ),
+  "tv-42": (
+    <>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+      <path d="M8 10H6v2h2M6 14v-4" />
+    </>
+  ),
+  "tv-27": (
+    <>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+      <path d="M15 10h3l-3 4h3" />
+    </>
+  ),
+  "cadeira-erotica": (
+    <>
+      <path d="M6 21V12a6 6 0 0112 0v9" />
+      <path d="M6 16h12" />
+      <path d="M9 21h6" />
+      <circle cx="12" cy="5" r="2" />
+    </>
+  ),
+  pole: (
+    <>
+      <line x1="12" y1="2" x2="12" y2="22" />
+      <path d="M9 7c0-1.7 1.3-3 3-3s3 1.3 3 3" />
+      <path d="M10 15c0 1.1.9 2 2 2s2-.9 2-2" />
+    </>
+  ),
 };
 
 export const AMENITY_LABELS: Record<string, string> = {
@@ -224,6 +289,16 @@ export const AMENITY_LABELS: Record<string, string> = {
   "king-2": "2 Kings",
   "king-4": "4 Kings",
   "hidro-8": "Hidro 8 pessoas",
+  // ── Amenidades Altana ─────────────────────────────────────────────────────
+  som: "Som ambiente",
+  frigobar: "Frigobar",
+  "ar-central": "Ar-cond. central",
+  "ar-split": "Ar-cond. split",
+  "tv-2": "2 Smart TVs",
+  "tv-42": "TV 42\"",
+  "tv-27": "TV 27\"",
+  "cadeira-erotica": "Cadeira erótica",
+  pole: "Pole Dance",
 };
 
 export function AmenityChip({ keyName }: { keyName: string }) {

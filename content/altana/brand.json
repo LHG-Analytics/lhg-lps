@@ -59,18 +59,18 @@
       "bookingBaseUrl": "https://wa.me/5561996647709",
       "categories": {
         "all": [
-          { "id": "panoramica-1", "name": "Panorâmica 1", "meta": "Suíte Panorâmica 1", "slug": "panoramica-1", "amenities": [] },
-          { "id": "especial",     "name": "Especial",     "meta": "Suíte Especial",     "slug": "especial",     "amenities": [] },
-          { "id": "ouro",         "name": "Ouro",         "meta": "Suíte Ouro",         "slug": "ouro",         "amenities": [] },
-          { "id": "tematica-1",   "name": "Temática 1",   "meta": "Suíte Temática 1",   "slug": "tematica-1",   "amenities": [] },
-          { "id": "platina",      "name": "Platina",      "meta": "Suíte Platina",      "slug": "platina",      "amenities": [] },
-          { "id": "tematica-2",   "name": "Temática 2",   "meta": "Suíte Temática 2",   "slug": "tematica-2",   "amenities": [] },
-          { "id": "panoramica-2", "name": "Panorâmica 2", "meta": "Suíte Panorâmica 2", "slug": "panoramica-2", "amenities": [] },
-          { "id": "tematica",     "name": "Temática",     "meta": "Suíte Temática",     "slug": "tematica",     "amenities": [] },
-          { "id": "prata",        "name": "Prata",        "meta": "Suíte Prata",        "slug": "prata",        "amenities": [] },
-          { "id": "spa",          "name": "Spa",          "meta": "Suíte Spa",          "slug": "spa",          "amenities": [] },
-          { "id": "master",       "name": "Master",       "meta": "Suíte Master",       "slug": "master",       "amenities": [] },
-          { "id": "premium",      "name": "Premium",      "meta": "Suíte Premium",      "slug": "premium",      "hero": true, "amenities": [] }
+          { "id": "panoramica-1", "name": "Panorâmica 1", "meta": "TV · Som · Frigobar · Ar central",                    "slug": "panoramica-1", "amenities": ["tv", "som", "frigobar", "ar-central"] },
+          { "id": "especial",     "name": "Especial",     "meta": "TV · Som · Frigobar · Ar split · Hidromassagem",      "slug": "especial",     "amenities": ["tv", "som", "frigobar", "ar-split", "hidro"] },
+          { "id": "ouro",         "name": "Ouro",         "meta": "TV · Som · Frigobar · Ar central · Hidromassagem",    "slug": "ouro",         "amenities": ["tv", "som", "frigobar", "ar-central", "hidro"] },
+          { "id": "tematica-1",   "name": "Temática 1",   "meta": "TV · Som · Frigobar · Ar central · Hidromassagem",    "slug": "tematica-1",   "amenities": ["tv", "som", "frigobar", "ar-central", "hidro"] },
+          { "id": "platina",      "name": "Platina",      "meta": "TV · Som · Frigobar · Sauna · Hidromassagem",         "slug": "platina",      "amenities": ["tv", "som", "frigobar", "ar-central", "hidro", "sauna"] },
+          { "id": "tematica-2",   "name": "Temática 2",   "meta": "TV · Som · Frigobar · Ar central · Hidro · Sauna",    "slug": "tematica-2",   "amenities": ["tv", "som", "frigobar", "ar-central", "hidro", "sauna"] },
+          { "id": "panoramica-2", "name": "Panorâmica 2", "meta": "TV · Som · Frigobar · Ar central · Hidro · Sauna",    "slug": "panoramica-2", "amenities": ["tv", "som", "frigobar", "ar-central", "hidro", "sauna"] },
+          { "id": "tematica",     "name": "Temática",     "meta": "TV · Som · Frigobar · Ar central",                    "slug": "tematica",     "amenities": ["tv", "som", "frigobar", "ar-central"] },
+          { "id": "prata",        "name": "Prata",        "meta": "TV · Som · Frigobar · Ar central",                    "slug": "prata",        "amenities": ["tv", "som", "frigobar", "ar-central"] },
+          { "id": "spa",          "name": "Spa",          "meta": "2 TVs · Som · Frigobar · Ar central · Hidro · Sauna", "slug": "spa",          "amenities": ["tv-2", "som", "frigobar", "ar-central", "hidro", "sauna"] },
+          { "id": "master",       "name": "Master",       "meta": "TV · Som · Frigobar · Hidro · Sauna · Piscina",       "slug": "master",       "amenities": ["tv", "som", "frigobar", "ar-central", "hidro", "sauna", "piscina"] },
+          { "id": "premium",      "name": "Premium",      "meta": "2 TVs · Piscina · Sauna · Hidro · Pista + Pole",      "slug": "premium",      "hero": true, "amenities": ["tv-42", "tv-27", "som", "frigobar", "ar-central", "cadeira-erotica", "hidro", "pista", "piscina", "sauna", "pole"] }
         ]
       }
     }
