@@ -1604,6 +1604,7 @@ section { padding: 96px 0; position: relative; }
 
 /* ── Altana Motel ────────────────────────────────────────────────────────── */
 [data-brand="altana"] .logo__mark { height: 52px; }
+[data-brand="altana"] .unit__img img { object-position: center 25%; }
 [data-brand="altana"] .hero__bg {
   background:
     linear-gradient(90deg, color-mix(in srgb, #0A1A10 85%, transparent) 0%, color-mix(in srgb, #0A1A10 35%, transparent) 45%, transparent 70%),
