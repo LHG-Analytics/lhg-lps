@@ -110,18 +110,18 @@ export async function proxy(request: NextRequest) {
       return NextResponse.rewrite(url);
     }
 
-    // campanhas.{marca}.com.br/{path_slug}/* → rewrite transparente
+    // campanha(s).{marca}.com.br/{path_slug}/* → rewrite transparente
     // Ex.: campanhas.lemonmotel.com.br/diadosnamorados → /lemon/namorados
-    if (hostname.startsWith("campanhas.")) {
-      const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "";
-      if (firstSegment) {
-        const cKey = `${hostname}:${firstSegment}`;
-        if (campanhasMap.has(cKey)) {
-          const { brandId, slug } = campanhasMap.get(cKey)!;
-          const url = request.nextUrl.clone();
-          url.pathname = `/${brandId}/${slug}`;
-          return NextResponse.rewrite(url);
-        }
+    //      campanha.altanamotel.com.br/diadosnamorados  → /altana/namorados
+    // Não há guard de prefixo: o mapa garante a correspondência exata por hostname completo
+    const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "";
+    if (firstSegment) {
+      const cKey = `${hostname}:${firstSegment}`;
+      if (campanhasMap.has(cKey)) {
+        const { brandId, slug } = campanhasMap.get(cKey)!;
+        const url = request.nextUrl.clone();
+        url.pathname = `/${brandId}/${slug}`;
+        return NextResponse.rewrite(url);
       }
     }
 
