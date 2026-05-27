@@ -1,0 +1,263 @@
+{
+  "slug": "namorados",
+  "brand": "altana",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Altana — Dia dos Namorados 2026",
+    "description": "Dia dos Namorados no Altana: 11 a 14 de junho, 4h e 12h em todas as categorias. Entrada, salada e prato principal inclusos. Pernoite com café da manhã especial.",
+    "canonical": "https://campanhas.altanamotel.com.br/diadosnamorados",
+    "analytics": {}
+  },
+  "campaign": {
+    "name": "Dia dos Namorados 2026",
+    "range": {
+      "start": "2026-06-11",
+      "end": "2026-06-14",
+      "premium": "2026-06-12",
+      "label": "11 a 14 de junho"
+    },
+    "countdown": {
+      "target": "2026-06-14T23:59:59-03:00"
+    },
+    "lots": [
+      { "id": "ativo",     "name": "Tarifa de campanha", "discountPct": 0, "from": "2026-05-27", "to": "2026-06-14" },
+      { "id": "encerrado", "name": "Encerrado",          "discountPct": 0, "after": "2026-06-14" }
+    ],
+    "periods": [
+      {
+        "id": "4h",
+        "label": "4 Horas",
+        "shortLabel": "4h",
+        "meta": "Entrada · Salada · Prato principal",
+        "scope": "Todas as categorias",
+        "scopeKey": "all",
+        "inclusos": "Entrada · Salada · Prato principal"
+      },
+      {
+        "id": "12h",
+        "label": "12 Horas",
+        "shortLabel": "12h",
+        "meta": "Entrada · Salada · Prato principal · Café da manhã",
+        "scope": "Todas as categorias",
+        "scopeKey": "all",
+        "featured": true,
+        "featuredTag": "★ Experiência completa",
+        "inclusos": "Entrada · Salada · Prato principal · Café da manhã especial para o casal"
+      }
+    ],
+    "dates": [
+      { "value": "2026-06-11", "day": "11", "dow": "Quinta", "tier": "regular", "label": "11 de junho · Quinta" },
+      { "value": "2026-06-12", "day": "12", "dow": "Sexta",  "tier": "regular", "label": "12 de junho · Sexta"  },
+      { "value": "2026-06-13", "day": "13", "dow": "Sábado", "tier": "regular", "label": "13 de junho · Sábado" },
+      { "value": "2026-06-14", "day": "14", "dow": "Domingo","tier": "regular", "label": "14 de junho · Domingo" }
+    ],
+    "pricing": {
+      "currency": "BRL",
+      "units": {
+        "altana": {
+          "panoramica-1": { "4h": { "regular": 32600, "premium": 32600 }, "12h": { "regular": 41900, "premium": 41900 } },
+          "especial":     { "4h": { "regular": 34400, "premium": 34400 }, "12h": { "regular": 44200, "premium": 44200 } },
+          "ouro":         { "4h": { "regular": 34400, "premium": 34400 }, "12h": { "regular": 44200, "premium": 44200 } },
+          "tematica-1":   { "4h": { "regular": 36200, "premium": 36200 }, "12h": { "regular": 46600, "premium": 46600 } },
+          "platina":      { "4h": { "regular": 38000, "premium": 38000 }, "12h": { "regular": 48900, "premium": 48900 } },
+          "tematica-2":   { "4h": { "regular": 39900, "premium": 39900 }, "12h": { "regular": 51200, "premium": 51200 } },
+          "panoramica-2": { "4h": { "regular": 41700, "premium": 41700 }, "12h": { "regular": 53600, "premium": 53600 } },
+          "tematica":     { "4h": { "regular": 52300, "premium": 52300 }, "12h": { "regular": 39500, "premium": 39500 } },
+          "prata":        { "4h": { "regular": 50200, "premium": 50200 }, "12h": { "regular": 61700, "premium": 61700 } },
+          "spa":          { "4h": { "regular": 56200, "premium": 56200 }, "12h": { "regular": 72300, "premium": 72300 } },
+          "master":       { "4h": { "regular": 69000, "premium": 69000 }, "12h": { "regular": 88700, "premium": 88700 } },
+          "premium":      { "4h": { "regular": 78100, "premium": 78100 }, "12h": { "regular": 100400, "premium": 100400 } }
+        }
+      }
+    }
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": {
+        "tag": "Pacote · Dia dos Namorados - 2026"
+      }
+    },
+    {
+      "type": "hero",
+      "props": {
+        "poster": "/brands/altana/namorados/hero-altana.jpeg",
+        "eyebrow": "EDIÇÃO LIMITADA · DIA DOS NAMORADOS 2026",
+        "headlineFull": "O presente perfeito não se embrulha. Se vive.",
+        "headlineEmphasis": "vive",
+        "typewriter": true,
+        "subtitle": "Reserve agora sua experiência Altana.",
+        "primaryCta": { "label": "Escolher suíte", "href": "#unidades" },
+        "meta": [
+          { "label": "Períodos",  "value": "4 Horas · 12 Horas",       "highlight": "12 Horas" },
+          { "label": "Datas",     "value": "11 a 14 de junho",          "highlight": "12" },
+          { "label": "Unidade",   "value": "Sobradinho, Brasília - DF" }
+        ]
+      }
+    },
+    {
+      "type": "benefits",
+      "props": {
+        "eyebrow": "O que está incluso",
+        "headlineFull": "Tudo pensado para vocês dois.",
+        "headlineEmphasis": "vocês dois",
+        "items": [
+          {
+            "icon": "utensils",
+            "title": "Gastronomia inclusa na suíte",
+            "body": "Entrada, salada e prato principal servidos diretamente na suíte nos dois períodos. No pacote de 12 horas, o café da manhã também está incluso — sem pressa para a manhã seguinte."
+          },
+          {
+            "icon": "coffee",
+            "title": "Café da manhã especial",
+            "body": "Exclusivo para o período de 12 horas: café da manhã especial para o casal, servido na suíte com todo o conforto e privacidade que vocês merecem."
+          },
+          {
+            "icon": "clock",
+            "title": "Concierge 24h",
+            "body": "Time disponível a qualquer hora, antes e durante a estadia. Sem formulários, sem espera — vocês pedem, a gente resolve."
+          },
+          {
+            "icon": "champagne",
+            "title": "Suítes para todos os estilos",
+            "body": "De Panorâmica a Premium, 12 categorias disponíveis para o casal escolher a que combina mais com o clima da data. Todas com gastronomia inclusa."
+          }
+        ]
+      }
+    },
+    {
+      "type": "unitPicker",
+      "props": {
+        "id": "unidades",
+        "eyebrow": "Reserve sua suíte",
+        "headline": "Escolha seu período e sua <em>suíte ideal</em> para o Dia dos Namorados.",
+        "subtitle": "Selecione o período (4h ou 12h), a data (11 a 14/06) e a categoria de suíte. Finalize pelo WhatsApp com atendimento imediato.",
+        "units": ["altana"],
+        "wizardSteps": [
+          { "n": 1, "label": "Período" },
+          { "n": 2, "label": "Data" },
+          { "n": 3, "label": "Categoria" },
+          { "n": 4, "label": "Resumo" }
+        ],
+        "stepCopy": {
+          "period": {
+            "title": "Escolha o período",
+            "hint": "Cada período tem uma curadoria de inclusos. Todas as categorias ficam disponíveis em qualquer escolha."
+          },
+          "date": {
+            "title": "Escolha sua data",
+            "hint": "Quatro dias para celebrar. O preço é o mesmo em todos.",
+            "smallHint": "Vagas limitadas por data. Reserve com antecedência para garantir a sua.",
+            "couponHint": ""
+          },
+          "category": {
+            "title": "Escolha a categoria da suíte",
+            "hint": "Todas as 12 categorias estão disponíveis no período escolhido.",
+            "hint3hIpiranga": "Todas as categorias estão disponíveis.",
+            "hint3hLapa": "Todas as categorias estão disponíveis.",
+            "hintAllPernoite": "Todas as categorias estão disponíveis para o período escolhido."
+          },
+          "summary": {
+            "title": "Sua reserva no Dia dos Namorados",
+            "hint": "Confirme os detalhes e finalize pelo WhatsApp — atendimento imediato.",
+            "labels": {
+              "unit": "Unidade",
+              "period": "Período",
+              "date": "Data",
+              "category": "Suíte",
+              "inclusos": "Inclusos",
+              "lot": "Lote",
+              "price": "Valor total"
+            },
+            "couponLine": "",
+            "lotLineNoCoupon": "{name}"
+          }
+        },
+        "openCtaLabel": "Reservar nesta unidade",
+        "confirmCtaLabel": "Reservar via WhatsApp"
+      }
+    },
+    {
+      "type": "offer",
+      "props": {
+        "eyebrow": "Alta demanda · Vagas limitadas",
+        "headlineFull": "Tudo pronto para o Dia dos Namorados. Só falta vocês.",
+        "headlineHtml": "Tudo pronto para o <em>Dia dos Namorados</em>.<br>Só falta <em>vocês</em>.",
+        "subtitle": "11 a 14 de junho · 4 horas e 12 horas. Vagas limitadas.",
+        "countdownTo": "2026-06-14T23:59:59-03:00",
+        "ctas": [
+          { "label": "Reservar via WhatsApp", "href": "#unidades", "variant": "gold" }
+        ],
+        "note": "4 Horas · 12 Horas · Atendimento imediato · Confirmação pelo WhatsApp"
+      }
+    },
+    {
+      "type": "faq",
+      "props": {
+        "eyebrow": "Dúvidas frequentes",
+        "headlineFull": "Antes da reserva.",
+        "headlineEmphasis": "reserva",
+        "intro": "Se sua pergunta não estiver aqui, o concierge responde em minutos pelo WhatsApp.",
+        "items": [
+          {
+            "q": "Como funciona a reserva?",
+            "a": "Escolha o período (4h ou 12h), a data (11 a 14/06) e a categoria de suíte no assistente acima. Com tudo definido, clique em 'Reservar via WhatsApp' — nosso time confirma em minutos."
+          },
+          {
+            "q": "O que está incluso no pacote?",
+            "a": "<b>4 Horas:</b> entrada + salada + prato principal servidos na suíte. <b>12 Horas:</b> entrada + salada + prato principal + café da manhã especial para o casal."
+          },
+          {
+            "q": "Posso escolher a categoria?",
+            "a": "Sim. No assistente você vê as 12 categorias disponíveis com os respectivos valores — de Panorâmica a Premium — e escolhe a que combina com o clima da noite."
+          },
+          {
+            "q": "O preço é o mesmo nos 4 dias?",
+            "a": "Sim. Os valores são iguais em todos os dias: 11, 12, 13 e 14 de junho. Escolha a data que melhor encaixa na agenda de vocês."
+          },
+          {
+            "q": "Qual a diferença entre 4h e 12h?",
+            "a": "O período de 4 horas inclui entrada, salada e prato principal. O de 12 horas adiciona café da manhã especial para o casal — perfeito para quem quer aproveitar a noite completa."
+          },
+          {
+            "q": "E se eu precisar de mais informações?",
+            "a": "Fale com o concierge pelo WhatsApp — disponível 24h. Respondemos em minutos para tirar dúvidas, confirmar disponibilidade e fechar a reserva."
+          },
+          {
+            "q": "Política de cancelamento?",
+            "a": "O cancelamento pode ser solicitado em até 30 minutos após a confirmação, desde que o check-in ainda não tenha sido realizado. Após o início do uso da suíte, não será possível cancelamento ou reembolso."
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Hospitalidade privada, projetada para casais que buscam privacidade, design e experiências inesquecíveis.",
+        "columns": [
+          {
+            "title": "Unidade",
+            "links": [
+              { "label": "Altana · Sobradinho", "href": "#unidades", "focusUnit": "altana" }
+            ]
+          },
+          {
+            "title": "Pacotes",
+            "links": [
+              { "label": "4 Horas",  "href": "#unidades" },
+              { "label": "12 Horas", "href": "#unidades" }
+            ]
+          },
+          {
+            "title": "Ajuda",
+            "links": [
+              { "label": "Fale pelo WhatsApp", "href": "https://wa.me/5561996647709" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Altana Motel. Todos os direitos reservados.",
+        "ageNotice": "Experiência para maiores de 18 anos"
+      }
+    }
+  ]
+}

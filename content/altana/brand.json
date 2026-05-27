@@ -48,9 +48,42 @@
     "lavBright": "#CB98FF",
     "inkDeep": "#2F1A46"
   },
-  "units": [],
+  "units": [
+    {
+      "id": "altana",
+      "label": "Altana",
+      "name": "Altana",
+      "address": "Lago Norte Subida do Colorado 2 · Sobradinho, Brasília - DF",
+      "image": "/brands/altana/units/altana-fachada.jpg",
+      "imageAlt": "Fachada Altana Motel",
+      "bookingBaseUrl": "https://wa.me/5561996647709",
+      "categories": {
+        "all": [
+          { "id": "panoramica-1", "name": "Panorâmica 1", "meta": "Suíte Panorâmica 1", "slug": "panoramica-1", "amenities": [] },
+          { "id": "especial",     "name": "Especial",     "meta": "Suíte Especial",     "slug": "especial",     "amenities": [] },
+          { "id": "ouro",         "name": "Ouro",         "meta": "Suíte Ouro",         "slug": "ouro",         "amenities": [] },
+          { "id": "tematica-1",   "name": "Temática 1",   "meta": "Suíte Temática 1",   "slug": "tematica-1",   "amenities": [] },
+          { "id": "platina",      "name": "Platina",      "meta": "Suíte Platina",      "slug": "platina",      "amenities": [] },
+          { "id": "tematica-2",   "name": "Temática 2",   "meta": "Suíte Temática 2",   "slug": "tematica-2",   "amenities": [] },
+          { "id": "panoramica-2", "name": "Panorâmica 2", "meta": "Suíte Panorâmica 2", "slug": "panoramica-2", "amenities": [] },
+          { "id": "tematica",     "name": "Temática",     "meta": "Suíte Temática",     "slug": "tematica",     "amenities": [] },
+          { "id": "prata",        "name": "Prata",        "meta": "Suíte Prata",        "slug": "prata",        "amenities": [] },
+          { "id": "spa",          "name": "Spa",          "meta": "Suíte Spa",          "slug": "spa",          "amenities": [] },
+          { "id": "master",       "name": "Master",       "meta": "Suíte Master",       "slug": "master",       "amenities": [] },
+          { "id": "premium",      "name": "Premium",      "meta": "Suíte Premium",      "slug": "premium",      "hero": true, "amenities": [] }
+        ]
+      }
+    }
+  ],
   "booking": {
-    "periodIds": {},
-    "urlTemplate": "https://altanamotel.com.br/pt-BR/{unit}/{categorySlug}/schedule?date={date}&period={periodId}"
+    "periodIds": {
+      "4h":  "4h",
+      "12h": "12h"
+    },
+    "urlTemplate": "https://wa.me/5561996647709"
+  },
+  "concierge": {
+    "label": "Concierge 24h",
+    "href": "https://wa.me/5561996647709"
   }
 }
