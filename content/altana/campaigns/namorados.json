@@ -62,7 +62,7 @@
           "platina":      { "4h": { "regular": 38000, "premium": 38000 }, "12h": { "regular": 48900, "premium": 48900 } },
           "tematica-2":   { "4h": { "regular": 39900, "premium": 39900 }, "12h": { "regular": 51200, "premium": 51200 } },
           "panoramica-2": { "4h": { "regular": 41700, "premium": 41700 }, "12h": { "regular": 53600, "premium": 53600 } },
-          "tematica":     { "4h": { "regular": 52300, "premium": 52300 }, "12h": { "regular": 39500, "premium": 39500 } },
+          "tematica":     { "4h": { "regular": 52300, "premium": 52300 }, "12h": { "regular": 64000, "premium": 64000 } },
           "prata":        { "4h": { "regular": 50200, "premium": 50200 }, "12h": { "regular": 61700, "premium": 61700 } },
           "spa":          { "4h": { "regular": 56200, "premium": 56200 }, "12h": { "regular": 72300, "premium": 72300 } },
           "master":       { "4h": { "regular": 69000, "premium": 69000 }, "12h": { "regular": 88700, "premium": 88700 } },
