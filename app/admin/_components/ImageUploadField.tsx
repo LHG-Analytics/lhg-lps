@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
+import { upload } from "@vercel/blob/client";
 
 interface Props {
   value: string;
@@ -17,6 +18,7 @@ export function ImageUploadField({
   compact = false,
 }: Props) {
   const [uploading, setUploading] = useState(false);
+  const [progress,  setProgress]  = useState(0);
   const [dragging,  setDragging]  = useState(false);
   const [error,     setError]     = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,24 +26,30 @@ export function ImageUploadField({
   const isImage = !!value && /\.(png|jpe?g|gif|webp|svg|avif|bmp)(\?|$)/i.test(value);
   const isVideo = !!value && /\.(mp4|webm|mov|avi|mkv)(\?|$)/i.test(value);
 
-  async function upload(file: File) {
+  async function uploadFile(file: File) {
     setUploading(true);
+    setProgress(0);
     setError("");
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      fd.append("brandId", brandId);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      if (!res.ok) {
-        const msg = await res.text();
-        throw new Error(msg || "Erro no upload");
-      }
-      const { path } = (await res.json()) as { path: string };
-      onChange(path);
+      const slug     = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+      const pathname = `brands/${brandId}/uploads/${Date.now()}-${slug}`;
+
+      // Upload direto browser → Vercel Blob (sem passar pelo servidor)
+      // Sem limite de 4.5 MB — suporta vídeos grandes.
+      const blob = await upload(pathname, file, {
+        access: "public",
+        handleUploadUrl: "/api/admin/upload-token",
+        onUploadProgress: ({ percentage }) => {
+          setProgress(Math.round(percentage));
+        },
+      });
+
+      onChange(blob.url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro no upload");
     } finally {
       setUploading(false);
+      setProgress(0);
       if (inputRef.current) inputRef.current.value = "";
     }
   }
@@ -50,19 +58,19 @@ export function ImageUploadField({
     e.preventDefault();
     setDragging(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) upload(file);
+    if (file) void uploadFile(file);
   }
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (file) upload(file);
+    if (file) void uploadFile(file);
   }
 
-  const emptyH  = compact ? 44 : 72;
+  const emptyH   = compact ? 44 : 72;
   const previewH = compact ? 56 : 100;
-  const zoneH   = value ? previewH : emptyH;
-  const border  = `2px dashed ${dragging ? "#A67CFF" : uploading ? "rgba(166,124,255,0.4)" : "rgba(255,255,255,0.1)"}`;
-  const bg      = dragging ? "rgba(166,124,255,0.08)" : "rgba(255,255,255,0.02)";
+  const zoneH    = value ? previewH : emptyH;
+  const border   = `2px dashed ${dragging ? "#A67CFF" : uploading ? "rgba(166,124,255,0.4)" : "rgba(255,255,255,0.1)"}`;
+  const bg       = dragging ? "rgba(166,124,255,0.08)" : "rgba(255,255,255,0.02)";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -127,15 +135,31 @@ export function ImageUploadField({
           </div>
         )}
 
-        {/* Upload overlay */}
+        {/* Upload overlay com barra de progresso */}
         {uploading && (
           <div style={{
             position: "absolute", inset: 0,
-            background: "rgba(13,13,18,0.72)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 11, color: "#A67CFF",
+            background: "rgba(13,13,18,0.82)",
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+            gap: 8, padding: "0 16px",
           }}>
-            Enviando…
+            <div style={{ fontSize: 11, color: "#A67CFF" }}>
+              {progress > 0 ? `Enviando… ${progress}%` : "Preparando…"}
+            </div>
+            <div style={{
+              width: "100%", height: 4,
+              background: "rgba(166,124,255,0.15)",
+              borderRadius: 2, overflow: "hidden",
+            }}>
+              <div style={{
+                width: `${progress}%`,
+                height: "100%",
+                background: "linear-gradient(90deg, #8E6FB8, #C9A7F5)",
+                borderRadius: 2,
+                transition: "width 0.2s ease",
+              }} />
+            </div>
           </div>
         )}
 
