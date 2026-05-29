@@ -34,6 +34,7 @@ export function Nav({ tag, brand }: Props) {
             width={140}
             height={22}
             className="logo__mark"
+            style={{ width: "auto" }}
             priority
           />
         </a>
