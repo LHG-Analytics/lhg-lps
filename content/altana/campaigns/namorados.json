@@ -55,18 +55,18 @@
       "currency": "BRL",
       "units": {
         "altana": {
-          "panoramica-1": { "4h": { "regular": 32600, "premium": 32600 }, "12h": { "regular": 41900, "premium": 41900 } },
-          "especial":     { "4h": { "regular": 34400, "premium": 34400 }, "12h": { "regular": 44200, "premium": 44200 } },
-          "ouro":         { "4h": { "regular": 34400, "premium": 34400 }, "12h": { "regular": 44200, "premium": 44200 } },
-          "tematica-1":   { "4h": { "regular": 36200, "premium": 36200 }, "12h": { "regular": 46600, "premium": 46600 } },
-          "platina":      { "4h": { "regular": 38000, "premium": 38000 }, "12h": { "regular": 48900, "premium": 48900 } },
-          "tematica-2":   { "4h": { "regular": 39900, "premium": 39900 }, "12h": { "regular": 51200, "premium": 51200 } },
-          "panoramica-2": { "4h": { "regular": 41700, "premium": 41700 }, "12h": { "regular": 53600, "premium": 53600 } },
+          "panoramica-1": { "4h": { "regular": 32600, "premium": 32600 }, "12h": { "regular": 66400, "premium": 66400 } },
+          "especial":     { "4h": { "regular": 34400, "premium": 34400 }, "12h": { "regular": 68700, "premium": 68700 } },
+          "ouro":         { "4h": { "regular": 34400, "premium": 34400 }, "12h": { "regular": 68700, "premium": 68700 } },
+          "tematica-1":   { "4h": { "regular": 36200, "premium": 36200 }, "12h": { "regular": 71100, "premium": 71100 } },
+          "platina":      { "4h": { "regular": 38000, "premium": 38000 }, "12h": { "regular": 73400, "premium": 73400 } },
+          "tematica-2":   { "4h": { "regular": 39900, "premium": 39900 }, "12h": { "regular": 75700, "premium": 75700 } },
+          "panoramica-2": { "4h": { "regular": 63200, "premium": 63200 }, "12h": { "regular": 78100, "premium": 78100 } },
           "tematica":     { "4h": { "regular": 52300, "premium": 52300 }, "12h": { "regular": 64000, "premium": 64000 } },
-          "prata":        { "4h": { "regular": 50200, "premium": 50200 }, "12h": { "regular": 61700, "premium": 61700 } },
-          "spa":          { "4h": { "regular": 56200, "premium": 56200 }, "12h": { "regular": 72300, "premium": 72300 } },
-          "master":       { "4h": { "regular": 69000, "premium": 69000 }, "12h": { "regular": 88700, "premium": 88700 } },
-          "premium":      { "4h": { "regular": 78100, "premium": 78100 }, "12h": { "regular": 100400, "premium": 100400 } }
+          "prata":        { "4h": { "regular": 50400, "premium": 50400 }, "12h": { "regular": 61700, "premium": 61700 } },
+          "spa":          { "4h": { "regular": 77700, "premium": 77700 }, "12h": { "regular": 96800, "premium": 96800 } },
+          "master":       { "4h": { "regular": 90500, "premium": 90500 }, "12h": { "regular": 113200, "premium": 113200 } },
+          "premium":      { "4h": { "regular": 99600, "premium": 99600 }, "12h": { "regular": 124900, "premium": 124900 } }
         }
       }
     }
