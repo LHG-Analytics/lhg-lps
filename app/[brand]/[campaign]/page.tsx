@@ -10,7 +10,7 @@ import { Concierge24h } from "@/components/Concierge24h";
 import { AnalyticsScripts, GtmNoscript, type Analytics } from "@/components/AnalyticsScripts";
 import { JsonLd } from "@/components/JsonLd";
 import { createClient as createSupabasePublic } from "@supabase/supabase-js";
-import type { Block } from "@/lib/schema";
+import type { Block, Campaign } from "@/lib/schema";
 
 const LooseBlockSchema = z.array(
   z.object({ type: z.string(), props: z.record(z.string(), z.unknown()) }).passthrough()
@@ -137,8 +137,9 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       getCampaign(brandId, campaignSlug),
     ]);
 
-    // Tenta sobrescrever com dados publicados do CMS (Supabase anon key + RLS)
+    // CMS (Supabase) é a fonte de verdade — sobrescreve o JSON quando disponível.
     let campaign = campaignFromFile;
+    let resolvedBrand = brand;
     let cmsFont: BrandFonts | null = null;
     try {
       const supabase = createSupabasePublic(
@@ -149,28 +150,51 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       const [{ data: row }, { data: brandRow }] = await Promise.all([
         supabase
           .from("campaigns")
-          .select("blocks, meta")
+          .select("blocks, meta, campaign_data")
           .eq("brand_id", brandId)
           .eq("slug", campaignSlug)
           .eq("status", "published")
           .maybeSingle(),
         supabase
           .from("brands")
-          .select("fonts")
+          .select("fonts, logo, favicon, booking, concierge")
           .eq("id", brandId)
           .maybeSingle(),
       ]);
 
+      // Blocos editáveis pelo CMS
       if (row?.blocks) {
         const parsed = LooseBlockSchema.safeParse(row.blocks);
         if (parsed.success && parsed.data.length > 0) {
           campaign = { ...campaign, blocks: parsed.data as Block[] };
         }
       }
+
+      // Meta SEO editável pelo CMS
       if (row?.meta && typeof row.meta === "object") {
         const incoming = row.meta as { title?: string; description?: string; ogTitle?: string; ogDescription?: string; ogImage?: string; canonical?: string; robots?: "index" | "noindex"; analytics?: Record<string, string> };
         campaign = { ...campaign, meta: { ...campaign.meta, ...incoming } };
       }
+
+      // Dados de campanha (lots, periods, dates, pricing) editáveis pelo CMS
+      if (row?.campaign_data && typeof row.campaign_data === "object") {
+        const cd = row.campaign_data as Record<string, unknown>;
+        campaign = {
+          ...campaign,
+          campaign: {
+            ...campaign.campaign,
+            ...(typeof cd.name === "string"               ? { name: cd.name }                                                      : {}),
+            ...(cd.range && typeof cd.range === "object"  ? { range: cd.range as Campaign["campaign"]["range"] }                   : {}),
+            ...(cd.countdown && typeof cd.countdown === "object" ? { countdown: cd.countdown as { target: string } }               : {}),
+            ...(Array.isArray(cd.lots)    ? { lots: cd.lots    as Campaign["campaign"]["lots"] }                                   : {}),
+            ...(Array.isArray(cd.periods) ? { periods: cd.periods as Campaign["campaign"]["periods"] }                             : {}),
+            ...(Array.isArray(cd.dates)   ? { dates: cd.dates   as Campaign["campaign"]["dates"] }                                 : {}),
+            ...(cd.pricing && typeof cd.pricing === "object" ? { pricing: cd.pricing as Campaign["campaign"]["pricing"] }          : {}),
+          },
+        };
+      }
+
+      // Fontes customizadas pelo CMS
       if (brandRow?.fonts && typeof brandRow.fonts === "object") {
         const f = brandRow.fonts as Record<string, unknown>;
         const str = (k: string) => (typeof f[k] === "string" ? (f[k] as string) : undefined);
@@ -187,9 +211,28 @@ async function safeLoad(brandId: string, campaignSlug: string) {
         };
         if (Object.values(fonts).some(Boolean)) cmsFont = fonts;
       }
+
+      // Logo e favicon gerenciados pelo CMS (Vercel Blob)
+      if (brandRow?.logo && typeof brandRow.logo === "object") {
+        const l = brandRow.logo as { src?: string; alt?: string };
+        if (l.src) resolvedBrand = { ...resolvedBrand, logo: { src: l.src, alt: l.alt ?? resolvedBrand.logo.alt } };
+      }
+      if (typeof brandRow?.favicon === "string" && brandRow.favicon) {
+        resolvedBrand = { ...resolvedBrand, favicon: brandRow.favicon };
+      }
+
+      // Booking e concierge editáveis pelo CMS
+      if (brandRow?.booking && typeof brandRow.booking === "object") {
+        const b = brandRow.booking as { periodIds?: Record<string, string>; urlTemplate?: string };
+        if (b.urlTemplate) resolvedBrand = { ...resolvedBrand, booking: { ...resolvedBrand.booking, ...b } };
+      }
+      if (brandRow?.concierge && typeof brandRow.concierge === "object") {
+        const c = brandRow.concierge as { label?: string; href?: string };
+        if (c.href) resolvedBrand = { ...resolvedBrand, concierge: { label: c.label ?? "Concierge 24h", href: c.href } };
+      }
     } catch { /* Supabase indisponível → mantém JSON */ }
 
-    return { brand, campaign, cmsFont };
+    return { brand: resolvedBrand, campaign, cmsFont };
   } catch {
     return null;
   }
