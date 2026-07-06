@@ -9,6 +9,9 @@ import type { NextConfig } from "next";
  * Roteamento por domínio (CloudFront ou subdomínio) é feito em middleware.ts.
  */
 const nextConfig: NextConfig = {
+  // Assets servidos diretamente da Vercel em produção.
+  // Evita que proxies externos (Amplify, CloudFront) precisem rotear /_next/*.
+  assetPrefix: process.env.NODE_ENV === "production" ? "https://lhg-lps.vercel.app" : undefined,
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
