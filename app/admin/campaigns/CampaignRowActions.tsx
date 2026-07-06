@@ -48,6 +48,19 @@ export function CampaignRowActions({
     }
   }
 
+  async function deleteCampaign() {
+    if (!confirm(`Excluir "${slug}"? A campanha será arquivada e não aparecerá mais na listagem.`)) return;
+    setWorking(true);
+    try {
+      const res = await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(await res.text());
+      router.refresh();
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Erro ao excluir");
+      setWorking(false);
+    }
+  }
+
   async function toggleStatus() {
     const next = status === "published" ? "draft" : "published";
     if (status === "published" && !confirm("Despublicar esta campanha?")) return;
@@ -103,6 +116,17 @@ export function CampaignRowActions({
       >
         {isPublished ? "Despublicar" : "Publicar"}
       </button>
+
+      {!isPublished && (
+        <button
+          onClick={deleteCampaign}
+          disabled={working}
+          style={{ ...pill, color: "#E05260", borderColor: "rgba(224,82,96,0.2)", opacity: working ? 0.5 : 1 }}
+          title="Arquivar esta campanha"
+        >
+          Excluir
+        </button>
+      )}
     </div>
   );
 }
