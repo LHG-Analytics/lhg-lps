@@ -337,6 +337,67 @@ const StickyCtaBlock = z.object({
   }),
 });
 
+/* -------------------------------------------------------------
+   FEATURE — seção 2 colunas: texto + imagem (ex: "A experiência")
+------------------------------------------------------------- */
+const FeatureBlock = z.object({
+  type: z.literal("feature"),
+  props: z.object({
+    eyebrow: z.string(),
+    headlineFull: z.string(),
+    headlineEmphasis: z.string().optional(),
+    body: z.array(z.string()),
+    image: z.string(),
+    imageAlt: z.string(),
+    /** "right" (padrão): texto à esquerda, imagem à direita. "left": invertido. */
+    imagePosition: z.enum(["left", "right"]).optional(),
+  }),
+});
+
+/* -------------------------------------------------------------
+   MENU-GRID — grade de itens de cardápio + harmonização
+------------------------------------------------------------- */
+const MenuGridBlock = z.object({
+  type: z.literal("menuGrid"),
+  props: z.object({
+    eyebrow: z.string(),
+    headlineFull: z.string(),
+    items: z.array(
+      z.object({
+        tag: z.string(),
+        name: z.string(),
+        description: z.string(),
+      })
+    ),
+    harmonization: z
+      .object({ title: z.string(), body: z.string() })
+      .optional(),
+  }),
+});
+
+/* -------------------------------------------------------------
+   PRICE-CARDS — preços simples sem wizard de reserva
+------------------------------------------------------------- */
+const PriceCardsBlock = z.object({
+  type: z.literal("priceCards"),
+  props: z.object({
+    eyebrow: z.string(),
+    headlineFull: z.string(),
+    backgroundImage: z.string().optional(),
+    cards: z.array(
+      z.object({
+        tag: z.string(),
+        name: z.string(),
+        price: z.string(),
+        note: z.string(),
+        highlight: z.boolean().optional(),
+      })
+    ),
+    availability: z.string(),
+    cta: z.object({ label: z.string(), href: z.string() }),
+  }),
+});
+
 export const BlockSchema = z.discriminatedUnion("type", [
   NavBlock,
   HeroBlock,
@@ -346,6 +407,9 @@ export const BlockSchema = z.discriminatedUnion("type", [
   FaqBlock,
   FooterBlock,
   StickyCtaBlock,
+  FeatureBlock,
+  MenuGridBlock,
+  PriceCardsBlock,
 ]);
 
 export type Block = z.infer<typeof BlockSchema>;
@@ -357,6 +421,9 @@ export type OfferBlockProps = z.infer<typeof OfferBlock>["props"];
 export type FaqBlockProps = z.infer<typeof FaqBlock>["props"];
 export type FooterBlockProps = z.infer<typeof FooterBlock>["props"];
 export type StickyCtaBlockProps = z.infer<typeof StickyCtaBlock>["props"];
+export type FeatureBlockProps = z.infer<typeof FeatureBlock>["props"];
+export type MenuGridBlockProps = z.infer<typeof MenuGridBlock>["props"];
+export type PriceCardsBlockProps = z.infer<typeof PriceCardsBlock>["props"];
 
 const AnalyticsSchema = z.object({
   ga4:          z.string().optional(),

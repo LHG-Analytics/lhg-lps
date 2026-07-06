@@ -9,7 +9,10 @@ const UnitPicker = dynamic(() => import("@/components/blocks/UnitPicker").then(m
 const Offer     = dynamic(() => import("@/components/blocks/Offer").then(m => m.Offer));
 const FAQ       = dynamic(() => import("@/components/blocks/FAQ").then(m => m.FAQ));
 const Footer    = dynamic(() => import("@/components/blocks/Footer").then(m => m.Footer));
-const StickyCta = dynamic(() => import("@/components/blocks/StickyCta").then(m => m.StickyCta));
+const StickyCta  = dynamic(() => import("@/components/blocks/StickyCta").then(m => m.StickyCta));
+const Feature    = dynamic(() => import("@/components/blocks/Feature").then(m => m.Feature));
+const MenuGrid   = dynamic(() => import("@/components/blocks/MenuGrid").then(m => m.MenuGrid));
+const PriceCards = dynamic(() => import("@/components/blocks/PriceCards").then(m => m.PriceCards));
 
 export type BlockContext = {
   brand: Brand;
@@ -122,5 +125,11 @@ function Render({
       return <Footer {...block.props} brand={brand} />;
     case "stickyCta":
       return <StickyCta {...block.props} />;
+    case "feature":
+      return <Feature {...block.props} />;
+    case "menuGrid":
+      return <MenuGrid {...block.props} />;
+    case "priceCards":
+      return <PriceCards {...block.props} />;
   }
 }

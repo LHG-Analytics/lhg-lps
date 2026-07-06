@@ -1,0 +1,181 @@
+{
+  "slug": "inverno",
+  "brand": "lush",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Lush · Menu de Inverno 2026",
+    "description": "Fondue de queijo e de chocolate, com opção de harmonização (Vinho Clarendelle) e o aconchego da suíte. Temporada de inverno assinada pela Chef Bia Rosa, nas unidades Ipiranga e Lapa.",
+    "analytics": { "gtm": "GTM-TBNLRMJ" }
+  },
+  "campaign": {
+    "name": "Menu de Inverno 2026",
+    "range": {
+      "start": "2026-07-01",
+      "end": "2026-07-31",
+      "premium": "2026-07-31",
+      "label": "Até 31 de julho"
+    },
+    "countdown": { "target": "2026-07-31T23:59:59-03:00" },
+    "lots": [],
+    "periods": [],
+    "dates": []
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": {
+        "tag": "Menu de Inverno · 2026"
+      }
+    },
+    {
+      "type": "hero",
+      "props": {
+        "poster": "/brands/lush/inverno/fondue-mesa.jpg",
+        "eyebrow": "TEMPORADA DE INVERNO · 2026",
+        "headlineFull": "Um inverno para derreter a dois.",
+        "headlineEmphasis": "derreter a dois.",
+        "typewriter": true,
+        "subtitle": "Fondue na suíte, assinado pela Chef Bia Rosa. Ipiranga e Lapa.",
+        "primaryCta": { "label": "Ver o pacote", "href": "#pacote" },
+        "meta": [
+          { "label": "Unidades",    "value": "Ipiranga · Lapa" },
+          { "label": "Disponível",  "value": "Até 31 de julho" },
+          { "label": "Chef",        "value": "Bia Rosa" }
+        ]
+      }
+    },
+    {
+      "type": "feature",
+      "props": {
+        "eyebrow": "A experiência",
+        "headlineFull": "Alta gastronomia dentro da suíte",
+        "headlineEmphasis": "dentro da suíte",
+        "body": [
+          "Quando o frio chega, a Lush transforma a intimidade da suíte em uma experiência sensorial: uma mesa de fondue à luz de velas, sem precisar sair do quarto. Panelas de barro, vinho na taça e o casal, só.",
+          "Ingredientes selecionados e harmonizações cuidadosamente escolhidas, disponíveis nas duas unidades, Ipiranga e Lapa, com piscina aquecida para aproveitar mesmo nos dias mais frios do ano."
+        ],
+        "image": "/brands/lush/inverno/tabuas-piscina.jpg",
+        "imageAlt": "Fondue de chocolate e de queijo ao lado da piscina Lush",
+        "imagePosition": "right"
+      }
+    },
+    {
+      "type": "menuGrid",
+      "props": {
+        "eyebrow": "Assinado pela Chef Bia Rosa",
+        "headlineFull": "O menu de fondue",
+        "items": [
+          {
+            "tag": "Salgado",
+            "name": "Fondue de Queijo",
+            "description": "Queijo derretido servido com pão italiano macio, batatas bolinha douradas e filé mignon em cubos grelhado na chapa, a novidade desta edição."
+          },
+          {
+            "tag": "Doce",
+            "name": "Fondue de Chocolate",
+            "description": "Chocolate ao leite e 70% cacau com creme de leite fresco, finalizado com conhaque e Licor Amarula. Servido com morango, banana, marshmallow e brownie artesanal da casa."
+          }
+        ],
+        "harmonization": {
+          "title": "Harmonização",
+          "body": "Como opção de harmonização, o Vinho Francês Clarendelle pode acompanhar as duas etapas, equilibrando a estrutura da carne, a potência do queijo e a intensidade do chocolate."
+        }
+      }
+    },
+    {
+      "type": "priceCards",
+      "props": {
+        "eyebrow": "Temporada por tempo limitado",
+        "headlineFull": "Escolha a sua experiência",
+        "backgroundImage": "/brands/lush/inverno/lareira-vinho.jpg",
+        "cards": [
+          {
+            "tag": "Combo",
+            "name": "Fondue de Inverno",
+            "price": "R$ 295",
+            "note": "Queijo + chocolate · sem vinho",
+            "highlight": false
+          },
+          {
+            "tag": "Com vinho",
+            "name": "Fondue de Queijo",
+            "price": "R$ 444",
+            "note": "Harmonização Clarendelle",
+            "highlight": true
+          },
+          {
+            "tag": "Com vinho",
+            "name": "Fondue de Chocolate",
+            "price": "R$ 394",
+            "note": "Harmonização Clarendelle",
+            "highlight": true
+          }
+        ],
+        "availability": "Disponível até 31 de julho · unidades Ipiranga e Lapa · reserva pelo site",
+        "cta": { "label": "Reservar pelo site", "href": "https://lushmotel.com.br" }
+      }
+    },
+    {
+      "type": "faq",
+      "props": {
+        "eyebrow": "Dúvidas frequentes",
+        "headlineFull": "Antes de reservar.",
+        "headlineEmphasis": "reservar.",
+        "intro": "Se sua pergunta não estiver aqui, o concierge responde em minutos pelo WhatsApp.",
+        "items": [
+          {
+            "q": "Como faço para pedir o fondue?",
+            "a": "O fondue é incluído no pacote e entregue diretamente na suíte após o check-in. Não é necessário fazer pedido separado — apenas informe ao concierge na reserva se preferir o salgado, o doce ou os dois."
+          },
+          {
+            "q": "Posso pedir o fondue durante qualquer período (3h ou pernoite)?",
+            "a": "Sim. O menu de inverno está disponível nos dois formatos — 3 horas e pernoite — nas unidades Ipiranga e Lapa."
+          },
+          {
+            "q": "O vinho Clarendelle está incluso?",
+            "a": "O vinho é uma opção de harmonização com custo adicional. Você pode adicioná-lo ao reservar ou solicitar ao concierge na chegada. O combo base (R$ 295) inclui queijo + chocolate sem o vinho."
+          },
+          {
+            "q": "A piscina aquecida está disponível no inverno?",
+            "a": "Sim. Nas suítes com piscina das unidades Ipiranga e Lapa, a água é aquecida — ideal para aproveitar nos dias mais frios."
+          },
+          {
+            "q": "Até quando o menu de inverno estará disponível?",
+            "a": "O menu de inverno 2026 está disponível até 31 de julho, enquanto durarem os ingredientes. Recomendamos reservar com antecedência."
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Hospitalidade privada, desenhada para casais que procuram privacidade, design e tempo de qualidade.",
+        "columns": [
+          {
+            "title": "Unidades",
+            "links": [
+              { "label": "Lush Ipiranga", "href": "https://lushmotel.com.br/pt-BR/ipiranga" },
+              { "label": "Lush Lapa",     "href": "https://lushmotel.com.br/pt-BR/lapa" }
+            ]
+          },
+          {
+            "title": "Menu de Inverno",
+            "links": [
+              { "label": "Ver o pacote",    "href": "#pacote" },
+              { "label": "Reservar pelo site", "href": "https://lushmotel.com.br" }
+            ]
+          },
+          {
+            "title": "Ajuda",
+            "links": [
+              { "label": "Política de privacidade", "href": "https://lushmotel.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso",           "href": "https://lushmotel.com.br/pt-BR/terms" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Lush Motel. Todos os direitos reservados.",
+        "ageNotice": "Experiência para maiores de 18 anos"
+      }
+    }
+  ]
+}

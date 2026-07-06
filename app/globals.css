@@ -1611,6 +1611,206 @@ section { padding: 96px 0; position: relative; }
     linear-gradient(180deg, transparent 60%, color-mix(in srgb, #0A1A10 50%, transparent) 100%);
 }
 
+/* =============================================================
+   FEATURE — seção 2 colunas texto + imagem
+============================================================= */
+.feature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 560px;
+}
+.feature__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  padding: 80px 64px;
+}
+.feature__headline { margin: 0; }
+.feature__headline em {
+  font-style: italic;
+  color: var(--lav);
+}
+.feature__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--ink-mut);
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 480px;
+}
+.feature__img {
+  position: relative;
+  overflow: hidden;
+}
+@media (max-width: 860px) {
+  .feature {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 56vw;
+  }
+  .feature__text { padding: 56px 24px 40px; order: -1; }
+  .feature__img  { min-height: 56vw; }
+}
+
+/* =============================================================
+   MENU-GRID — grade do cardápio
+============================================================= */
+.menu-grid {
+  padding: 96px 0;
+  background: var(--bg-elev);
+}
+.menu-grid__header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.menu-grid__headline { margin: 8px 0 0; }
+.menu-grid__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.menu-grid__item {
+  padding: 40px 36px;
+  background: var(--bg-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menu-grid__tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lav);
+}
+.menu-grid__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+.menu-grid__desc {
+  margin: 0;
+  font-size: .9rem;
+  line-height: 1.65;
+  color: var(--ink-mut);
+}
+.menu-grid__harmonization {
+  margin-top: 40px;
+  border-top: 1px solid var(--line);
+  padding-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menu-grid__harm-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lav);
+}
+.menu-grid__harm-body {
+  margin: 0;
+  font-size: .9rem;
+  line-height: 1.7;
+  color: var(--ink-mut);
+  max-width: 640px;
+}
+@media (max-width: 600px) {
+  .menu-grid { padding: 64px 0; }
+  .menu-grid__item { padding: 28px 20px; }
+}
+
+/* =============================================================
+   PRICE-CARDS — preços sem wizard de reserva
+============================================================= */
+.price-cards {
+  position: relative;
+  padding: 120px 0;
+  isolation: isolate;
+  text-align: center;
+}
+.price-cards__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--bg) 70%, transparent) 30%, color-mix(in srgb, var(--bg) 70%, transparent) 70%, var(--bg) 100%);
+  z-index: 1;
+}
+.price-cards__inner {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.price-cards__headline { margin: 8px 0 48px; }
+.price-cards__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  width: 100%;
+  max-width: 820px;
+  margin-bottom: 8px;
+}
+.price-card {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color .2s;
+}
+.price-card--highlight {
+  border-color: var(--lav);
+  background: color-mix(in srgb, var(--lav) 8%, var(--bg-card));
+}
+.price-card__tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--lav);
+}
+.price-card__name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ink);
+}
+.price-card__price {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+  margin: 8px 0;
+}
+.price-card__note {
+  font-size: .8rem;
+  color: var(--ink-mut);
+}
+.price-cards__availability {
+  font-size: .85rem;
+  color: var(--ink-dim);
+  margin: 8px 0 24px;
+  max-width: 480px;
+}
+@media (max-width: 600px) {
+  .price-cards { padding: 80px 0; }
+  .price-cards__grid { grid-template-columns: 1fr; }
+  .price-card__price { font-size: 1.8rem; }
+}
+
 .concierge-fab:active { transform: translateY(0); }
 .concierge-fab__icon {
   width: 20px; height: 20px;
