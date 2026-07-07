@@ -276,7 +276,7 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
                 type="text"
                 value={basePath}
                 onChange={(e) => setBasePath(e.target.value)}
-                placeholder="ex: /pt-BR/diadosnamorados2026"
+                placeholder="ex: /campanhas/natal"
                 style={{ ...fld }}
               />
               <div style={{ fontSize: 11, color: "#3A3850", marginTop: 5 }}>
@@ -284,7 +284,24 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
               </div>
             </div>
 
-            {basePath.trim().startsWith("/") && (
+            {/* /campanhas/* — Amplify já cobre com wildcard, zero config extra */}
+            {basePath.trim().startsWith("/campanhas/") && (
+              <div style={{ ...card, borderColor: "rgba(46,184,122,0.25)", display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#2EB87A" }}>✓ Pronto para publicar</div>
+                <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
+                  A regra <code style={{ color: "#C4AEFF" }}>/campanhas/{"<*>"}</code> já está configurada no Amplify
+                  e cobre automaticamente qualquer slug futuro. Nenhuma configuração adicional é necessária.
+                </div>
+                <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
+                  Após salvar e publicar, a URL{" "}
+                  <strong style={{ color: "#F0EEF8" }}>lushmotel.com.br{basePath.trim()}</strong>{" "}
+                  estará no ar em até 60 segundos.
+                </div>
+              </div>
+            )}
+
+            {/* Outros paths (/pt-BR/...) — guia CloudFront para a Softo */}
+            {basePath.trim().startsWith("/") && !basePath.trim().startsWith("/campanhas/") && (
               <div style={card}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#F0A84A", marginBottom: 12 }}>📋 Guia de configuração CloudFront — para a Softo</div>
 
