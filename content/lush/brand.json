@@ -56,7 +56,7 @@
       "address": "Av. do Estado, 6600 · Ipiranga, SP",
       "image": "/brands/lush/units/fachada-ipiranga.webp",
       "imageAlt": "Fachada Lush Ipiranga iluminada em tons de púrpura e âmbar",
-      "bookingBaseUrl": "https://lushmotel.com.br/pt-BR/ipiranga",
+      "bookingBaseUrl": "https://lushmotel.com.br/pt-BR",
       "categories": {
         "all": [
           { "id": "casa-lush",  "name": "Casa Lush",       "meta": "200m² · Suíte signature",        "slug": "casa-lush",       "hero": true, "amenities": ["piscina","cascata","hidro","sauna","pista","teto","garagem-2","espresso","adega","king"] },
@@ -78,7 +78,7 @@
       "address": "Av. Emb. Macedo Soares, 1037 · Lapa, SP",
       "image": "/brands/lush/units/fachada-lapa.webp",
       "imageAlt": "Fachada Lush Lapa com letreiro iluminado",
-      "bookingBaseUrl": "https://lushmotel.com.br/pt-BR/lapa",
+      "bookingBaseUrl": "https://lushmotel.com.br/pt-BR",
       "categories": {
         "all": [
           { "id": "spa-splash",   "name": "Lush Spa Splash",   "meta": "60m² · Piscina + Hidro + Sauna", "slug": "lush-spa-splash",   "hero": true, "amenities": ["piscina","cascata","hidro","sauna","teto","garagem","espresso","adega","king"] },
