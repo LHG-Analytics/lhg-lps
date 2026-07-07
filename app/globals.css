@@ -700,7 +700,7 @@ section { padding: 96px 0; position: relative; }
 }
 .opt__meta {
   font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--ink-dim);
+  color: var(--ink-mut);
 }
 .opt__check {
   position: absolute; top: 14px; right: 14px;
@@ -962,7 +962,7 @@ section { padding: 96px 0; position: relative; }
 /* Categoria carousel */
 .unit__cats-label {
   font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--ink-dim);
+  color: var(--ink-mut);
   margin: 0 0 14px;
   display: flex; align-items: center; gap: 10px;
 }
@@ -1042,7 +1042,7 @@ section { padding: 96px 0; position: relative; }
 .cat__meta {
   display: block;
   font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--ink-dim);
+  color: var(--ink-mut);
   line-height: 1.45;
   text-wrap: pretty;
 }
@@ -1235,12 +1235,12 @@ section { padding: 96px 0; position: relative; }
 .count-box span {
   display: block;
   font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--ink-dim); margin-top: 8px;
+  color: var(--ink-mut); margin-top: 8px;
 }
 .offer__cta { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
 .offer__note {
   margin-top: 24px;
-  font-size: 12px; color: var(--ink-dim);
+  font-size: 12px; color: var(--ink-mut);
   letter-spacing: 0.14em; text-transform: uppercase;
 }
 
@@ -1463,6 +1463,18 @@ section { padding: 96px 0; position: relative; }
     padding: 14px 22px;
     font-size: 11px;
   }
+  /* FAQ: 24px é largo demais ao lado do toggle de 36px em telas estreitas */
+  .faq-item__q {
+    font-size: 20px;
+  }
+  /* Feature: padding interno generoso no desktop; compactar levemente em mobile */
+  .feature__text {
+    gap: 18px;
+  }
+  /* Concierge FAB: sobe para não sobrepor o StickyCta quando ambos estão visíveis */
+  body:has(.sticky-cta) .concierge-fab {
+    bottom: calc(max(16px, env(safe-area-inset-bottom)) + 76px);
+  }
 }
 
 @media (max-width: 480px) {
@@ -1517,6 +1529,16 @@ section { padding: 96px 0; position: relative; }
   section { padding: 56px 0; }
   .wrap { padding: 0 18px; }
   .offer__inner { padding: 40px 20px; }
+
+  /* Feature: padding lateral mínimo em telas muito estreitas */
+  .feature__text { padding: 40px 18px 32px; gap: 16px; }
+
+  /* PriceCards: cartões mais compactos sem comprometer leitura */
+  .price-card { padding: 24px 18px; }
+  .price-card__price { font-size: 1.7rem; }
+
+  /* MenuGrid: itens mais compactos */
+  .menu-grid__item { padding: 24px 18px; }
 }
 
 /* -------------------------------------------------------------
@@ -1626,10 +1648,13 @@ section { padding: 96px 0; position: relative; }
   gap: 24px;
   padding: 80px 64px;
 }
-.feature__headline { margin: 0; }
+.feature__headline { margin: 0; font-size: clamp(34px, 4.2vw, 52px); }
 .feature__headline em {
   font-style: italic;
-  color: var(--lav);
+  background: var(--lav-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 .feature__body {
   display: flex;
@@ -1664,7 +1689,7 @@ section { padding: 96px 0; position: relative; }
   text-align: center;
   margin-bottom: 56px;
 }
-.menu-grid__headline { margin: 8px 0 0; }
+.menu-grid__headline { margin: 8px 0 0; font-size: clamp(36px, 4.4vw, 52px); }
 .menu-grid__items {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -1689,9 +1714,11 @@ section { padding: 96px 0; position: relative; }
 }
 .menu-grid__name {
   margin: 0;
-  font-family: var(--font-display);
+  font-family: var(--font-serif), var(--font-display), serif;
   font-size: 1.5rem;
-  font-weight: 400;
+  font-weight: 500;
+  font-variation-settings: "opsz" 36;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 .menu-grid__desc {
@@ -1751,7 +1778,7 @@ section { padding: 96px 0; position: relative; }
   align-items: center;
   gap: 16px;
 }
-.price-cards__headline { margin: 8px 0 48px; }
+.price-cards__headline { margin: 8px 0 48px; font-size: clamp(36px, 4.4vw, 52px); }
 .price-cards__grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1782,17 +1809,21 @@ section { padding: 96px 0; position: relative; }
   color: var(--lav);
 }
 .price-card__name {
-  font-family: var(--font-display);
+  font-family: var(--font-serif), var(--font-display), serif;
   font-size: 1.2rem;
-  font-weight: 400;
+  font-weight: 500;
+  font-variation-settings: "opsz" 24;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 .price-card__price {
-  font-family: var(--font-display);
+  font-family: var(--font-serif), var(--font-display), serif;
   font-size: 2.2rem;
   font-weight: 600;
+  font-variation-settings: "opsz" 48;
+  letter-spacing: -0.02em;
   color: var(--ink);
-  line-height: 1.1;
+  line-height: 1.05;
   margin: 8px 0;
 }
 .price-card__note {
@@ -1801,7 +1832,7 @@ section { padding: 96px 0; position: relative; }
 }
 .price-cards__availability {
   font-size: .85rem;
-  color: var(--ink-dim);
+  color: var(--ink-mut);
   margin: 8px 0 24px;
   max-width: 480px;
 }
