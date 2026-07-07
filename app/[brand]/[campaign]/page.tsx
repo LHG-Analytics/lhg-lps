@@ -11,6 +11,7 @@ import { AnalyticsScripts, GtmNoscript, type Analytics } from "@/components/Anal
 import { JsonLd } from "@/components/JsonLd";
 import { createClient as createSupabasePublic } from "@supabase/supabase-js";
 import type { Block, Campaign } from "@/lib/schema";
+import { asset } from "@/lib/asset";
 
 const LooseBlockSchema = z.array(
   z.object({ type: z.string(), props: z.record(z.string(), z.unknown()) }).passthrough()
@@ -51,9 +52,9 @@ export async function generateMetadata({
       ? { index: false, follow: false, googleBot: { index: false } }
       : { index: true,  follow: true },
     icons: {
-      icon: data.brand.favicon,
-      shortcut: data.brand.favicon,
-      apple: data.brand.favicon,
+      icon: asset(data.brand.favicon),
+      shortcut: asset(data.brand.favicon),
+      apple: asset(data.brand.favicon),
     },
     openGraph: {
       title: effectiveOgTitle,
@@ -104,7 +105,7 @@ export default async function CampaignPage({ params }: { params: Params }) {
         <link
           rel="preload"
           as="image"
-          href={heroPoster}
+          href={asset(heroPoster)}
           fetchPriority="high"
           {...(heroPoster.endsWith(".webp") && { type: "image/webp" })}
         />

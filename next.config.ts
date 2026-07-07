@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.public.blob.vercel-storage.com",
       },
+      // Assets próprios servidos via NEXT_PUBLIC_ASSET_ORIGIN (proxy Amplify/CloudFront)
+      {
+        protocol: "https",
+        hostname: "lhg-lps.vercel.app",
+      },
     ],
   },
   typedRoutes: true,

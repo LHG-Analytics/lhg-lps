@@ -39,7 +39,7 @@ export function Hero({
       {/* Imagem estática — apenas quando NÃO há vídeo (ex: Andar de Cima) */}
       {poster && !video && (
         <Image
-          src={poster}
+          src={asset(poster)}
           alt=""
           aria-hidden="true"
           fill
