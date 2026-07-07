@@ -101,6 +101,6 @@
   },
   "concierge": {
     "label": "Concierge 24h",
-    "href": "https://wa.me/551152417027"
+    "href": "https://api.whatsapp.com/send/?phone=551152417027&text&type=phone_number&app_absent=0"
   }
 }
