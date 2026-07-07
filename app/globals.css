@@ -1648,6 +1648,15 @@ section { padding: 96px 0; position: relative; }
   gap: 24px;
   padding: 80px 64px;
 }
+/* Alinha o texto com o recuo do .wrap (max-width: var(--maxw) centralizado).
+   :first-child = texto à esquerda (imagePosition right);
+   :last-child  = texto à direita (imagePosition left). */
+.feature__text:first-child {
+  padding-left: max(24px, calc((100vw - var(--maxw)) / 2));
+}
+.feature__text:last-child {
+  padding-right: max(24px, calc((100vw - var(--maxw)) / 2));
+}
 .feature__headline { margin: 0; font-size: clamp(34px, 4.2vw, 52px); }
 .feature__headline em {
   font-style: italic;
