@@ -169,6 +169,7 @@ export function UnitPicker({
                     height={230}
                     className=""
                     sizes="(max-width: 1100px) 90vw, 580px"
+                    unoptimized
                   />
                 </div>
 

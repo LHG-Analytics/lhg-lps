@@ -31,6 +31,7 @@ export function Footer({
                 height={28}
                 className="logo__mark"
                 priority={false}
+                unoptimized
               />
             </div>
             <p>{tagline}</p>
