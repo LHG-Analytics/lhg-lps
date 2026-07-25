@@ -20,6 +20,10 @@ export default async function UsersPage() {
       .order("created_at", { ascending: false }),
   ]);
 
+  // Oculta convites de quem já tem perfil (convite não apagado na aceitação)
+  const profileEmails = new Set((profiles ?? []).map((p: { email?: string | null }) => p.email).filter(Boolean))
+  const pendingInvites = (invites ?? []).filter((i) => !profileEmails.has(i.email))
+
   return (
     <AdminShell userEmail={user.email!}>
       <header className="admin-header">
@@ -28,7 +32,7 @@ export default async function UsersPage() {
       <section className="admin-section">
         <UsersTable
           profiles={profiles ?? []}
-          initialInvites={invites ?? []}
+          initialInvites={pendingInvites}
           currentUserId={user.id}
         />
       </section>

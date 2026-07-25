@@ -40,10 +40,10 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (existing) {
-      await supabase
-        .from("admin_profiles")
-        .update({ email, name })
-        .eq("id", user.id);
+      await Promise.all([
+        supabase.from("admin_profiles").update({ email, name }).eq("id", user.id),
+        supabase.from("admin_invites").delete().eq("email", email),
+      ]);
       return NextResponse.redirect(`${origin}/admin`);
     }
 
