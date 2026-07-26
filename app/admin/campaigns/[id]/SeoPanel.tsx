@@ -1,5 +1,6 @@
 "use client";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
+import type { GeoMeta } from "./GeoPanel";
 
 /* ── tipos ──────────────────────────────────────────── */
 type Analytics = { ga4?: string; metaPixel?: string; gtm?: string; tiktokPixel?: string };
@@ -13,6 +14,8 @@ export type SeoMeta = {
   canonical?: string;
   robots?: "index" | "noindex";
   analytics?: Analytics;
+  /** Dados de GEO — editados no painel irmão `GeoPanel`, salvos no mesmo `meta`. */
+  geo?: GeoMeta;
 };
 
 interface Props {

@@ -23,13 +23,14 @@ import { MediaLibrary } from "./MediaLibrary";
 import { PeriodsPanel } from "./PeriodsPanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
 import { SeoPanel, type SeoMeta } from "./SeoPanel";
+import { GeoPanel, type GeoMeta } from "./GeoPanel";
 import { FloatingInspector } from "./FloatingInspector";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
 
 /* ── tipos ─────────────────────────────────────────── */
 type EditorTab  = "visual" | "code" | "style";
-type SidebarTab = "blocks" | "theme" | "seo";
+type SidebarTab = "blocks" | "theme" | "seo" | "geo";
 type BlockStyle = {
   cssVars?: Record<string, string>;
   elementOverrides?: Record<string, Record<string, string>>;
@@ -702,7 +703,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
 
           {/* Sidebar tab toggle */}
           <div style={{ display: "flex", padding: "8px 8px 0", gap: 3 }}>
-            {(["blocks","theme","seo"] as SidebarTab[]).map((t) => (
+            {(["blocks","theme","seo","geo"] as SidebarTab[]).map((t) => (
               <button key={t} onClick={() => setSidebarTab(t)} style={{
                 flex: 1, padding: "5px 0", border: "none", borderRadius: 6,
                 background: sidebarTab === t ? "rgba(166,124,255,0.18)" : "transparent",
@@ -710,7 +711,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
                 fontSize: 10, fontWeight: 700, cursor: "pointer",
                 textTransform: "uppercase", letterSpacing: "0.05em",
               }}>
-                {t === "blocks" ? `Blocos` : t === "theme" ? "🎨 Tema" : "📋 SEO"}
+                {t === "blocks" ? `Blocos` : t === "theme" ? "🎨 Tema" : t === "seo" ? "📋 SEO" : "✦ GEO"}
               </button>
             ))}
           </div>
@@ -828,12 +829,23 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
             </>
           ) : sidebarTab === "theme" ? (
             <ThemePanel theme={theme} onChange={updateTheme} saving={themeSaving} onSave={saveTheme} />
-          ) : (
+          ) : sidebarTab === "seo" ? (
             <SeoPanel
               meta={meta}
               slug={slug}
               brandId={brandId}
               onChange={setMeta}
+              onSave={() => saveMeta(meta)}
+              saving={metaSaving}
+            />
+          ) : (
+            <GeoPanel
+              geo={(meta.geo ?? {}) as GeoMeta}
+              seoTitle={meta.title}
+              seoDescription={meta.description}
+              brandName={brandId}
+              blocks={blocks}
+              onChange={(geo) => setMeta((m) => ({ ...m, geo }))}
               onSave={() => saveMeta(meta)}
               saving={metaSaving}
             />

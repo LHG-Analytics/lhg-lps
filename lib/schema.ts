@@ -432,6 +432,39 @@ const AnalyticsSchema = z.object({
   tiktokPixel:  z.string().optional(),
 }).optional();
 
+/** GEO — Generative Engine Optimization.
+ *
+ * Fatos estruturados que alimentam o JSON-LD (`components/JsonLd.tsx`) e são
+ * lidos por LLMs (ChatGPT, Perplexity, Google AI Overviews) ao citar a página.
+ * Diferente do SEO, que otimiza o *ranking*, o GEO otimiza a *citação*: o que
+ * o modelo consegue afirmar com precisão sobre a campanha.
+ *
+ * Todo campo é opcional — ausente significa "derive do conteúdo dos blocos". */
+const GeoSchema = z.object({
+  /** Resumo declarativo e factual em 2–3 frases. É o trecho que o LLM cita
+   * literalmente, então evita linguagem publicitária e afirma fatos. */
+  summary: z.string().optional(),
+  /** Fatos atômicos enumeráveis (preço, período, unidades, inclusos).
+   * LLMs extraem listas com muito mais fidelidade do que prosa corrida. */
+  keyFacts: z.array(z.string()).optional(),
+  /** Entidade schema.org principal da campanha. Default: "Offer". */
+  contentType: z.enum(["Offer", "Event", "Product", "Service"]).optional(),
+  priceLow:      z.number().optional(),
+  priceHigh:     z.number().optional(),
+  priceCurrency: z.string().optional(),
+  /** ISO date (YYYY-MM-DD) — vira validFrom/validThrough no Offer
+   * e startDate/endDate no Event. */
+  validFrom:    z.string().optional(),
+  validThrough: z.string().optional(),
+  /** Q&A em tom de resposta direta. Vazio → deriva do bloco `faq`. */
+  qa: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
+  /** Público-alvo (ex.: "casais maiores de 18 anos"). Vira schema.org/Audience. */
+  audience: z.string().optional(),
+  /** Sinaliza a crawlers de IA se o conteúdo pode ser usado em respostas
+   * generativas. Controle definitivo exige robots.txt no nível do site. */
+  aiCrawlers: z.enum(["allow", "block"]).optional(),
+}).optional();
+
 export const CampaignSchema = z.object({
   slug: z.string(),
   brand: z.string(),
@@ -447,6 +480,7 @@ export const CampaignSchema = z.object({
     canonical:  z.string().optional(),
     robots:     z.enum(["index", "noindex"]).optional(),
     analytics:  AnalyticsSchema,
+    geo:        GeoSchema,
   }),
   campaign: z.object({
     name: z.string(),
@@ -464,6 +498,7 @@ export const CampaignSchema = z.object({
 });
 
 export type Campaign = z.infer<typeof CampaignSchema>;
+export type CampaignGeo = NonNullable<z.infer<typeof GeoSchema>>;
 export type Lot = z.infer<typeof Lot>;
 export type Period = z.infer<typeof Period>;
 export type CampaignDate = z.infer<typeof CampaignDate>;

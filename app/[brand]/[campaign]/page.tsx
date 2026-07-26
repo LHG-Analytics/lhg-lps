@@ -35,7 +35,7 @@ export async function generateMetadata({
   const data = await safeLoad(brand, campaign);
   if (!data) return {};
 
-  const { title, description, ogTitle, ogDescription, ogImage, canonical, robots } = data.campaign.meta;
+  const { title, description, ogTitle, ogDescription, ogImage, canonical, robots, geo } = data.campaign.meta;
   const effectiveOgTitle = ogTitle || title;
   const effectiveOgDesc  = ogDescription || description;
   const images = ogImage ? [{ url: ogImage, width: 1200, height: 630, alt: effectiveOgTitle ?? title }] : [];
@@ -48,9 +48,13 @@ export async function generateMetadata({
     title,
     description,
     ...(resolvedCanonical && { alternates: { canonical: resolvedCanonical } }),
-    robots: robots === "noindex"
-      ? { index: false, follow: false, googleBot: { index: false } }
-      : { index: true,  follow: true },
+    // String crua em vez do objeto Robots do Next: permite anexar `noai`/`noimageai`,
+    // diretivas de GEO que o tipo Robots não modela. Bloqueio garantido por bot
+    // exigiria robots.txt no nível do site.
+    robots: [
+      ...(robots === "noindex" ? ["noindex", "nofollow"] : ["index", "follow"]),
+      ...(geo?.aiCrawlers === "block" ? ["noai", "noimageai"] : []),
+    ].join(", "),
     icons: {
       icon: asset(data.brand.favicon),
       shortcut: asset(data.brand.favicon),
@@ -171,9 +175,9 @@ async function safeLoad(brandId: string, campaignSlug: string) {
         }
       }
 
-      // Meta SEO editável pelo CMS
+      // Meta SEO + GEO editáveis pelo CMS
       if (row?.meta && typeof row.meta === "object") {
-        const incoming = row.meta as { title?: string; description?: string; ogTitle?: string; ogDescription?: string; ogImage?: string; canonical?: string; robots?: "index" | "noindex"; analytics?: Record<string, string> };
+        const incoming = row.meta as Partial<Campaign["meta"]>;
         campaign = { ...campaign, meta: { ...campaign.meta, ...incoming } };
       }
 
