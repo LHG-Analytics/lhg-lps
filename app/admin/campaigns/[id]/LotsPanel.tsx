@@ -186,7 +186,7 @@ export function LotsPanel({ open, onClose, campaignId, initialLots, onSaved }: P
         </div>
 
         {/* Conteúdo */}
-        <div style={{ flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="admin-scroll" style={{ flex: 1, overflowY: "auto", padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ fontSize: 12, color: "#8E8AA8", lineHeight: 1.6 }}>
             Os lotes controlam o desconto ativo e o cupom exibido na LP. O lote com gate de data ativo é selecionado automaticamente por <code style={{ color: "#A67CFF", fontSize: 11 }}>lib/lots.ts</code>.
           </div>

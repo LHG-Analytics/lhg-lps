@@ -114,7 +114,7 @@ export function PricingPanel({ open, onClose, campaignId, brandId }: Props) {
         </div>
 
         {/* Body */}
-        <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div className="admin-scroll" style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 14 }}>
           {loading && <div style={{ textAlign: "center", color: "#55526A", padding: 32, fontSize: 13 }}>Carregando…</div>}
 
           {!loading && periods.length === 0 && (

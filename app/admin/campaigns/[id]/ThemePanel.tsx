@@ -42,7 +42,7 @@ export function ThemePanel({ theme, onChange, saving, onSave }: Props) {
   }
 
   return (
-    <div style={{ flex: 1, overflowY: "auto", padding: "8px 12px 0" }}>
+    <div className="admin-scroll admin-panel" style={{ flex: 1, overflowY: "auto", padding: "8px 12px 0" }}>
       {GROUPS.map((g) => (
         <div key={g.label} style={{ marginBottom: 18 }}>
           <div style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#55526A", marginBottom: 8 }}>

@@ -299,8 +299,8 @@ export function GeoPanel({ geo, seoTitle, seoDescription, brandName, blocks, onC
   const crawlers = geo.aiCrawlers ?? "allow";
 
   return (
-    <div style={{ flex: 1, overflowY: "auto" as const, padding: 12 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="admin-scroll admin-panel" style={{ flex: 1, overflowY: "auto" as const, padding: 12 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 0 }}>
 
         {/* ── INTRO + DERIVAR ── */}
         <div style={{ background: "rgba(166,124,255,0.05)", border: "1px solid rgba(166,124,255,0.16)", borderRadius: 8, padding: "11px 12px" }}>
@@ -392,9 +392,10 @@ export function GeoPanel({ geo, seoTitle, seoDescription, brandName, blocks, onC
         {/* ── PREÇO E VALIDADE ── */}
         <div>
           <SectionTitle>Preço e validade</SectionTitle>
+          {/* Preço em 2 colunas: número é curto e cabe. */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            <div>
-              <FieldLabel>Preço mínimo</FieldLabel>
+            <div style={{ minWidth: 0 }}>
+              <FieldLabel>Preço mín.</FieldLabel>
               <input
                 type="number"
                 min={0}
@@ -404,8 +405,8 @@ export function GeoPanel({ geo, seoTitle, seoDescription, brandName, blocks, onC
                 placeholder="295"
               />
             </div>
-            <div>
-              <FieldLabel>Preço máximo</FieldLabel>
+            <div style={{ minWidth: 0 }}>
+              <FieldLabel>Preço máx.</FieldLabel>
               <input
                 type="number"
                 min={0}
@@ -415,7 +416,12 @@ export function GeoPanel({ geo, seoTitle, seoDescription, brandName, blocks, onC
                 placeholder="444"
               />
             </div>
-            <div>
+          </div>
+
+          {/* Datas empilhadas: input[type=date] tem largura mínima intrínseca
+              de ~130px, que estoura uma coluna de 94px e cria scroll lateral. */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
+            <div style={{ minWidth: 0 }}>
               <FieldLabel>Válido de</FieldLabel>
               <input
                 type="date"
@@ -424,7 +430,7 @@ export function GeoPanel({ geo, seoTitle, seoDescription, brandName, blocks, onC
                 style={{ ...fieldStyle, fontSize: 12, colorScheme: "dark" }}
               />
             </div>
-            <div>
+            <div style={{ minWidth: 0 }}>
               <FieldLabel>Válido até</FieldLabel>
               <input
                 type="date"
@@ -462,7 +468,7 @@ export function GeoPanel({ geo, seoTitle, seoDescription, brandName, blocks, onC
                       padding: "7px 8px", borderRadius: 6, cursor: "pointer", textAlign: "left" as const,
                       border: `1px solid ${active ? "#A67CFF" : "rgba(255,255,255,0.08)"}`,
                       background: active ? "rgba(166,124,255,0.14)" : "transparent",
-                      fontFamily: "inherit",
+                      fontFamily: "inherit", minWidth: 0, overflowWrap: "anywhere" as const,
                     }}
                   >
                     <div style={{ fontSize: 11, fontWeight: 700, color: active ? "#A67CFF" : "#8E8AA8" }}>{label}</div>

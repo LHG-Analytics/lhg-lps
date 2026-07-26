@@ -199,7 +199,7 @@ export function PeriodsPanel({ open, onClose, campaignId }: Props) {
         </div>
 
         {/* Body */}
-        <div style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
+        <div className="admin-scroll" style={{ flex: 1, overflowY: "auto", padding: 18, display: "flex", flexDirection: "column", gap: 10 }}>
           {loading && <div style={{ textAlign: "center", color: "#55526A", fontSize: 13, padding: 24 }}>Carregando…</div>}
 
           {!loading && tab === "periods" && (

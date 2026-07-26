@@ -699,19 +699,25 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
       <div style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}>
 
         {/* ── SIDEBAR ──────────────────────────────── */}
-        <aside style={{ width: 220, borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+        <aside style={{ width: 220, minWidth: 0, overflowX: "hidden", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", flexShrink: 0 }}>
 
           {/* Sidebar tab toggle */}
-          <div style={{ display: "flex", padding: "8px 8px 0", gap: 3 }}>
+          {/* 4 abas em 220px: sem emoji e sem letter-spacing os rótulos
+              cabem numa linha só. `minWidth: 0` impede que o texto empurre
+              a sidebar e gere scroll horizontal. */}
+          <div style={{ display: "flex", padding: "8px 6px 0", gap: 2 }}>
             {(["blocks","theme","seo","geo"] as SidebarTab[]).map((t) => (
-              <button key={t} onClick={() => setSidebarTab(t)} style={{
-                flex: 1, padding: "5px 0", border: "none", borderRadius: 6,
+              <button key={t} onClick={() => setSidebarTab(t)} title={
+                t === "blocks" ? "Blocos da página" : t === "theme" ? "Cores e tipografia"
+                : t === "seo" ? "SEO, Open Graph e Analytics" : "GEO — otimização para IAs"
+              } style={{
+                flex: 1, minWidth: 0, padding: "6px 2px", border: "none", borderRadius: 6,
                 background: sidebarTab === t ? "rgba(166,124,255,0.18)" : "transparent",
                 color: sidebarTab === t ? "#A67CFF" : "#55526A",
                 fontSize: 10, fontWeight: 700, cursor: "pointer",
-                textTransform: "uppercase", letterSpacing: "0.05em",
+                textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden",
               }}>
-                {t === "blocks" ? `Blocos` : t === "theme" ? "🎨 Tema" : t === "seo" ? "📋 SEO" : "✦ GEO"}
+                {t === "blocks" ? "Blocos" : t === "theme" ? "Tema" : t === "seo" ? "SEO" : "GEO"}
               </button>
             ))}
           </div>
@@ -719,7 +725,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
           {sidebarTab === "blocks" ? (
             <>
               {/* Block list with DnD */}
-              <div style={{ flex: 1, overflowY: "auto", padding: "6px 8px" }}>
+              <div className="admin-scroll admin-panel" style={{ flex: 1, overflowY: "auto", padding: "6px 8px" }}>
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}

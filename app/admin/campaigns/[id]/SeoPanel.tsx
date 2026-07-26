@@ -147,8 +147,8 @@ export function SeoPanel({ meta, slug, brandId, onChange, onSave, saving }: Prop
   const robotsValue      = meta.robots ?? "index";
 
   return (
-    <div style={{ flex: 1, overflowY: "auto" as const, padding: 12 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="admin-scroll admin-panel" style={{ flex: 1, overflowY: "auto" as const, padding: 12 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16, minWidth: 0 }}>
 
         {/* ── SERP PREVIEW ── */}
         <div>
