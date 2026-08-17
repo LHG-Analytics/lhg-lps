@@ -135,17 +135,51 @@ export default async function CampaignPage({ params }: { params: Params }) {
   );
 }
 
-async function safeLoad(brandId: string, campaignSlug: string) {
-  try {
-    const [brand, campaignFromFile] = await Promise.all([
-      getBrand(brandId),
-      getCampaign(brandId, campaignSlug),
-    ]);
+/** Esqueleto para campanha que só existe no CMS (sem JSON em disco).
+ *
+ * Todo campo de `campaign` é `z.string()` sem refinamento, então string vazia
+ * mantém o schema válido; o conteúdo real vem do `campaign_data` do Supabase.
+ * Sem isto, campanha criada no CMS nunca renderiza — `getCampaign` lança
+ * ENOENT e a rota cai em `notFound()`. */
+function blankCampaign(brandId: string, slug: string): Campaign {
+  return {
+    slug,
+    brand: brandId,
+    lang: "pt-BR",
+    meta: { title: "", description: "" },
+    campaign: {
+      name: "",
+      range: { start: "", end: "", premium: "", label: "" },
+      countdown: { target: "" },
+      lots: [],
+      periods: [],
+      dates: [],
+    },
+    blocks: [],
+  };
+}
 
+async function safeLoad(brandId: string, campaignSlug: string) {
+  // Brand é obrigatória: sem brand.json não há tema, unidades nem booking.
+  let brand: Awaited<ReturnType<typeof getBrand>>;
+  try {
+    brand = await getBrand(brandId);
+  } catch {
+    return null;
+  }
+
+  // JSON da campanha é opcional — campanha nascida no CMS não tem arquivo.
+  let campaignFromFile: Campaign | null = null;
+  try {
+    campaignFromFile = await getCampaign(brandId, campaignSlug);
+  } catch { /* segue com o esqueleto + dados do Supabase */ }
+
+  {
     // CMS (Supabase) é a fonte de verdade — sobrescreve o JSON quando disponível.
-    let campaign = campaignFromFile;
+    let campaign = campaignFromFile ?? blankCampaign(brandId, campaignSlug);
     let resolvedBrand = brand;
     let cmsFont: BrandFonts | null = null;
+    let publishedInCms = false;
     try {
       const supabase = createSupabasePublic(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -155,7 +189,7 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       const [{ data: row }, { data: brandRow }] = await Promise.all([
         supabase
           .from("campaigns")
-          .select("blocks, meta, campaign_data")
+          .select("blocks, meta, campaign_data, lang")
           .eq("brand_id", brandId)
           .eq("slug", campaignSlug)
           .eq("status", "published")
@@ -166,6 +200,14 @@ async function safeLoad(brandId: string, campaignSlug: string) {
           .eq("id", brandId)
           .maybeSingle(),
       ]);
+
+      // Row publicada é o que autoriza uma campanha sem JSON a existir
+      if (row) {
+        publishedInCms = true;
+        if (typeof row.lang === "string" && row.lang) {
+          campaign = { ...campaign, lang: row.lang };
+        }
+      }
 
       // Blocos editáveis pelo CMS
       if (row?.blocks) {
@@ -237,8 +279,10 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       }
     } catch { /* Supabase indisponível → mantém JSON */ }
 
+    // Sem JSON em disco e sem row publicada, a campanha não existe.
+    // Rascunho/arquivada seguem 404 quando não têm arquivo — como esperado.
+    if (!campaignFromFile && !publishedInCms) return null;
+
     return { brand: resolvedBrand, campaign, cmsFont };
-  } catch {
-    return null;
   }
 }
