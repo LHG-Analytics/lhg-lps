@@ -78,6 +78,23 @@ export async function PATCH(
     }
   }
 
+  // Validação do caminho base. Um path de segmento único (ex.: "/campanhas")
+  // vira prefixo de todas as campanhas do namespace e captura o tráfego delas,
+  // então exige-se ao menos dois segmentos. Barra final é normalizada.
+  if (typeof body.base_path === "string" && body.base_path.trim()) {
+    const normalized = body.base_path.trim().replace(/\/+$/, "");
+    if (!normalized.startsWith("/")) {
+      return new NextResponse("O caminho base deve começar com /", { status: 400 });
+    }
+    if (normalized.split("/").filter(Boolean).length < 2) {
+      return new NextResponse(
+        `"${normalized}" é genérico demais: um caminho de um só segmento captura todas as campanhas abaixo dele. Use algo como "${normalized}/nome-da-campanha".`,
+        { status: 400 }
+      );
+    }
+    body.base_path = normalized;
+  }
+
   // Validação dos dados de campanha (periods, lots, pricing, dates)
   if (body.campaign_data !== undefined) {
     const result = CampaignDataSchema.safeParse(body.campaign_data);
@@ -125,7 +142,26 @@ export async function PATCH(
     .update({ ...body, updated_at: new Date().toISOString() })
     .eq("id", id);
 
-  if (error) return new NextResponse(error.message, { status: 500 });
+  if (error) {
+    // Violação de unicidade chega como mensagem crua do Postgres; traduz para
+    // algo que diga ao editor o que fazer.
+    if (error.code === "23505" || /duplicate key|unique constraint/i.test(error.message)) {
+      if (/base_path/.test(error.message)) {
+        return new NextResponse(
+          "Outra campanha desta marca já usa este caminho base. Escolha um caminho diferente ou libere o da campanha antiga.",
+          { status: 409 }
+        );
+      }
+      if (/custom_domain/.test(error.message)) {
+        return new NextResponse(
+          "Este domínio já está em uso por outra campanha. Escolha outro subdomínio.",
+          { status: 409 }
+        );
+      }
+      return new NextResponse("Esse valor já está em uso por outra campanha.", { status: 409 });
+    }
+    return new NextResponse(error.message, { status: 500 });
+  }
 
   const action = body.status === "published" ? "publish" : "save_draft";
   void logAudit(supabase, user.id, user.email, {

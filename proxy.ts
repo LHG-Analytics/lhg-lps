@@ -12,13 +12,31 @@ function getIp(req: NextRequest): string {
 
 /* ── Cache de rotas dinâmicas (sobrevive warm invocations) ─────────────── */
 type RouteEntry = { brandId: string; slug: string };
+
+/** Rota por subdiretório. `domain` é o domínio da marca dona da campanha —
+ * duas marcas podem declarar o mesmo `basePath`, já que vivem em domínios
+ * diferentes, então o par (domain, basePath) é o que identifica a LP. */
+type PathRoute = { domain: string | null; basePath: string; entry: RouteEntry };
+
 type RouteCache = {
   domainMap:    Map<string, RouteEntry>;          // custom_domain         → LP
-  pathMap:      Map<string, RouteEntry>;          // base_path             → LP
+  pathRoutes:   PathRoute[];                      // (domain, base_path)   → LP
+  brandDomains: string[];                         // domínios de marca conhecidos
   campanhasMap: Map<string, RouteEntry>;          // "campanhasHostname:pathSlug" → LP
   brandSlugMap: Map<string, string | null>;       // "brand/slug"          → custom_domain
   ts: number;
 };
+
+const EMPTY_CACHE = (ts: number): RouteCache => ({
+  domainMap: new Map(), pathRoutes: [], brandDomains: [],
+  campanhasMap: new Map(), brandSlugMap: new Map(), ts,
+});
+
+/** Domínio de marca que atende este hostname, ou null (domínio Vercel, localhost).
+ * Cobre subdomínios: `promo.lushmotel.com.br` resolve para `lushmotel.com.br`. */
+function matchBrandDomain(hostname: string, brandDomains: string[]): string | null {
+  return brandDomains.find((d) => hostname === d || hostname.endsWith(`.${d}`)) ?? null;
+}
 
 let routeCache: RouteCache | null = null;
 const CACHE_TTL = 60_000;
@@ -28,18 +46,19 @@ async function getRouteMap(): Promise<RouteCache> {
   if (routeCache && now - routeCache.ts < CACHE_TTL) return routeCache;
 
   try {
-    // Busca todas as campanhas publicadas (com ou sem domínio/path/campanhas_domain)
-    const url = new URL(
-      "/rest/v1/campaigns?select=brand_id,slug,custom_domain,base_path,path_slug,campanhas_domain&status=eq.published",
-      process.env.NEXT_PUBLIC_SUPABASE_URL
-    );
-    const res = await fetch(url.toString(), {
-      headers: {
-        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-      },
-      cache: "no-store",
-    });
+    const headers = {
+      apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+    };
+    const rest = (path: string) =>
+      fetch(new URL(path, process.env.NEXT_PUBLIC_SUPABASE_URL).toString(), { headers, cache: "no-store" });
+
+    // Campanhas publicadas + domínio de cada marca. O domínio é o que desambigua
+    // duas marcas que declararam o mesmo base_path.
+    const [res, brandsRes] = await Promise.all([
+      rest("/rest/v1/campaigns?select=brand_id,slug,custom_domain,base_path,path_slug,campanhas_domain&status=eq.published"),
+      rest("/rest/v1/brands?select=id,domain"),
+    ]);
 
     if (!res.ok) throw new Error(`Supabase ${res.status}`);
 
@@ -52,8 +71,14 @@ async function getRouteMap(): Promise<RouteCache> {
       campanhas_domain: string | null;
     }>;
 
+    const brandDomainById = new Map<string, string>();
+    if (brandsRes.ok) {
+      const brands = (await brandsRes.json()) as Array<{ id: string; domain: string | null }>;
+      for (const b of brands) if (b.domain) brandDomainById.set(b.id, b.domain);
+    }
+
     const domainMap    = new Map<string, RouteEntry>();
-    const pathMap      = new Map<string, RouteEntry>();
+    const pathRoutes: PathRoute[] = [];
     const campanhasMap = new Map<string, RouteEntry>();
     // "brand/slug" → URL canônica completa para 308 redirect (custom_domain ou campanhas_domain/path_slug)
     const brandSlugMap = new Map<string, string | null>();
@@ -61,7 +86,13 @@ async function getRouteMap(): Promise<RouteCache> {
     for (const row of rows) {
       const entry: RouteEntry = { brandId: row.brand_id, slug: row.slug };
       if (row.custom_domain)   domainMap.set(row.custom_domain, entry);
-      if (row.base_path)       pathMap.set(row.base_path.replace(/\/$/, ""), entry);
+      if (row.base_path) {
+        pathRoutes.push({
+          domain: brandDomainById.get(row.brand_id) ?? null,
+          basePath: row.base_path.replace(/\/$/, ""),
+          entry,
+        });
+      }
       // Roteamento campanhas.{marca}.com.br/{path_slug}
       // Chave: "{campanhas_domain}:{path_slug}" (ex.: "campanhas.lemonmotel.com.br:diadosnamorados")
       if (row.campanhas_domain && row.path_slug) {
@@ -76,9 +107,17 @@ async function getRouteMap(): Promise<RouteCache> {
       brandSlugMap.set(`${row.brand_id}/${row.slug}`, canonicalUrl);
     }
 
-    routeCache = { domainMap, pathMap, campanhasMap, brandSlugMap, ts: now };
+    // Caminho mais específico primeiro: evita que /campanhas/natal capture
+    // uma rota /campanhas/natal/promo declarada por outra campanha.
+    pathRoutes.sort((a, b) => b.basePath.length - a.basePath.length);
+
+    routeCache = {
+      domainMap, pathRoutes, campanhasMap, brandSlugMap,
+      brandDomains: [...new Set(brandDomainById.values())],
+      ts: now,
+    };
   } catch {
-    if (!routeCache) routeCache = { domainMap: new Map(), pathMap: new Map(), campanhasMap: new Map(), brandSlugMap: new Map(), ts: now };
+    if (!routeCache) routeCache = EMPTY_CACHE(now);
     else routeCache = { ...routeCache, ts: now };
   }
 
@@ -100,7 +139,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api") && !isStaticAsset) {
-    const { domainMap, pathMap, campanhasMap, brandSlugMap } = await getRouteMap();
+    const { domainMap, pathRoutes, brandDomains, campanhasMap, brandSlugMap } = await getRouteMap();
 
     // Subdomínio: hostname exato → rewrite transparente (ex.: diadosnamorados.lushmotel.com.br)
     if (domainMap.has(hostname)) {
@@ -125,14 +164,21 @@ export async function proxy(request: NextRequest) {
       }
     }
 
-    // Subdiretório: prefixo de path → rewrite transparente
-    for (const [basePath, entry] of pathMap) {
-      if (pathname === basePath || pathname.startsWith(basePath + "/")) {
-        const { brandId, slug } = entry;
-        const url = request.nextUrl.clone();
-        url.pathname = `/${brandId}/${slug}${pathname.slice(basePath.length)}`;
-        return NextResponse.rewrite(url);
-      }
+    // Subdiretório: prefixo de path → rewrite transparente.
+    //
+    // Num domínio de marca só respondem as campanhas daquela marca — sem isso,
+    // duas marcas com o mesmo base_path se sobrepõem e o domínio de uma serve
+    // a LP da outra. Em domínio sem marca (lhg-lps.vercel.app, localhost) o
+    // match é aberto, para preview e desenvolvimento continuarem funcionando.
+    const hostDomain = matchBrandDomain(hostname, brandDomains);
+    for (const route of pathRoutes) {
+      const { basePath, entry } = route;
+      if (pathname !== basePath && !pathname.startsWith(basePath + "/")) continue;
+      if (hostDomain && route.domain !== hostDomain) continue;
+
+      const url = request.nextUrl.clone();
+      url.pathname = `/${entry.brandId}/${entry.slug}${pathname.slice(basePath.length)}`;
+      return NextResponse.rewrite(url);
     }
 
     // 308 redirect: acesso direto pelo domínio Vercel (/brand/slug)

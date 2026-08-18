@@ -159,6 +159,8 @@ const BLOCK_DEFAULTS: Record<string, Record<string, unknown>> = {
 interface Props {
   campaignId: string;
   brandId: string;
+  /** Domínio público da marca — usado pelo DeployPanel para montar a URL. */
+  brandDomain?: string;
   slug: string;
   initialBlocks: Block[];
   initialTheme: Record<string, string>;
@@ -169,7 +171,7 @@ interface Props {
 }
 
 /* ═══════════════════════════════════════════════════ */
-export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, initialLots, status }: Props) {
+export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, initialLots, status }: Props) {
   const [blocks, setBlocks]                   = useState<Block[]>(() =>
     initialBlocks.map((b, i) => b._id ? b : { ...b, _id: `blk-${b.type}-${i}` })
   );
@@ -1123,6 +1125,7 @@ export function CampaignEditor({ campaignId, brandId, slug, initialBlocks, initi
         open={deployOpen}
         onClose={() => setDeployOpen(false)}
         campaignId={campaignId}
+        brandDomain={brandDomain || `${brandId}.com.br`}
         initial={deploy}
         onSaved={(cfg) => setDeploy(cfg)}
       />

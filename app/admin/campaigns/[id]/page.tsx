@@ -20,6 +20,8 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
   // Usa os blocks do Supabase se já foram editados, senão carrega do JSON
   let initialBlocks = (campaign.blocks ?? []) as { type: string; props: Record<string, unknown> }[];
   let initialTheme: Record<string, string> = {};
+  // Domínio público da marca — o DeployPanel monta a URL da campanha com ele.
+  let brandDomain = "";
   if (initialBlocks.length === 0) {
     try {
       const lp = await getCampaign(campaign.brand_id, campaign.slug);
@@ -28,6 +30,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
   }
   try {
     const brand = await getBrand(campaign.brand_id);
+    brandDomain = brand.domain;
     initialTheme = Object.fromEntries(
       Object.entries(brand.theme).map(([k, v]) => [k, String(v)])
     );
@@ -37,6 +40,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
     <CampaignEditor
       campaignId={campaign.id}
       brandId={campaign.brand_id}
+      brandDomain={brandDomain}
       slug={campaign.slug}
       initialBlocks={initialBlocks}
       initialTheme={initialTheme}

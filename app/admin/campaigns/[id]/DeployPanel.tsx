@@ -21,9 +21,18 @@ interface Props {
   open: boolean;
   onClose: () => void;
   campaignId: string;
+  /** Domínio da marca dona da campanha — a URL pública se monta a partir dele. */
+  brandDomain: string;
   initial: DeployConfig;
   onSaved: (cfg: DeployConfig) => void;
 }
+
+/** Domínios onde a regra wildcard `/campanhas/<*>` → Vercel já existe no
+ * Amplify. Espelha o estado da infra, que é configurada por domínio pela Softo:
+ * uma marca fora desta lista precisa da regra criada antes de publicar em
+ * subdiretório, senão a URL responde 404 mesmo com tudo certo no CMS.
+ * Ao habilitar um domínio novo, adicione-o aqui. */
+const CAMPANHAS_WILDCARD_DOMAINS = ["lushmotel.com.br"];
 
 const fld: React.CSSProperties = {
   width: "100%", background: "#16161F", border: "1px solid rgba(255,255,255,0.08)",
@@ -36,7 +45,7 @@ const card: React.CSSProperties = {
   borderRadius: 8, padding: 14,
 };
 
-export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Props) {
+export function DeployPanel({ open, onClose, campaignId, brandDomain, initial, onSaved }: Props) {
   const [mode, setMode]           = useState<DeployMode>(initial.mode);
   const [domain, setDomain]       = useState(initial.domain);
   const [basePath, setBasePath]   = useState(initial.basePath);
@@ -54,6 +63,9 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
   const vercelHost = typeof window !== "undefined"
     ? window.location.hostname
     : "lhg-lps.vercel.app";
+
+  const wildcardReady = CAMPANHAS_WILDCARD_DOMAINS.includes(brandDomain);
+  const publicUrl     = `${brandDomain}${basePath.trim()}`;
 
   async function save() {
     setSaving(true); setError("");
@@ -284,20 +296,45 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
               </div>
             </div>
 
-            {/* /campanhas/* — Amplify já cobre com wildcard, zero config extra */}
+            {/* /campanhas/* — o wildcard do Amplify existe por domínio */}
             {basePath.trim().startsWith("/campanhas/") && (
-              <div style={{ ...card, borderColor: "rgba(46,184,122,0.25)", display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#2EB87A" }}>✓ Pronto para publicar</div>
-                <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
-                  A regra <code style={{ color: "#C4AEFF" }}>/campanhas/{"<*>"}</code> já está configurada no Amplify
-                  e cobre automaticamente qualquer slug futuro. Nenhuma configuração adicional é necessária.
+              wildcardReady ? (
+                <div style={{ ...card, borderColor: "rgba(46,184,122,0.25)", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#2EB87A" }}>✓ Pronto para publicar</div>
+                  <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
+                    A regra <code style={{ color: "#C4AEFF" }}>/campanhas/{"<*>"}</code> já está configurada no Amplify
+                    de <strong style={{ color: "#F0EEF8" }}>{brandDomain}</strong> e cobre qualquer slug futuro.
+                    Nenhuma configuração adicional é necessária.
+                  </div>
+                  <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
+                    Após salvar e publicar, a URL <strong style={{ color: "#F0EEF8" }}>{publicUrl}</strong>{" "}
+                    estará no ar em até 60 segundos.
+                  </div>
                 </div>
-                <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
-                  Após salvar e publicar, a URL{" "}
-                  <strong style={{ color: "#F0EEF8" }}>lushmotel.com.br{basePath.trim()}</strong>{" "}
-                  estará no ar em até 60 segundos.
+              ) : (
+                <div style={{ ...card, borderColor: "rgba(240,168,74,0.3)", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#F0A84A" }}>⚠ Falta liberar o domínio</div>
+                  <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
+                    O wildcard <code style={{ color: "#C4AEFF" }}>/campanhas/{"<*>"}</code> está configurado apenas em{" "}
+                    <strong style={{ color: "#F0EEF8" }}>{CAMPANHAS_WILDCARD_DOMAINS.join(", ")}</strong>. Em{" "}
+                    <strong style={{ color: "#F0EEF8" }}>{brandDomain}</strong> ele ainda não existe, então{" "}
+                    <strong style={{ color: "#F0EEF8" }}>{publicUrl}</strong> vai responder 404 mesmo com a campanha publicada.
+                  </div>
+                  <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8 }}>
+                    <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                      Peça à Softo esta regra em {brandDomain}
+                    </div>
+                    <Row label="Tipo" value="Rewrite (200)" />
+                    <Row label="Origem" value="/campanhas/<*>" />
+                    <Row label="Destino" value={`https://${vercelHost}/campanhas/<*>`} />
+                  </div>
+                  <div style={{ fontSize: 10, color: "#55526A", lineHeight: 1.5 }}>
+                    Regra criada uma única vez por domínio — depois dela, toda campanha nova em{" "}
+                    <code style={{ color: "#8E8AA8" }}>/campanhas/…</code> funciona sem tocar na infra.
+                    Alternativa sem depender da Softo: use o modo <strong>Subdomínio</strong>, que se configura sozinho.
+                  </div>
                 </div>
-              </div>
+              )
             )}
 
             {/* Outros paths (/pt-BR/...) — guia CloudFront para a Softo */}
@@ -325,7 +362,7 @@ export function DeployPanel({ open, onClose, campaignId, initial, onSaved }: Pro
 
                 <Step n={4} title="Verificar">
                   <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
-                    Acesse <strong style={{ color: "#F0EEF8" }}>{`seu-domínio.com.br${basePath.trim()}`}</strong> e confirme que a LP carrega.
+                    Acesse <strong style={{ color: "#F0EEF8" }}>{publicUrl}</strong> e confirme que a LP carrega.
                     O Default Behavior do CloudFront não é afetado.
                   </div>
                 </Step>

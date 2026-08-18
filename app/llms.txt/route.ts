@@ -93,10 +93,14 @@ function isWebPage(url: string): boolean {
 /* ── coleta ─────────────────────────────────────────── */
 
 async function collect(): Promise<{ entries: Entry[]; brands: Map<string, Brand> }> {
-  const params = await getAllCampaigns();
-
-  // Rows do CMS, indexadas por `brand/slug`
-  const rows = new Map<string, Row>();
+  // Só o CMS autoriza uma campanha a entrar no índice.
+  //
+  // A policy RLS `public read published campaigns` já restringe a chave anon a
+  // `status = 'published'`, então toda row devolvida aqui está publicada — e um
+  // rascunho é indistinguível de "não existe". Por isso o JSON em disco serve
+  // apenas para completar metadados, nunca para autorizar: usá-lo como fallback
+  // colocaria campanhas antigas em rascunho na lista de ativas.
+  const rows: Row[] = [];
   try {
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -104,27 +108,18 @@ async function collect(): Promise<{ entries: Entry[]; brands: Map<string, Brand>
     );
     const { data } = await supabase
       .from("campaigns")
-      .select("brand_id, slug, status, meta, base_path");
-    for (const r of (data ?? []) as Row[]) rows.set(`${r.brand_id}/${r.slug}`, r);
+      .select("brand_id, slug, status, meta, base_path")
+      .eq("status", "published");
+    rows.push(...((data ?? []) as Row[]));
   } catch {
-    /* Supabase fora do ar → segue só com JSON */
+    /* Supabase fora do ar → índice vazio, melhor que índice errado */
   }
-
-  // Slugs conhecidos = união do que está em disco com o que está no CMS
-  const keys = new Set<string>([
-    ...params.map((p) => `${p.brand}/${p.campaign}`),
-    ...rows.keys(),
-  ]);
 
   const brands = new Map<string, Brand>();
   const entries: Entry[] = [];
 
-  for (const key of keys) {
-    const [brandId, slug] = key.split("/") as [string, string];
-    const row = rows.get(key);
-
-    // Row existente manda: rascunho/arquivada fica de fora mesmo com JSON em disco
-    if (row && row.status !== "published") continue;
+  for (const row of rows) {
+    const { brand_id: brandId, slug } = row;
 
     let fromFile: Campaign | null = null;
     try {
@@ -132,7 +127,6 @@ async function collect(): Promise<{ entries: Entry[]; brands: Map<string, Brand>
     } catch {
       /* campanha existe só no CMS */
     }
-    if (!row && !fromFile) continue;
 
     if (!brands.has(brandId)) {
       try {
@@ -142,11 +136,15 @@ async function collect(): Promise<{ entries: Entry[]; brands: Map<string, Brand>
       }
     }
 
-    const meta = { ...(fromFile?.meta ?? {}), ...(row?.meta ?? {}) } as Partial<Campaign["meta"]>;
-    const url = meta.canonical?.trim() || (row?.base_path ? `${BASE}${row.base_path}` : null);
+    const brand = brands.get(brandId)!;
+    const meta = { ...(fromFile?.meta ?? {}), ...(row.meta ?? {}) } as Partial<Campaign["meta"]>;
+    // Subdiretório resolve no domínio da própria marca — não em BASE, que
+    // fixaria lushmotel.com.br numa campanha de outra marca.
+    const url = meta.canonical?.trim()
+      || (row.base_path ? `https://${brand.domain}${row.base_path}` : null);
     if (!url) continue; // sem URL pública declarada, não entra no índice
 
-    const title = meta.title?.trim() || `${brands.get(brandId)!.name} — ${slug}`;
+    const title = meta.title?.trim() || `${brand.name} — ${slug}`;
     entries.push({ brandId, title, url, description: meta.description, geo: meta.geo });
   }
 
