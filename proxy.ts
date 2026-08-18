@@ -196,6 +196,13 @@ export async function proxy(request: NextRequest) {
       // Torna verificável de fora se o Host chegou reescrito pelo CDN.
       rewritten.headers.set("x-lhg-host", hostname);
       rewritten.headers.set("x-lhg-route", `${entry.brandId}/${entry.slug}`);
+      // TEMPORÁRIO: descobre se algum header repassado pelo CDN carrega o
+      // domínio que o visitante acessou. Remover após a investigação.
+      const carriers: string[] = [];
+      request.headers.forEach((value, name) => {
+        if (/\.com\.br/i.test(value)) carriers.push(`${name}=${value.slice(0, 60)}`);
+      });
+      rewritten.headers.set("x-lhg-probe", carriers.join(" | ").slice(0, 400) || "nenhum");
       return rewritten;
     }
 
