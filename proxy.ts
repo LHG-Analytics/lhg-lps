@@ -24,12 +24,15 @@ type RouteCache = {
   brandDomains: string[];                         // domínios de marca conhecidos
   campanhasMap: Map<string, RouteEntry>;          // "campanhasHostname:pathSlug" → LP
   brandSlugMap: Map<string, string | null>;       // "brand/slug"          → custom_domain
+  /** "brandId/segmento-público" → slug real. Resolve a URL pública quando ela
+   * difere do slug (ex.: base_path /campanhas/menu-de-inverno, slug inverno). */
+  brandPathMap: Map<string, string>;
   ts: number;
 };
 
 const EMPTY_CACHE = (ts: number): RouteCache => ({
   domainMap: new Map(), pathRoutes: [], brandDomains: [],
-  campanhasMap: new Map(), brandSlugMap: new Map(), ts,
+  campanhasMap: new Map(), brandSlugMap: new Map(), brandPathMap: new Map(), ts,
 });
 
 /** Domínio de marca que atende este hostname, ou null (domínio Vercel, localhost).
@@ -82,16 +85,26 @@ async function getRouteMap(): Promise<RouteCache> {
     const campanhasMap = new Map<string, RouteEntry>();
     // "brand/slug" → URL canônica completa para 308 redirect (custom_domain ou campanhas_domain/path_slug)
     const brandSlugMap = new Map<string, string | null>();
+    const brandPathMap = new Map<string, string>();
+    const publishedBrandSlugs = new Set<string>();
 
     for (const row of rows) {
       const entry: RouteEntry = { brandId: row.brand_id, slug: row.slug };
+      publishedBrandSlugs.add(`${row.brand_id}/${row.slug}`);
       if (row.custom_domain)   domainMap.set(row.custom_domain, entry);
       if (row.base_path) {
+        const basePath = row.base_path.replace(/\/$/, "");
         pathRoutes.push({
           domain: brandDomainById.get(row.brand_id) ?? null,
-          basePath: row.base_path.replace(/\/$/, ""),
+          basePath,
           entry,
         });
+        // Segmento que o CDN repassa: o que sobra do base_path depois do
+        // prefixo consumido pela regra de rewrite do domínio.
+        const publicSeg = basePath.replace(/^\/campanhas\//, "").replace(/^\//, "");
+        if (publicSeg && publicSeg !== row.slug) {
+          brandPathMap.set(`${row.brand_id}/${publicSeg}`, row.slug);
+        }
       }
       // Roteamento campanhas.{marca}.com.br/{path_slug}
       // Chave: "{campanhas_domain}:{path_slug}" (ex.: "campanhas.lemonmotel.com.br:diadosnamorados")
@@ -111,8 +124,14 @@ async function getRouteMap(): Promise<RouteCache> {
     // uma rota /campanhas/natal/promo declarada por outra campanha.
     pathRoutes.sort((a, b) => b.basePath.length - a.basePath.length);
 
+    // Só mantém entradas cujo slug real está publicado
+    for (const [key, slug] of brandPathMap) {
+      const brandId = key.split("/")[0]!;
+      if (!publishedBrandSlugs.has(`${brandId}/${slug}`)) brandPathMap.delete(key);
+    }
+
     routeCache = {
-      domainMap, pathRoutes, campanhasMap, brandSlugMap,
+      domainMap, pathRoutes, campanhasMap, brandSlugMap, brandPathMap,
       brandDomains: [...new Set(brandDomainById.values())],
       ts: now,
     };
@@ -152,7 +171,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (!pathname.startsWith("/admin") && !pathname.startsWith("/_next") && !pathname.startsWith("/api") && !isStaticAsset) {
-    const { domainMap, pathRoutes, brandDomains, campanhasMap, brandSlugMap } = await getRouteMap();
+    const { domainMap, pathRoutes, brandDomains, campanhasMap, brandSlugMap, brandPathMap } = await getRouteMap();
 
     // Subdomínio: hostname exato → rewrite transparente (ex.: diadosnamorados.lushmotel.com.br)
     if (domainMap.has(hostname)) {
@@ -197,6 +216,23 @@ export async function proxy(request: NextRequest) {
       rewritten.headers.set("x-lhg-host", hostname);
       rewritten.headers.set("x-lhg-route", `${entry.brandId}/${entry.slug}`);
       return rewritten;
+    }
+
+    // Regra de domínio que já embute a marca no destino
+    // (/campanhas/<*> → lhg-lps.vercel.app/{marca}/<*>): o caminho que chega
+    // aqui é /{marca}/{segmento}. Quando `segmento` não é o slug de nenhuma
+    // campanha da marca, tenta casá-lo com o base_path dela — assim a URL
+    // pública pode diferir do slug (menu-de-inverno → inverno).
+    {
+      const segs = pathname.split("/").filter(Boolean);
+      if (segs.length >= 2) {
+        const realSlug = brandPathMap.get(`${segs[0]}/${segs.slice(1).join("/")}`);
+        if (realSlug) {
+          const url = request.nextUrl.clone();
+          url.pathname = `/${segs[0]}/${realSlug}`;
+          return NextResponse.rewrite(url);
+        }
+      }
     }
 
     // 308 redirect: acesso direto pelo domínio Vercel (/brand/slug)
