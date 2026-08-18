@@ -85,13 +85,6 @@ export default async function CampaignPage({ params }: { params: Params }) {
 
   const analytics = data.campaign.meta.analytics as Analytics | undefined;
 
-  // Preload manual do poster do hero — Next.js 15+/16 App Router não gera
-  // <link rel="preload"> automaticamente a partir de <Image priority>.
-  const heroBlock = data.campaign.blocks.find(
-    (b): b is Extract<Block, { type: "hero" }> => b.type === "hero"
-  );
-  const heroPoster = heroBlock?.props?.poster as string | undefined;
-
   // Fontes: CMS override (Supabase) → JSON brand.fonts → undefined
   const { googleFontsUrl, fontFaceCSS, displayFont, bodyFont } = resolveFontData(
     data.cmsFont,
@@ -105,15 +98,10 @@ export default async function CampaignPage({ params }: { params: Params }) {
       {googleFontsUrl && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
       {googleFontsUrl && <link rel="stylesheet" href={googleFontsUrl} />}
       {fontFaceCSS && <style dangerouslySetInnerHTML={{ __html: fontFaceCSS }} />}
-      {heroPoster && (
-        <link
-          rel="preload"
-          as="image"
-          href={asset(heroPoster)}
-          fetchPriority="high"
-          {...(heroPoster.endsWith(".webp") && { type: "image/webp" })}
-        />
-      )}
+      {/* Sem preload manual do poster: o `priority` no <Image> do Hero já emite
+          <link rel="preload" imageSrcSet> passando pelo otimizador. Um preload
+          escrito à mão apontaria para o arquivo original e o browser baixaria
+          as duas versões — eram 16 MB extras por página. */}
       <div style={{ ...themeStyle(data.brand.theme), ...fontStyle }} data-brand={data.brand.id}>
         {analytics?.gtm && <GtmNoscript id={analytics.gtm} />}
         <BlockRenderer
