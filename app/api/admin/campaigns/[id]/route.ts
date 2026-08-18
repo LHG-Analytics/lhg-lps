@@ -106,9 +106,39 @@ export async function PATCH(
 
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("brand_id, slug, blocks, meta, campaign_data")
+    .select("brand_id, slug, base_path, blocks, meta, campaign_data")
     .eq("id", id)
     .single();
+
+  // Nome da campanha vive dentro de campaign_data. O merge acontece aqui porque
+  // um PATCH substitui o JSONB inteiro — se o cliente mandasse só { name }, os
+  // lotes, períodos e a tabela de preços seriam apagados.
+  if (typeof body.campaign_name === "string") {
+    const current = (campaign?.campaign_data ?? {}) as Record<string, unknown>;
+    body.campaign_data = { ...current, name: body.campaign_name.trim() };
+    delete body.campaign_name;
+  }
+
+  // Renomear slug: muda a rota interna e, por consequência, a URL pública.
+  let previousSlug: string | null = null;
+  if (typeof body.slug === "string") {
+    const nextSlug = body.slug.trim().toLowerCase();
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(nextSlug)) {
+      return new NextResponse(
+        "Slug inválido: use apenas letras minúsculas, números e hífens.",
+        { status: 400 }
+      );
+    }
+    body.slug = nextSlug;
+    if (campaign && campaign.slug !== nextSlug) {
+      previousSlug = campaign.slug;
+      // base_path derivado do slug acompanha a renomeação. Caminho que o editor
+      // digitou à mão é preservado — só o padrão /campanhas/<slug> é seguido.
+      if (body.base_path === undefined && campaign.base_path === `/campanhas/${campaign.slug}`) {
+        body.base_path = `/campanhas/${nextSlug}`;
+      }
+    }
+  }
 
   // Grava snapshot antes de publicar para permitir rollback
   if (body.status === "published" && campaign) {
@@ -158,6 +188,12 @@ export async function PATCH(
           { status: 409 }
         );
       }
+      if (/slug/.test(error.message)) {
+        return new NextResponse(
+          "Outra campanha desta marca já usa este slug. Escolha outro.",
+          { status: 409 }
+        );
+      }
       return new NextResponse("Esse valor já está em uso por outra campanha.", { status: 409 });
     }
     return new NextResponse(error.message, { status: 500 });
@@ -172,8 +208,14 @@ export async function PATCH(
     details: { status: body.status, hasBlocks: body.blocks !== undefined },
   });
 
-  if (body.status === "published" && campaign) {
-    revalidatePath(`/${campaign.brand_id}/${campaign.slug}`);
+  if (campaign) {
+    const brand = campaign.brand_id;
+    const currentSlug = typeof body.slug === "string" ? body.slug : campaign.slug;
+    if (body.status === "published" || previousSlug) {
+      revalidatePath(`/${brand}/${currentSlug}`);
+    }
+    // Renomear deixa a rota antiga em cache servindo a LP; invalida também.
+    if (previousSlug) revalidatePath(`/${brand}/${previousSlug}`);
   }
 
   return NextResponse.json({ ok: true });

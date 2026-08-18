@@ -166,12 +166,14 @@ interface Props {
   initialTheme: Record<string, string>;
   initialMeta?: Meta;
   initialDeploy?: DeployConfig;
+  /** `campaign_data.name` — nome de exibição da campanha, editável no header. */
+  initialName?: string;
   initialLots?: Lot[];
   status: string;
 }
 
 /* ═══════════════════════════════════════════════════ */
-export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, initialLots, status }: Props) {
+export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initialBlocks, initialTheme, initialMeta, initialDeploy, initialName, initialLots, status }: Props) {
   const [blocks, setBlocks]                   = useState<Block[]>(() =>
     initialBlocks.map((b, i) => b._id ? b : { ...b, _id: `blk-${b.type}-${i}` })
   );
@@ -198,6 +200,7 @@ export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initial
   const [versionsOpen, setVersionsOpen]       = useState(false);
   const [versions, setVersions]               = useState<Version[]>([]);
   const [dupModal, setDupModal]               = useState({ open: false, slug: `${slug}-copia`, saving: false, error: "" });
+  const [renameModal, setRenameModal]         = useState({ open: false, name: initialName ?? "", slug, saving: false, error: "" });
   const [deployOpen, setDeployOpen]           = useState(false);
   const [deploy, setDeploy]                   = useState<DeployConfig>(initialDeploy ?? { mode: null, domain: "", basePath: "" });
   const [lotsOpen, setLotsOpen]               = useState(false);
@@ -623,6 +626,27 @@ export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initial
     }
   }
 
+  async function renameCampaign() {
+    const nextSlug = renameModal.slug.trim().toLowerCase();
+    const nextName = renameModal.name.trim();
+    if (!nextSlug) return;
+    setRenameModal((m) => ({ ...m, saving: true, error: "" }));
+    try {
+      const res = await fetch(`/api/admin/campaigns/${campaignId}`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        // `campaign_name` é mesclado no campaign_data pelo servidor — mandar o
+        // objeto inteiro daqui apagaria lotes, períodos e tabela de preços.
+        body: JSON.stringify({ slug: nextSlug, campaign_name: nextName }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      // Reload: o slug alimenta a URL do preview e o base_path derivado.
+      if (nextSlug !== slug) window.location.reload();
+      else setRenameModal((m) => ({ ...m, open: false, saving: false }));
+    } catch (err) {
+      setRenameModal((m) => ({ ...m, saving: false, error: err instanceof Error ? err.message : "Erro ao renomear." }));
+    }
+  }
+
   /* ════════════════════════════════════════════════ */
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh", background: "#0D0D12", overflow: "hidden" }}>
@@ -631,7 +655,29 @@ export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initial
       <header style={{ height: 48, borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", padding: "0 16px", gap: 12, flexShrink: 0 }}>
         <Link href="/admin/campaigns" style={{ color: "#55526A", fontSize: 12, textDecoration: "none" }}>← Campanhas</Link>
         <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
-        <span style={{ fontSize: 13, color: "#F0EEF8", fontWeight: 600 }}>{slug}</span>
+        {/* Clique abre o modal de renomear (nome + slug) */}
+        <button
+          onClick={() => setRenameModal((m) => ({ ...m, open: true, name: initialName ?? "", slug, error: "" }))}
+          title="Renomear campanha e slug"
+          style={{
+            display: "flex", alignItems: "baseline", gap: 7, background: "transparent",
+            border: "none", borderRadius: 5, padding: "3px 6px", cursor: "pointer",
+            fontFamily: "inherit", margin: "0 -6px",
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+        >
+          {initialName?.trim() && (
+            <span style={{ fontSize: 13, color: "#F0EEF8", fontWeight: 600 }}>{initialName.trim()}</span>
+          )}
+          <span style={{
+            fontSize: initialName?.trim() ? 11 : 13,
+            color: initialName?.trim() ? "#8E8AA8" : "#F0EEF8",
+            fontWeight: initialName?.trim() ? 400 : 600,
+            fontFamily: "monospace",
+          }}>{slug}</span>
+          <span style={{ fontSize: 9, color: "#3A3850" }}>✎</span>
+        </button>
         <span style={{ fontSize: 11, color: "#55526A" }}>{brandId}</span>
         <span style={{
           fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99,
@@ -1092,6 +1138,15 @@ export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initial
         onChange={(s) => setDupModal((m) => ({ ...m, slug: s }))}
         onConfirm={duplicateCampaign}
         onClose={() => setDupModal((m) => ({ ...m, open: false, error: "" }))}
+      />
+
+      <RenameModal
+        state={renameModal}
+        originalSlug={slug}
+        brandDomain={brandDomain || `${brandId}.com.br`}
+        onChange={(patch) => setRenameModal((m) => ({ ...m, ...patch }))}
+        onConfirm={renameCampaign}
+        onClose={() => setRenameModal((m) => ({ ...m, open: false, error: "" }))}
       />
 
       <LotsPanel
@@ -2125,6 +2180,89 @@ function VersionsPanel({ versions, onRestore, onClose }: {
 }
 
 /* ── DuplicateModal ─────────────────────────────────── */
+function RenameModal({ state, originalSlug, brandDomain, onChange, onConfirm, onClose }: {
+  state: { open: boolean; name: string; slug: string; saving: boolean; error: string };
+  originalSlug: string;
+  brandDomain: string;
+  onChange: (patch: Partial<{ name: string; slug: string }>) => void;
+  onConfirm: () => void;
+  onClose: () => void;
+}) {
+  if (!state.open) return null;
+
+  const slug    = state.slug.trim().toLowerCase();
+  const slugOk  = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
+  const changed = slug !== originalSlug;
+
+  return (
+    <div
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(0,0,0,0.72)", display: "flex", alignItems: "center", justifyContent: "center" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{ background: "#13121A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: 24, width: 380, display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: "#F0EEF8" }}>Renomear campanha</div>
+
+        <div>
+          <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Nome da campanha</label>
+          <input
+            type="text"
+            value={state.name}
+            onChange={(e) => onChange({ name: e.target.value })}
+            style={{ ...fieldStyle, width: "100%" }}
+            placeholder="Ex: Chefs no Motel 2026"
+            onKeyDown={(e) => { if (e.key === "Enter" && slugOk) onConfirm(); if (e.key === "Escape") onClose(); }}
+            autoFocus
+          />
+          <div style={{ fontSize: 10, color: "#3A3850", marginTop: 3 }}>
+            Nome interno e usado no JSON-LD da página. Não aparece na URL.
+          </div>
+        </div>
+
+        <div>
+          <label style={{ fontSize: 10, color: "#8E8AA8", display: "block", marginBottom: 4, textTransform: "uppercase", letterSpacing: "0.07em" }}>Slug</label>
+          <input
+            type="text"
+            value={state.slug}
+            onChange={(e) => onChange({ slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "").replace(/--+/g, "-") })}
+            style={{ ...fieldStyle, width: "100%", fontFamily: "monospace", borderColor: state.slug && !slugOk ? "#E05260" : undefined }}
+            placeholder="ex: chefs-no-motel"
+            onKeyDown={(e) => { if (e.key === "Enter" && slugOk) onConfirm(); if (e.key === "Escape") onClose(); }}
+          />
+          {state.slug && !slugOk ? (
+            <div style={{ fontSize: 10, color: "#E05260", marginTop: 3 }}>Use apenas letras minúsculas, números e hífens.</div>
+          ) : (
+            <div style={{ fontSize: 10, color: "#3A3850", marginTop: 3, fontFamily: "monospace" }}>
+              {brandDomain}/campanhas/{slug || "…"}
+            </div>
+          )}
+        </div>
+
+        {changed && slugOk && (
+          <div style={{ fontSize: 10, color: "#F0A84A", lineHeight: 1.5, background: "rgba(240,168,74,0.07)", border: "1px solid rgba(240,168,74,0.2)", borderRadius: 6, padding: "8px 10px" }}>
+            ⚠ Trocar o slug muda a URL pública. O caminho antigo{" "}
+            <code style={{ color: "#F0EEF8" }}>/campanhas/{originalSlug}</code> passa a responder 404 — links já divulgados param de funcionar.
+          </div>
+        )}
+
+        {state.error && <div style={{ fontSize: 11, color: "#E05260" }}>{state.error}</div>}
+
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={onClose} style={{ flex: 1, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 0", color: "#8E8AA8", fontSize: 12, cursor: "pointer", fontWeight: 600 }}>
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={state.saving || !slugOk}
+            style={{ flex: 1, background: "#A67CFF", color: "#fff", border: "none", borderRadius: 6, padding: "8px 0", fontSize: 12, fontWeight: 700, cursor: state.saving || !slugOk ? "default" : "pointer", opacity: state.saving || !slugOk ? 0.6 : 1 }}
+          >
+            {state.saving ? "Salvando…" : "Salvar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function DuplicateModal({ state, onChange, onConfirm, onClose }: {
   state: { open: boolean; slug: string; saving: boolean; error: string };
   onChange: (slug: string) => void;

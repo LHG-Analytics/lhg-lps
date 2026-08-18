@@ -50,6 +50,7 @@ export default async function CampaignPage({ params }: { params: Promise<{ id: s
         domain:   (campaign.custom_domain as string | null) ?? "",
         basePath: (campaign.base_path    as string | null) ?? "",
       }}
+      initialName={(campaign.campaign_data as { name?: string } | null)?.name ?? ""}
       initialLots={((campaign.campaign_data as { lots?: unknown[] } | null)?.lots ?? []) as import("./LotsPanel").Lot[]}
       status={campaign.status}
     />

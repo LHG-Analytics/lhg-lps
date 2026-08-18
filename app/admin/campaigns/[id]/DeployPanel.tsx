@@ -32,7 +32,14 @@ interface Props {
  * uma marca fora desta lista precisa da regra criada antes de publicar em
  * subdiretório, senão a URL responde 404 mesmo com tudo certo no CMS.
  * Ao habilitar um domínio novo, adicione-o aqui. */
-const CAMPANHAS_WILDCARD_DOMAINS = ["lushmotel.com.br"];
+const CAMPANHAS_WILDCARD_DOMAINS = [
+  "lushmotel.com.br",
+  "andardecimasuites.com.br",
+  "toutmotel.com.br",
+  "lemonmotel.com.br",
+  // altanamotel.com.br fica fora: o dominio responde por LiteSpeed, nao pela
+  // Vercel, entao subdiretorio ainda nao serve ali.
+];
 
 const fld: React.CSSProperties = {
   width: "100%", background: "#16161F", border: "1px solid rgba(255,255,255,0.08)",

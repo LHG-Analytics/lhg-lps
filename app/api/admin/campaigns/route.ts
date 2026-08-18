@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
 
     const { data: created, error: createErr } = await supabase
       .from("campaigns")
-      .insert({ brand_id: source.brand_id, slug, lang: source.lang, meta: source.meta, blocks: source.blocks, campaign_data: source.campaign_data, status: "draft" })
+      .insert({ brand_id: source.brand_id, slug, lang: source.lang, meta: source.meta, blocks: source.blocks, campaign_data: source.campaign_data, base_path: `/campanhas/${slug}`, status: "draft" })
       .select("id").single();
 
     if (createErr) return new NextResponse(createErr.message, { status: 500 });
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
 
   const { data: created, error: createErr } = await supabase
     .from("campaigns")
-    .insert({ brand_id: body.brandId, slug, lang: body.lang ?? "pt-BR", meta: body.meta ?? {}, blocks: body.blocks ?? [], campaign_data: {}, status: "draft" })
+    .insert({ brand_id: body.brandId, slug, lang: body.lang ?? "pt-BR", meta: body.meta ?? {}, blocks: body.blocks ?? [], campaign_data: {}, base_path: `/campanhas/${slug}`, status: "draft" })
     .select("id").single();
 
   if (createErr) return new NextResponse(createErr.message, { status: 500 });
