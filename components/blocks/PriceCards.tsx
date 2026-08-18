@@ -19,7 +19,6 @@ export function PriceCards({ eyebrow, headlineFull, backgroundImage, cards, avai
           fill
           sizes="100vw"
           style={{ objectFit: "cover" }}
-          unoptimized
         />
       )}
       <div className="price-cards__overlay" />

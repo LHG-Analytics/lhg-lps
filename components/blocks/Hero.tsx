@@ -44,7 +44,6 @@ export function Hero({
           aria-hidden="true"
           fill
           priority
-          unoptimized
           sizes="100vw"
           className="hero__poster"
           style={{ objectFit: "cover", pointerEvents: "none" }}

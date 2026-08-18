@@ -36,7 +36,6 @@ export function Nav({ tag, brand }: Props) {
             className="logo__mark"
             style={{ width: "auto" }}
             priority
-            unoptimized
           />
         </a>
         <div className="nav__cta">

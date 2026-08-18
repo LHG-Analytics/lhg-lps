@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
   assetPrefix: process.env.NODE_ENV === "production" ? "https://lhg-lps.vercel.app" : undefined,
   images: {
     formats: ["image/avif", "image/webp"],
+    // Otimizador na origem da Vercel — ver lib/image-loader.ts
+    loader: "custom",
+    loaderFile: "./lib/image-loader.ts",
     remotePatterns: [
       // Vercel Blob Store — URLs geradas pelo upload do CMS
       {

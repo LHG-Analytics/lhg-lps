@@ -29,7 +29,7 @@ export function Feature({
 
   const imageSide = (
     <div className="feature__img">
-      <Image src={imgSrc} alt={imageAlt} fill sizes="50vw" style={{ objectFit: "cover" }} unoptimized />
+      <Image src={imgSrc} alt={imageAlt} fill sizes="50vw" style={{ objectFit: "cover" }} />
     </div>
   );
 
