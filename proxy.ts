@@ -125,9 +125,22 @@ async function getRouteMap(): Promise<RouteCache> {
 }
 
 /* ── Proxy principal ────────────────────────────────────────────────────── */
+/** Domínio que o visitante realmente acessou.
+ *
+ * Amplify/CloudFront sobrescrevem o header `Host` pelo hostname da Vercel —
+ * sem isso a Vercel não reconhece o projeto e devolve 404. O domínio original
+ * sobrevive em `x-forwarded-host`, e é ele que identifica a marca: usar `Host`
+ * aqui faria toda campanha em subdiretório resolver como se estivesse no mesmo
+ * domínio, e um único base_path compartilhado serviria a marca errada. */
+function effectiveHost(request: NextRequest): string {
+  const forwarded = request.headers.get("x-forwarded-host");
+  const raw = forwarded?.split(",")[0]?.trim() || request.headers.get("host") || "";
+  return raw.split(":")[0] ?? "";
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hostname = (request.headers.get("host") ?? "").split(":")[0] ?? "";
+  const hostname = effectiveHost(request);
 
   /* 1. Roteamento por domínio/subdiretório (antes do auth check) */
   const isStaticAsset = /\.[a-zA-Z0-9]{2,5}$/.test(pathname);
@@ -178,7 +191,12 @@ export async function proxy(request: NextRequest) {
 
       const url = request.nextUrl.clone();
       url.pathname = `/${entry.brandId}/${entry.slug}${pathname.slice(basePath.length)}`;
-      return NextResponse.rewrite(url);
+      const rewritten = NextResponse.rewrite(url);
+      // Diagnóstico: qual domínio o proxy enxergou e para onde resolveu.
+      // Torna verificável de fora se o Host chegou reescrito pelo CDN.
+      rewritten.headers.set("x-lhg-host", hostname);
+      rewritten.headers.set("x-lhg-route", `${entry.brandId}/${entry.slug}`);
+      return rewritten;
     }
 
     // 308 redirect: acesso direto pelo domínio Vercel (/brand/slug)
