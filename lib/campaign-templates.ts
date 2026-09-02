@@ -177,6 +177,10 @@ const B = {
             {
               title: "acompanhamentos", heading: "plain", accent: "gold",
               subtitle: "R$ 0,00 por porção extra",
+              // `items: []` explícito: o CMS grava este objeto como JSONB e o
+              // preview não passa pelo Zod, então a chave ausente chegaria
+              // como `undefined` no componente.
+              items: [],
               inlineItems: ["Acompanhamento", "Acompanhamento", "Acompanhamento"],
             },
           ],

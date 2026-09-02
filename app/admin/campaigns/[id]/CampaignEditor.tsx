@@ -190,6 +190,7 @@ const BLOCK_DEFAULTS: Record<string, Record<string, unknown>> = {
           {
             title: "acompanhamentos", heading: "plain", accent: "gold",
             subtitle: "R$ 15,00 por porção extra",
+            items: [],
             inlineItems: ["Arroz e feijão", "Fritas", "Legumes grelhados", "Vinagrete"],
           },
         ],
