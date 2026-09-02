@@ -168,13 +168,15 @@ async function safeLoad(brandId: string, campaignSlug: string) {
     let resolvedBrand = brand;
     let cmsFont: BrandFonts | null = null;
     let publishedInCms = false;
+    /** Status real da campanha no CMS, ou null se o CMS não a conhece. */
+    let cmsStatus: string | null = null;
     try {
       const supabase = createSupabasePublic(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
-      const [{ data: row }, { data: brandRow }] = await Promise.all([
+      const [{ data: row }, { data: brandRow }, { data: statusRow }] = await Promise.all([
         supabase
           .from("campaigns")
           .select("blocks, meta, campaign_data, lang")
@@ -187,7 +189,19 @@ async function safeLoad(brandId: string, campaignSlug: string) {
           .select("fonts, logo, favicon, booking, concierge")
           .eq("id", brandId)
           .maybeSingle(),
+        // A RLS de `campaigns` esconde rascunho da chave anon, então a query
+        // acima não distingue "despublicada" de "não existe". Esta view expõe
+        // só (marca, slug, status) — sem conteúdo — e é o que permite recusar
+        // uma campanha despublicada que tenha JSON em disco.
+        supabase
+          .from("campaign_public_status")
+          .select("status")
+          .eq("brand_id", brandId)
+          .eq("slug", campaignSlug)
+          .maybeSingle(),
       ]);
+
+      if (typeof statusRow?.status === "string") cmsStatus = statusRow.status;
 
       // Row publicada é o que autoriza uma campanha sem JSON a existir
       if (row) {
@@ -267,8 +281,15 @@ async function safeLoad(brandId: string, campaignSlug: string) {
       }
     } catch { /* Supabase indisponível → mantém JSON */ }
 
+    // Campanha que o CMS conhece e não publicou não vai ao ar — nem com JSON
+    // em disco. O arquivo é fallback de conteúdo, não autorização: sem esta
+    // checagem, `draft` e `archived` ficavam públicos em /campanhas/<slug>,
+    // porque a regra do Amplify resolve direto na rota e não consulta o filtro
+    // de status do proxy. Status desconhecido (CMS fora do ar, ou campanha só
+    // em arquivo) mantém o comportamento antigo, para não derrubar LP no ar.
+    if (cmsStatus !== null && cmsStatus !== "published") return null;
+
     // Sem JSON em disco e sem row publicada, a campanha não existe.
-    // Rascunho/arquivada seguem 404 quando não têm arquivo — como esperado.
     if (!campaignFromFile && !publishedInCms) return null;
 
     return { brand: resolvedBrand, campaign, cmsFont };
