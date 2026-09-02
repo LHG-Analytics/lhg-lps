@@ -398,6 +398,79 @@ const PriceCardsBlock = z.object({
   }),
 });
 
+/* -------------------------------------------------------------
+   MENU — cardápio impresso em 3 colunas
+   Reproduz o layout do cardápio do Gastrobar: título serif em duas
+   vozes, filete ornamental, condução pontilhada até o preço e uma
+   coluna central em painel. Um bloco = uma página do cardápio.
+------------------------------------------------------------- */
+const MenuItem = z.object({
+  name: z.string(),
+  /** Sufixo em corpo menor ao lado do nome, ex.: "(6 unidades)". */
+  qty: z.string().optional(),
+  /** Texto livre — "R$ 84,00". O símbolo é destacado na renderização. */
+  price: z.string().optional(),
+  description: z.string().optional(),
+  /** Linha extra em itálico com rótulo próprio, ex.: "Divirta-se:". */
+  noteLabel: z.string().optional(),
+  note: z.string().optional(),
+});
+
+const MenuSection = z.object({
+  title: z.string(),
+  /** Segunda metade do título, em itálico — "acordando *bem*". */
+  titleEmphasis: z.string().optional(),
+  /** Complemento em itálico na mesma linha do título. */
+  subtitle: z.string().optional(),
+  /** Parágrafo introdutório em itálico, acima dos itens. */
+  intro: z.string().optional(),
+  /** `ornament` = título centralizado entre filetes; `plain` = subtítulo interno. */
+  heading: z.enum(["ornament", "plain"]).default("ornament"),
+  accent: z.enum(["accent", "gold", "green", "panelInk"]).default("accent"),
+  items: z.array(MenuItem).default([]),
+  /** Lista corrida separada por `·`, para acompanhamentos e afins. */
+  inlineItems: z.array(z.string()).optional(),
+  footnote: z.string().optional(),
+});
+
+const MenuColumn = z.object({
+  /** `panel` pinta a coluna com o fundo de destaque. */
+  variant: z.enum(["plain", "panel"]).default("plain"),
+  sections: z.array(MenuSection).default([]),
+  /** Cartão ao pé da coluna, com QR e chamada. */
+  card: z.object({
+    image: z.string().optional(),
+    imageAlt: z.string().optional(),
+    lines: z.array(z.string()).default([]),
+    handle: z.string().optional(),
+  }).optional(),
+});
+
+const MenuBlock = z.object({
+  type: z.literal("menu"),
+  props: z.object({
+    /** Sobrelinha do cabeçalho, ex.: "GASTROBAR". */
+    eyebrow: z.string().optional(),
+    /** Título do cardápio. Ausente = usa o logo da marca. */
+    title: z.string().optional(),
+    columns: z.array(MenuColumn).default([]),
+    footnote: z.string().optional(),
+    /** Paleta do cardápio. O impresso não segue o tema da LP, então cada
+     * token vira CSS var no wrapper; ausente cai no default do globals.css. */
+    palette: z.object({
+      bg:       z.string().optional(),
+      ink:      z.string().optional(),
+      muted:    z.string().optional(),
+      accent:   z.string().optional(),
+      panelBg:  z.string().optional(),
+      panelInk: z.string().optional(),
+      gold:     z.string().optional(),
+      green:    z.string().optional(),
+      cardBg:   z.string().optional(),
+    }).optional(),
+  }),
+});
+
 export const BlockSchema = z.discriminatedUnion("type", [
   NavBlock,
   HeroBlock,
@@ -410,6 +483,7 @@ export const BlockSchema = z.discriminatedUnion("type", [
   FeatureBlock,
   MenuGridBlock,
   PriceCardsBlock,
+  MenuBlock,
 ]);
 
 export type Block = z.infer<typeof BlockSchema>;
@@ -424,6 +498,7 @@ export type StickyCtaBlockProps = z.infer<typeof StickyCtaBlock>["props"];
 export type FeatureBlockProps = z.infer<typeof FeatureBlock>["props"];
 export type MenuGridBlockProps = z.infer<typeof MenuGridBlock>["props"];
 export type PriceCardsBlockProps = z.infer<typeof PriceCardsBlock>["props"];
+export type MenuBlockProps = z.infer<typeof MenuBlock>["props"];
 
 const AnalyticsSchema = z.object({
   ga4:          z.string().optional(),

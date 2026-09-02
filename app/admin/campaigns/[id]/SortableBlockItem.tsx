@@ -7,6 +7,7 @@ export type Block = { type: string; props: Record<string, unknown> };
 export const BLOCK_ICON: Record<string, string> = {
   nav: "🔝", hero: "🎯", benefits: "✨", unitPicker: "🛏",
   offer: "💰", faq: "❓", footer: "🔚", stickyCta: "📌",
+  feature: "🖼", menuGrid: "🍽", priceCards: "🏷", menu: "📜",
 };
 
 interface Props {

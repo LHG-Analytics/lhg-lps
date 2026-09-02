@@ -13,6 +13,7 @@ const StickyCta  = dynamic(() => import("@/components/blocks/StickyCta").then(m 
 const Feature    = dynamic(() => import("@/components/blocks/Feature").then(m => m.Feature));
 const MenuGrid   = dynamic(() => import("@/components/blocks/MenuGrid").then(m => m.MenuGrid));
 const PriceCards = dynamic(() => import("@/components/blocks/PriceCards").then(m => m.PriceCards));
+const Menu       = dynamic(() => import("@/components/blocks/Menu").then(m => m.Menu));
 
 export type BlockContext = {
   brand: Brand;
@@ -131,5 +132,7 @@ function Render({
       return <MenuGrid {...block.props} />;
     case "priceCards":
       return <PriceCards {...block.props} />;
+    case "menu":
+      return <Menu {...block.props} brand={brand} />;
   }
 }

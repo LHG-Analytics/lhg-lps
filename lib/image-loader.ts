@@ -24,9 +24,10 @@ export default function imageLoader({ src, width, quality }: LoaderArgs): string
   // SVG e data: URI não passam pelo otimizador (o Next recusa SVG por padrão).
   if (src.startsWith("data:") || src.endsWith(".svg")) return src;
 
-  // Em desenvolvimento usa o otimizador local; apontar para produção buscaria
-  // assets que ainda não existem no deploy.
-  const origin = process.env.NODE_ENV === "production" ? OPTIMIZER_ORIGIN : "";
+  // Em desenvolvimento serve o arquivo cru: declarar `loader: "custom"` desliga
+  // o endpoint /_next/image embutido, então uma URL para ele responderia 404.
+  // Apontar para produção também não serve — o asset local ainda não subiu.
+  if (process.env.NODE_ENV !== "production") return src;
 
-  return `${origin}/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=${quality ?? 75}`;
+  return `${OPTIMIZER_ORIGIN}/_next/image?url=${encodeURIComponent(src)}&w=${width}&q=${quality ?? 75}`;
 }

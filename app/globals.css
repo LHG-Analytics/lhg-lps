@@ -1860,3 +1860,282 @@ section { padding: 96px 0; position: relative; }
   .concierge-fab { right: 16px; padding: 11px 18px; font-size: 13px; }
   .concierge-fab__icon { width: 18px; height: 18px; }
 }
+
+/* ─── MENU — cardápio impresso em 3 colunas ───────────────────────────────
+   Reproduz o cardápio do Gastrobar: fundo lavanda claro, títulos serif em
+   duas vozes (romano + itálico), filete ornamental de pontos, condução
+   pontilhada até o preço e coluna central em painel bordô.
+
+   A paleta é independente do tema da LP — o impresso é claro e a LP escura.
+   Cada token tem default aqui e pode ser sobrescrito por `props.palette`,
+   que o bloco injeta como CSS var no wrapper.
+   ---------------------------------------------------------------------- */
+.menu {
+  --menu-bg: #F1EDF6;
+  --menu-ink: #3D2B3A;
+  --menu-muted: #6E6472;
+  --menu-accent: #8A1F52;
+  --menu-panel-bg: #6B1247;
+  --menu-panel-ink: #F6EFE9;
+  --menu-gold: #B0993F;
+  --menu-green: #5E9B4A;
+  --menu-card-bg: #93C47D;
+
+  background: var(--menu-bg);
+  color: var(--menu-ink);
+  /* A `.nav` é `position: fixed` e ocupa ~60px. Sem essa folga o cabeçalho do
+     cardápio nasce atrás dela — medido: -31px de invasão no mobile. A folga é
+     somada ao respiro normal, então o bloco continua correto no meio da página. */
+  padding: calc(60px + clamp(24px, 3vw, 40px)) clamp(16px, 3vw, 40px) clamp(36px, 5vw, 64px);
+  font-family: var(--font-body, "Inter"), system-ui, sans-serif;
+}
+
+/* ── Cabeçalho ── */
+.menu__head {
+  text-align: center;
+  margin-bottom: clamp(22px, 3vw, 38px);
+}
+.menu__eyebrow {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--menu-accent);
+  margin-bottom: 2px;
+}
+.menu__title {
+  font-family: var(--font-display, "Fraunces"), Georgia, serif;
+  font-size: clamp(30px, 4.4vw, 46px);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--menu-accent);
+  margin: 0;
+  line-height: 1;
+}
+
+/* ── Grade de colunas ── */
+.menu__cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 2.4vw, 34px);
+  max-width: 1280px;
+  margin: 0 auto;
+  align-items: start;
+}
+.menu__col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 2.6vw, 34px);
+  min-width: 0;
+}
+/* Coluna em painel: fundo bordô, texto creme e paleta invertida */
+.menu__col--panel {
+  background: var(--menu-panel-bg);
+  color: var(--menu-panel-ink);
+  border-radius: 14px;
+  padding: clamp(20px, 2.4vw, 30px) clamp(16px, 2vw, 26px);
+  --menu-ink: var(--menu-panel-ink);
+  --menu-muted: color-mix(in srgb, var(--menu-panel-ink) 68%, transparent);
+  --menu-accent: var(--menu-panel-ink);
+}
+
+/* ── Cabeçalho de seção ── */
+.menu-sec__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+/* Filete ornamental: fileira de pontos, aproximando o arabesco do impresso */
+.menu-sec__orn {
+  flex: 1;
+  height: 7px;
+  min-width: 12px;
+  color: currentColor;
+  opacity: 0.42;
+  background-image: radial-gradient(circle at 3.5px 3.5px, currentColor 1.5px, transparent 1.6px);
+  background-size: 8px 7px;
+  background-repeat: repeat-x;
+}
+.menu-sec__title {
+  font-family: var(--font-display, "Fraunces"), Georgia, serif;
+  font-size: clamp(20px, 2.1vw, 27px);
+  font-weight: 400;
+  line-height: 1.1;
+  margin: 0;
+  color: var(--menu-accent);
+  white-space: nowrap;
+}
+.menu-sec__title em {
+  font-style: italic;
+}
+.menu-sec__title--plain {
+  text-align: left;
+  white-space: normal;
+  margin-bottom: 10px;
+  font-size: clamp(17px, 1.7vw, 21px);
+}
+.menu-sec__sub {
+  font-family: var(--font-display, "Fraunces"), Georgia, serif;
+  font-style: italic;
+  font-size: 11.5px;
+  color: var(--menu-muted);
+  margin: -8px 0 12px;
+}
+.menu-sec__intro {
+  font-style: italic;
+  font-size: 11px;
+  line-height: 1.55;
+  color: var(--menu-muted);
+  margin: 0 0 14px;
+}
+
+/* Variantes de acento do título */
+.menu-sec--gold  .menu-sec__title,
+.menu-sec--gold  .menu-sec__orn { color: var(--menu-gold); }
+.menu-sec--green .menu-sec__title,
+.menu-sec--green .menu-sec__orn { color: var(--menu-green); }
+.menu-sec--green .menu-item__name { color: var(--menu-green); }
+
+/* ── Itens ── */
+.menu-sec__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.menu-item__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+}
+.menu-item__name {
+  font-family: var(--font-display, "Fraunces"), Georgia, serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  color: var(--menu-ink);
+}
+.menu-item__qty {
+  font-family: var(--font-body, "Inter"), system-ui, sans-serif;
+  font-size: 9px;
+  color: var(--menu-muted);
+}
+/* Condução pontilhada — encosta na linha de base do nome e do preço */
+.menu-item__lead {
+  flex: 1;
+  min-width: 14px;
+  align-self: flex-end;
+  margin: 0 5px 4px;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.38;
+}
+.menu-item__price {
+  font-family: var(--font-display, "Fraunces"), Georgia, serif;
+  font-size: 15px;
+  white-space: nowrap;
+  color: var(--menu-ink);
+}
+.menu-item__cur {
+  font-size: 10.5px;
+  margin-right: 2px;
+  letter-spacing: 0.02em;
+}
+.menu-item__desc {
+  font-style: italic;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--menu-muted);
+  margin: 3px 0 0;
+  max-width: 46ch;
+}
+.menu-item__note {
+  font-style: italic;
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--menu-muted);
+  margin: 5px 0 0;
+  max-width: 46ch;
+}
+.menu-item__note-label {
+  font-family: var(--font-display, "Fraunces"), Georgia, serif;
+  font-size: 11px;
+  color: var(--menu-ink);
+}
+
+/* Lista corrida — acompanhamentos */
+.menu-sec__inline {
+  font-size: 12.5px;
+  line-height: 2;
+  color: var(--menu-ink);
+  margin: 4px 0 0;
+}
+.menu-sec__foot {
+  font-size: 9.5px;
+  font-style: italic;
+  color: var(--menu-muted);
+  margin: 12px 0 0;
+}
+
+/* ── Cartão do QR ── */
+.menu-card {
+  background: var(--menu-card-bg);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #1F3A17;
+}
+.menu-card__qr {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  background: #fff;
+}
+.menu-card__body p {
+  font-style: italic;
+  font-size: 10.5px;
+  line-height: 1.5;
+  margin: 0 0 5px;
+}
+.menu-card__body p:last-child { margin-bottom: 0; }
+.menu-card__handle {
+  font-style: normal !important;
+  font-weight: 600;
+}
+
+.menu__foot {
+  max-width: 1280px;
+  margin: clamp(22px, 3vw, 34px) auto 0;
+  font-size: 9.5px;
+  font-style: italic;
+  color: var(--menu-muted);
+  text-align: center;
+}
+
+/* ── Tablet: painel deixa de ser coluna e vira faixa ── */
+@media (max-width: 1000px) {
+  .menu__cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .menu__col--panel {
+    grid-column: 1 / -1;
+    order: 1;
+  }
+  .menu-sec__title { white-space: normal; }
+}
+
+/* ── Mobile: coluna única ── */
+@media (max-width: 640px) {
+  .menu__cols {
+    grid-template-columns: 1fr;
+  }
+  .menu__col--panel { order: 0; }
+  .menu-item__desc,
+  .menu-item__note { max-width: none; }
+  .menu-card { flex-direction: column; text-align: center; }
+}

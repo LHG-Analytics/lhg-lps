@@ -153,6 +153,56 @@ const BLOCK_DEFAULTS: Record<string, Record<string, unknown>> = {
     ageNotice: "Proibido para menores de 18 anos.",
   },
   stickyCta: { ctas: [{ label: "Reservar", href: "#", variant: "gold" }] },
+  feature: {
+    eyebrow: "A experiência", headlineFull: "Título da seção", headlineEmphasis: "seção",
+    body: ["Parágrafo descritivo."], image: "", imageAlt: "", imagePosition: "right",
+  },
+  menuGrid: {
+    eyebrow: "Curadoria", headlineFull: "O menu",
+    items: [{ tag: "Opção", name: "Nome do item", description: "Descrição." }],
+  },
+  priceCards: {
+    eyebrow: "Por tempo limitado", headlineFull: "Escolha sua experiência", backgroundImage: "",
+    cards: [{ tag: "Básico", name: "Pacote", price: "R$ 0", note: "", highlight: false }],
+    availability: "", cta: { label: "Reservar", href: "#" },
+  },
+  menu: {
+    eyebrow: "GASTROBAR",
+    title: "",
+    columns: [
+      {
+        variant: "plain",
+        sections: [{
+          title: "acordando", titleEmphasis: "bem", heading: "ornament", accent: "accent",
+          items: [
+            { name: "Café Lush", price: "R$ 84,00", description: "Café ou chá, leite e suco de laranja. Cesta de pães com baguete na chapa." },
+            { name: "Brunch", price: "R$ 189,00", description: "Cesta de pães, ovos mexidos, bacon, presunto e muçarela." },
+          ],
+        }],
+      },
+      {
+        variant: "panel",
+        sections: [
+          {
+            title: "pratos", titleEmphasis: "principais", heading: "ornament", accent: "accent",
+            items: [{ name: "Moqueca de camarão", price: "R$ 89,00", description: "Camarão no leite de coco com legumes e azeite de dendê." }],
+          },
+          {
+            title: "acompanhamentos", heading: "plain", accent: "gold",
+            subtitle: "R$ 15,00 por porção extra",
+            inlineItems: ["Arroz e feijão", "Fritas", "Legumes grelhados", "Vinagrete"],
+          },
+        ],
+      },
+      {
+        variant: "plain",
+        sections: [{
+          title: "para", titleEmphasis: "dividir", heading: "ornament", accent: "accent",
+          items: [{ name: "Mix de pastéis", qty: "(6 unidades)", price: "R$ 43,00", description: "Pastéis de camarão, muçarela e carne. Acompanha vinagrete." }],
+        }],
+      },
+    ],
+  },
 };
 
 /* ── props ─────────────────────────────────────────── */
