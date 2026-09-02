@@ -35,6 +35,7 @@ const BLOCK_VISUAL: Record<string, BlockVisual> = {
   faq:        { color: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.15)", weight: 9  },
   footer:     { color: "rgba(255,255,255,0.02)", border: "rgba(255,255,255,0.1)",  weight: 6  },
   stickyCta:  { color: "rgba(166,124,255,0.22)", border: "rgba(166,124,255,0.6)",  weight: 3  },
+  menu:       { color: "rgba(241,237,246,0.14)", border: "rgba(138,31,82,0.75)",   weight: 26 },
 }
 const FB = { color: "rgba(255,255,255,0.03)", border: "rgba(255,255,255,0.12)", weight: 6 }
 
@@ -68,6 +69,7 @@ function BlockWireframe({ blockTypes, height = 120 }: { blockTypes: string[]; he
 const MH: Record<string, number> = {
   nav: 24, hero: 100, feature: 56, benefits: 64, menuGrid: 72,
   priceCards: 68, unitPicker: 80, offer: 60, faq: 58, footer: 50, stickyCta: 14,
+  menu: 132,
 }
 
 type BlockRenderer = () => React.ReactElement
@@ -238,6 +240,45 @@ const BR: Record<string, BlockRenderer> = {
       <div style={{ width: 45, height: 7, background: "rgba(255,255,255,0.08)", borderRadius: 4 }} />
     </div>
   ),
+
+  // Cardápio: fundo claro, 3 colunas com condução pontilhada e painel bordô no
+  // centro. É o único bloco claro da paleta, então destaca no picker.
+  menu: () => {
+    const row = (w: string, dark = false) => (
+      <div style={{ display: "flex", alignItems: "baseline", gap: 2, marginBottom: 3 }}>
+        <div style={{ width: w, height: 3, borderRadius: 1, background: dark ? "rgba(246,239,233,0.8)" : "rgba(61,43,58,0.7)" }} />
+        <div style={{ flex: 1, height: 0, borderBottom: `1px dotted ${dark ? "rgba(246,239,233,0.5)" : "rgba(61,43,58,0.4)"}` }} />
+        <div style={{ width: 11, height: 3, borderRadius: 1, background: dark ? "rgba(246,239,233,0.9)" : "rgba(138,31,82,0.85)" }} />
+      </div>
+    );
+    const secTitle = (dark = false) => (
+      <div style={{ display: "flex", alignItems: "center", gap: 3, marginBottom: 5 }}>
+        <div style={{ flex: 1, height: 3, backgroundImage: `radial-gradient(circle at 1.5px 1.5px, ${dark ? "rgba(246,239,233,0.55)" : "rgba(138,31,82,0.5)"} 1px, transparent 1.1px)`, backgroundSize: "5px 3px", backgroundRepeat: "repeat-x" }} />
+        <div style={{ width: 30, height: 5, borderRadius: 1, background: dark ? "rgba(246,239,233,0.9)" : "rgba(138,31,82,0.9)" }} />
+        <div style={{ flex: 1, height: 3, backgroundImage: `radial-gradient(circle at 1.5px 1.5px, ${dark ? "rgba(246,239,233,0.55)" : "rgba(138,31,82,0.5)"} 1px, transparent 1.1px)`, backgroundSize: "5px 3px", backgroundRepeat: "repeat-x" }} />
+      </div>
+    );
+    return (
+      <div style={{ height: 132, background: "#F1EDF6", padding: "9px 10px" }}>
+        <div style={{ width: 46, height: 6, borderRadius: 1, background: "rgba(138,31,82,0.9)", margin: "0 auto 9px" }} />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, alignItems: "start" }}>
+          <div style={{ minWidth: 0 }}>
+            {secTitle()}
+            {row("60%")}{row("70%")}{row("52%")}{row("64%")}
+          </div>
+          <div style={{ minWidth: 0, background: "#6B1247", borderRadius: 4, padding: "7px 6px" }}>
+            {secTitle(true)}
+            {row("66%", true)}{row("56%", true)}{row("72%", true)}
+            <div style={{ marginTop: 6, height: 16, borderRadius: 3, background: "#93C47D" }} />
+          </div>
+          <div style={{ minWidth: 0 }}>
+            {secTitle()}
+            {row("68%")}{row("54%")}{row("74%")}{row("60%")}
+          </div>
+        </div>
+      </div>
+    );
+  },
 }
 
 const DESIGN_W = 300

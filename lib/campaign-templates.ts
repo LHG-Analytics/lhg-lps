@@ -148,6 +148,55 @@ const B = {
     type: "stickyCta",
     props: { ctas: [{ label: "Reservar", href: "#unit-picker", variant: "gold" }] },
   },
+
+  /** Cardápio impresso em 3 colunas. Uma coluna central em painel e duas
+   * laterais simples — o esqueleto do cardápio do Gastrobar. */
+  menu: {
+    type: "menu",
+    props: {
+      eyebrow: "GASTROBAR",
+      title: "",
+      columns: [
+        {
+          variant: "plain",
+          sections: [{
+            title: "primeira", titleEmphasis: "seção", heading: "ornament", accent: "accent",
+            items: [
+              { name: "Nome do prato", price: "R$ 0,00", description: "Descrição dos ingredientes." },
+              { name: "Outro prato", price: "R$ 0,00", description: "Descrição dos ingredientes." },
+            ],
+          }],
+        },
+        {
+          variant: "panel",
+          sections: [
+            {
+              title: "pratos", titleEmphasis: "principais", heading: "ornament", accent: "accent",
+              items: [{ name: "Prato principal", price: "R$ 0,00", description: "Descrição dos ingredientes." }],
+            },
+            {
+              title: "acompanhamentos", heading: "plain", accent: "gold",
+              subtitle: "R$ 0,00 por porção extra",
+              inlineItems: ["Acompanhamento", "Acompanhamento", "Acompanhamento"],
+            },
+          ],
+          card: {
+            image: "",
+            imageAlt: "QR code do cardápio",
+            lines: ["Escaneie para ver fotos dos pratos e drinks."],
+            handle: "@lushmotel",
+          },
+        },
+        {
+          variant: "plain",
+          sections: [{
+            title: "para", titleEmphasis: "dividir", heading: "ornament", accent: "accent",
+            items: [{ name: "Petisco", qty: "(6 unidades)", price: "R$ 0,00", description: "Descrição dos ingredientes." }],
+          }],
+        },
+      ],
+    },
+  },
 }
 
 // ── Templates ──────────────────────────────────────────────────────────────
@@ -168,6 +217,14 @@ export const CAMPAIGN_TEMPLATES: CampaignTemplate[] = [
     category: "gastronomia",
     categoryLabel: "Gastronomia",
     blocks: [B.nav, B.hero, B.feature, B.menuGrid, B.priceCards, B.faq, B.footer],
+  },
+  {
+    id: "cardapio",
+    name: "Cardápio",
+    description: "Cardápio impresso em 3 colunas, com painel central e condução pontilhada até o preço. Duas páginas = dois blocos.",
+    category: "gastronomia",
+    categoryLabel: "Cardápio",
+    blocks: [B.nav, B.menu, B.menu, B.footer],
   },
   {
     id: "storytelling",
