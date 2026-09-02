@@ -221,11 +221,25 @@ export async function PATCH(
   return NextResponse.json({ ok: true });
 }
 
+/**
+ * DELETE /api/admin/campaigns/[id]
+ *
+ * Duas operações distintas, escolhidas por query param:
+ *   (padrão)          → arquiva, mantendo a linha e o histórico
+ *   ?permanent=true   → apaga a linha do banco, sem volta
+ *
+ * A exclusão definitiva remove os snapshots junto, via
+ * `campaign_snapshots_campaign_id_fkey ON DELETE CASCADE`.
+ *
+ * Campanha publicada é recusada nas duas: despublicar primeiro é a trava que
+ * impede tirar do ar uma URL divulgada com um clique só.
+ */
 export async function DELETE(
-  _req: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
+  const permanent = new URL(request.url).searchParams.get("permanent") === "true";
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -243,7 +257,31 @@ export async function DELETE(
   if (!campaign) return new NextResponse("Campanha não encontrada", { status: 404 });
 
   if (campaign.status === "published") {
-    return new NextResponse("Não é possível excluir uma campanha publicada. Archive-a primeiro.", { status: 409 });
+    return new NextResponse(
+      "Esta campanha está publicada. Despublique antes de arquivar ou excluir.",
+      { status: 409 }
+    );
+  }
+
+  if (permanent) {
+    const { count, error } = await supabase
+      .from("campaigns")
+      .delete({ count: "exact" })
+      .eq("id", id);
+
+    if (error) return new NextResponse(error.message, { status: 500 });
+    // Sem linha afetada = RLS barrou ou alguém já apagou; não mentir que deu certo.
+    if (count === 0) {
+      return new NextResponse("Nada foi excluído — a campanha já não existia.", { status: 409 });
+    }
+
+    void logAudit(supabase, user.id, user.email, {
+      action: "delete_campaign", entityType: "campaign",
+      entityId: id, entityLabel: campaign.slug,
+      details: { permanent: true, previousStatus: campaign.status, brandId: campaign.brand_id },
+    });
+
+    return NextResponse.json({ ok: true, permanent: true });
   }
 
   const { error } = await supabase
@@ -259,5 +297,5 @@ export async function DELETE(
     details: { previousStatus: campaign.status },
   });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, permanent: false });
 }
