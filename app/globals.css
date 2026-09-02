@@ -1871,15 +1871,17 @@ section { padding: 96px 0; position: relative; }
    que o bloco injeta como CSS var no wrapper.
    ---------------------------------------------------------------------- */
 .menu {
-  --menu-bg: #F1EDF6;
-  --menu-ink: #3D2B3A;
-  --menu-muted: #6E6472;
-  --menu-accent: #8A1F52;
-  --menu-panel-bg: #6B1247;
-  --menu-panel-ink: #F6EFE9;
-  --menu-gold: #B0993F;
-  --menu-green: #5E9B4A;
-  --menu-card-bg: #93C47D;
+  /* Fallback apenas: o componente injeta os oito tokens a partir de
+     `brand.theme`, então cada marca traz a própria paleta. Estes valores só
+     entram se `.menu` for renderizado fora do bloco. */
+  --menu-bg: var(--bg, #0A1A10);
+  --menu-ink: var(--ink, #F2ECFF);
+  --menu-muted: var(--ink-mut, #A8A0BE);
+  --menu-accent: var(--lav, #C9A7F5);
+  --menu-panel-bg: var(--bg-card, #112A1C);
+  --menu-panel-ink: var(--ink, #F2ECFF);
+  --menu-gold: var(--lav-soft, #E0C9FF);
+  --menu-green: var(--emerald, #4FB48A);
 
   background: var(--menu-bg);
   color: var(--menu-ink);
@@ -1903,15 +1905,14 @@ section { padding: 96px 0; position: relative; }
   color: var(--menu-accent);
   margin-bottom: 2px;
 }
-.menu__title {
-  font-family: var(--font-display, "Fraunces"), Georgia, serif;
-  font-size: clamp(30px, 4.4vw, 46px);
-  font-weight: 400;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--menu-accent);
-  margin: 0;
-  line-height: 1;
+/* Logo da marca no lugar de um título digitado — cada marca já tem a sua. */
+.menu__logo {
+  display: block;
+  height: clamp(30px, 3.4vw, 44px);
+  width: auto;
+  max-width: min(280px, 70vw);
+  margin: 0 auto;
+  object-fit: contain;
 }
 
 /* ── Grade de colunas ── */
@@ -2079,34 +2080,6 @@ section { padding: 96px 0; position: relative; }
   margin: 12px 0 0;
 }
 
-/* ── Cartão do QR ── */
-.menu-card {
-  background: var(--menu-card-bg);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: #1F3A17;
-}
-.menu-card__qr {
-  width: 88px;
-  height: 88px;
-  flex-shrink: 0;
-  border-radius: 4px;
-  background: #fff;
-}
-.menu-card__body p {
-  font-style: italic;
-  font-size: 10.5px;
-  line-height: 1.5;
-  margin: 0 0 5px;
-}
-.menu-card__body p:last-child { margin-bottom: 0; }
-.menu-card__handle {
-  font-style: normal !important;
-  font-weight: 600;
-}
 
 .menu__foot {
   max-width: 1280px;
@@ -2137,5 +2110,4 @@ section { padding: 96px 0; position: relative; }
   .menu__col--panel { order: 0; }
   .menu-item__desc,
   .menu-item__note { max-width: none; }
-  .menu-card { flex-direction: column; text-align: center; }
 }

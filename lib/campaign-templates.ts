@@ -155,7 +155,6 @@ const B = {
     type: "menu",
     props: {
       eyebrow: "GASTROBAR",
-      title: "",
       columns: [
         {
           variant: "plain",
@@ -183,13 +182,7 @@ const B = {
               items: [],
               inlineItems: ["Acompanhamento", "Acompanhamento", "Acompanhamento"],
             },
-          ],
-          card: {
-            image: "",
-            imageAlt: "QR code do cardápio",
-            lines: ["Escaneie para ver fotos dos pratos e drinks."],
-            handle: "@lushmotel",
-          },
+          ]
         },
         {
           variant: "plain",

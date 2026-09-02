@@ -30,21 +30,33 @@ function Ornament() {
  * aplicados, então uma seção sem `items` — legítima, quando ela só tem
  * `inlineItems` — chega com `undefined` e derrubaria a página inteira.
  */
-export function Menu({ eyebrow, title, columns, footnote, palette, brand }: Props) {
-  // Paleta do cardápio vira CSS var; ausente herda o default do globals.css.
-  const paletteVars = palette
-    ? (Object.fromEntries(
-        Object.entries(palette)
-          .filter(([, v]) => v)
-          .map(([k, v]) => [`--menu-${k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`, v])
-      ) as React.CSSProperties)
-    : undefined;
+export function Menu({ eyebrow, columns, footnote, palette, brand }: Props) {
+  // Cores saem do tema da marca — cada marca já tem a sua, então o cardápio
+  // acompanha sem ninguém digitar cor. `palette` sobrescreve token a token.
+  const t = brand.theme;
+  const vars: Record<string, string> = {
+    "--menu-bg":        palette?.bg       ?? t.bg,
+    "--menu-ink":       palette?.ink      ?? t.ink,
+    "--menu-muted":     palette?.muted    ?? t.inkMut,
+    "--menu-accent":    palette?.accent   ?? t.lavender,
+    "--menu-panel-bg":  palette?.panelBg  ?? t.bgCard,
+    "--menu-panel-ink": palette?.panelInk ?? t.ink,
+    "--menu-gold":      palette?.gold     ?? t.lavenderSoft,
+    "--menu-green":     palette?.green    ?? t.emerald,
+  };
 
   return (
-    <section className="menu" style={paletteVars}>
+    <section className="menu" style={vars as React.CSSProperties}>
       <header className="menu__head">
         {eyebrow && <span className="menu__eyebrow">{eyebrow}</span>}
-        <h2 className="menu__title">{title || brand.name}</h2>
+        <Image
+          className="menu__logo"
+          src={brand.logo.src}
+          alt={brand.logo.alt}
+          width={190}
+          height={40}
+          priority={false}
+        />
       </header>
 
       <div className="menu__cols">
@@ -114,25 +126,6 @@ export function Menu({ eyebrow, title, columns, footnote, palette, brand }: Prop
               );
             })}
 
-            {col?.card && (
-              <div className="menu-card">
-                {col.card.image && (
-                  <Image
-                    className="menu-card__qr"
-                    src={col.card.image}
-                    alt={col.card.imageAlt ?? ""}
-                    width={104}
-                    height={104}
-                  />
-                )}
-                <div className="menu-card__body">
-                  {(col.card.lines ?? []).map((line, li) => (
-                    <p key={li}>{line}</p>
-                  ))}
-                  {col.card.handle && <p className="menu-card__handle">{col.card.handle}</p>}
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </div>

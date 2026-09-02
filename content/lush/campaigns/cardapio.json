@@ -10,19 +10,30 @@
   },
   "campaign": {
     "name": "Cardápio Gastrobar Lush",
-    "range": { "start": "", "end": "", "premium": "", "label": "Servido 24h" },
-    "countdown": { "target": "" },
+    "range": {
+      "start": "",
+      "end": "",
+      "premium": "",
+      "label": "Servido 24h"
+    },
+    "countdown": {
+      "target": ""
+    },
     "lots": [],
     "periods": [],
     "dates": []
   },
   "blocks": [
-    { "type": "nav", "props": { "tag": "Gastrobar · Cardápio" } },
+    {
+      "type": "nav",
+      "props": {
+        "tag": "Gastrobar · Cardápio"
+      }
+    },
     {
       "type": "menu",
       "props": {
         "eyebrow": "GASTROBAR",
-        "title": "LUSH",
         "columns": [
           {
             "variant": "plain",
@@ -33,9 +44,21 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Café Lush", "price": "R$ 84,00", "description": "Café ou chá, leite e suco de laranja. Cesta de pães com baguete na chapa, pão doce e pão de queijo. Manteiga, requeijão e geleia. Ovos mexidos, muçarela e presunto." },
-                  { "name": "Café Lush Premium", "price": "R$ 132,00", "description": "Café ou chá, leite e suco de laranja. Cesta de pães com baguete na chapa, croissant, pão de queijo e bolo. Manteiga, requeijão e geleia. Ovos mexidos, presunto, muçarela e um item adicional." },
-                  { "name": "Brunch", "price": "R$ 189,00", "description": "Café ou chá, leite, suco de laranja e um espumante de 375ml. Cesta de pães com baguete na chapa, croissant, pão de queijo e bolo. Manteiga, requeijão e geleia de frutas. Ovos mexidos, bacon, presunto, muçarela. 2 mini quiches, panqueca com geleia de frutas e mais um item adicional." }
+                  {
+                    "name": "Café Lush",
+                    "price": "R$ 84,00",
+                    "description": "Café ou chá, leite e suco de laranja. Cesta de pães com baguete na chapa, pão doce e pão de queijo. Manteiga, requeijão e geleia. Ovos mexidos, muçarela e presunto."
+                  },
+                  {
+                    "name": "Café Lush Premium",
+                    "price": "R$ 132,00",
+                    "description": "Café ou chá, leite e suco de laranja. Cesta de pães com baguete na chapa, croissant, pão de queijo e bolo. Manteiga, requeijão e geleia. Ovos mexidos, presunto, muçarela e um item adicional."
+                  },
+                  {
+                    "name": "Brunch",
+                    "price": "R$ 189,00",
+                    "description": "Café ou chá, leite, suco de laranja e um espumante de 375ml. Cesta de pães com baguete na chapa, croissant, pão de queijo e bolo. Manteiga, requeijão e geleia de frutas. Ovos mexidos, bacon, presunto, muçarela. 2 mini quiches, panqueca com geleia de frutas e mais um item adicional."
+                  }
                 ]
               },
               {
@@ -43,12 +66,35 @@
                 "heading": "plain",
                 "accent": "accent",
                 "items": [
-                  { "name": "Bule de café ou leite", "price": "R$ 11,00" },
-                  { "name": "Omelete", "price": "R$ 27,00", "description": "Muçarela e presunto ou muçarela e tomate." },
-                  { "name": "Cesta de pães", "price": "R$ 34,00", "description": "Baguete na chapa, croissant, pão doce de coco e pão de queijo." },
-                  { "name": "Bowl de frutas", "price": "R$ 28,00", "description": "Mamão, abacaxi, morango." },
-                  { "name": "Tapiocas", "price": "R$ 25,00", "description": "Sabores: muçarela e presunto ou peito de peru, muçarela e tomate, brigadeiro com morango, leite condensado com coco." },
-                  { "name": "Misto Quente", "price": "R$ 26,00", "description": "Queijo muçarela e presunto ou peito de peru." }
+                  {
+                    "name": "Bule de café ou leite",
+                    "price": "R$ 11,00"
+                  },
+                  {
+                    "name": "Omelete",
+                    "price": "R$ 27,00",
+                    "description": "Muçarela e presunto ou muçarela e tomate."
+                  },
+                  {
+                    "name": "Cesta de pães",
+                    "price": "R$ 34,00",
+                    "description": "Baguete na chapa, croissant, pão doce de coco e pão de queijo."
+                  },
+                  {
+                    "name": "Bowl de frutas",
+                    "price": "R$ 28,00",
+                    "description": "Mamão, abacaxi, morango."
+                  },
+                  {
+                    "name": "Tapiocas",
+                    "price": "R$ 25,00",
+                    "description": "Sabores: muçarela e presunto ou peito de peru, muçarela e tomate, brigadeiro com morango, leite condensado com coco."
+                  },
+                  {
+                    "name": "Misto Quente",
+                    "price": "R$ 26,00",
+                    "description": "Queijo muçarela e presunto ou peito de peru."
+                  }
                 ]
               },
               {
@@ -57,10 +103,26 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Ceviche", "price": "R$ 40,00", "description": "Peixe branco em tiras, cebola roxa, coentro, maçã verde e milho crocante." },
-                  { "name": "Steak tartare", "price": "R$ 41,00", "description": "Filé mignon picado e condimentado. Acompanha torradas de azeite e ervas." },
-                  { "name": "Salada Caesar", "price": "R$ 39,00", "description": "Folhas, parmesão, tomate confit, cenoura, croutons, frango e vinagrete de mostarda." },
-                  { "name": "Mix de bruschettas", "price": "R$ 45,00", "description": "Sabores: tomate com manjericão e gorgonzola com nozes." }
+                  {
+                    "name": "Ceviche",
+                    "price": "R$ 40,00",
+                    "description": "Peixe branco em tiras, cebola roxa, coentro, maçã verde e milho crocante."
+                  },
+                  {
+                    "name": "Steak tartare",
+                    "price": "R$ 41,00",
+                    "description": "Filé mignon picado e condimentado. Acompanha torradas de azeite e ervas."
+                  },
+                  {
+                    "name": "Salada Caesar",
+                    "price": "R$ 39,00",
+                    "description": "Folhas, parmesão, tomate confit, cenoura, croutons, frango e vinagrete de mostarda."
+                  },
+                  {
+                    "name": "Mix de bruschettas",
+                    "price": "R$ 45,00",
+                    "description": "Sabores: tomate com manjericão e gorgonzola com nozes."
+                  }
                 ]
               },
               {
@@ -69,9 +131,21 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Lush Burguer", "price": "R$ 49,00", "description": "Pão tipo brioche, blend de carnes selecionadas, muçarela, bacon, alface, tomate e picles. Acompanha batata frita e molho especial." },
-                  { "name": "Vegan Burguer", "price": "R$ 47,00", "description": "Pão vegano, hambúguer de grão-de-bico com cogumelos, molho de ervas, picles de pepino, rúcula e tomate. Acompanha batata frita." },
-                  { "name": "Ciabatta de Fraldinha", "price": "R$ 48,00", "description": "Pão ciabatta, ragu de fraldinha, molho de mostarda, parmesão, tomate e rúcula. Acompanha batata frita." }
+                  {
+                    "name": "Lush Burguer",
+                    "price": "R$ 49,00",
+                    "description": "Pão tipo brioche, blend de carnes selecionadas, muçarela, bacon, alface, tomate e picles. Acompanha batata frita e molho especial."
+                  },
+                  {
+                    "name": "Vegan Burguer",
+                    "price": "R$ 47,00",
+                    "description": "Pão vegano, hambúguer de grão-de-bico com cogumelos, molho de ervas, picles de pepino, rúcula e tomate. Acompanha batata frita."
+                  },
+                  {
+                    "name": "Ciabatta de Fraldinha",
+                    "price": "R$ 48,00",
+                    "description": "Pão ciabatta, ragu de fraldinha, molho de mostarda, parmesão, tomate e rúcula. Acompanha batata frita."
+                  }
                 ]
               }
             ]
@@ -85,14 +159,46 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Moqueca vegana", "price": "R$ 65,00", "description": "Moqueca de legumes no leite de coco e azeite de dendê, acompanhado de arroz branco e farofa de castanha." },
-                  { "name": "Moqueca de camarão", "price": "R$ 89,00", "description": "Camarão no leite de coco com legumes e azeite de dendê. Acompanha arroz branco e farofa de castanha." },
-                  { "name": "Pappardelle com ragu de fraldinha", "price": "R$ 69,00", "description": "Pappardelle ao molho pomodoro com ragu de fraldinha." },
-                  { "name": "Rigatoni de quatro queijos", "price": "R$ 61,00", "description": "Rigatoni com blend de queijos e bacon." },
-                  { "name": "Risoto de parmesão e filé mignon", "price": "R$ 71,00", "description": "Risoto de parmesão e escalope de filé mignon ao molho poivre." },
-                  { "name": "Risoto de camarão", "price": "R$ 82,00", "description": "Com tomate, azeite de ervas e camarões salteados." },
-                  { "name": "Strogonoff Lush", "price": "R$ 67,00", "description": "Strogonoff de filé mignon acompanhado de arroz branco e batata frita palito." },
-                  { "name": "Salmão al limone", "price": "R$ 82,00", "description": "Filé de salmão grelhado com arroz de ervas, tomate cereja e molho de limão siciliano." }
+                  {
+                    "name": "Moqueca vegana",
+                    "price": "R$ 65,00",
+                    "description": "Moqueca de legumes no leite de coco e azeite de dendê, acompanhado de arroz branco e farofa de castanha."
+                  },
+                  {
+                    "name": "Moqueca de camarão",
+                    "price": "R$ 89,00",
+                    "description": "Camarão no leite de coco com legumes e azeite de dendê. Acompanha arroz branco e farofa de castanha."
+                  },
+                  {
+                    "name": "Pappardelle com ragu de fraldinha",
+                    "price": "R$ 69,00",
+                    "description": "Pappardelle ao molho pomodoro com ragu de fraldinha."
+                  },
+                  {
+                    "name": "Rigatoni de quatro queijos",
+                    "price": "R$ 61,00",
+                    "description": "Rigatoni com blend de queijos e bacon."
+                  },
+                  {
+                    "name": "Risoto de parmesão e filé mignon",
+                    "price": "R$ 71,00",
+                    "description": "Risoto de parmesão e escalope de filé mignon ao molho poivre."
+                  },
+                  {
+                    "name": "Risoto de camarão",
+                    "price": "R$ 82,00",
+                    "description": "Com tomate, azeite de ervas e camarões salteados."
+                  },
+                  {
+                    "name": "Strogonoff Lush",
+                    "price": "R$ 67,00",
+                    "description": "Strogonoff de filé mignon acompanhado de arroz branco e batata frita palito."
+                  },
+                  {
+                    "name": "Salmão al limone",
+                    "price": "R$ 82,00",
+                    "description": "Filé de salmão grelhado com arroz de ervas, tomate cereja e molho de limão siciliano."
+                  }
                 ]
               },
               {
@@ -101,11 +207,31 @@
                 "accent": "gold",
                 "subtitle": "corte especial e um acompanhamento à sua escolha",
                 "items": [
-                  { "name": "Fraldinha", "qty": "(220g)", "price": "R$ 72,00" },
-                  { "name": "Picanha", "qty": "(220g)", "price": "R$ 93,00" },
-                  { "name": "Filé Mignon", "qty": "(220g)", "price": "R$ 82,00" },
-                  { "name": "Tilápia", "qty": "(170g)", "price": "R$ 55,00" },
-                  { "name": "Filé de frango", "qty": "(180g)", "price": "R$ 44,00" }
+                  {
+                    "name": "Fraldinha",
+                    "qty": "(220g)",
+                    "price": "R$ 72,00"
+                  },
+                  {
+                    "name": "Picanha",
+                    "qty": "(220g)",
+                    "price": "R$ 93,00"
+                  },
+                  {
+                    "name": "Filé Mignon",
+                    "qty": "(220g)",
+                    "price": "R$ 82,00"
+                  },
+                  {
+                    "name": "Tilápia",
+                    "qty": "(170g)",
+                    "price": "R$ 55,00"
+                  },
+                  {
+                    "name": "Filé de frango",
+                    "qty": "(180g)",
+                    "price": "R$ 44,00"
+                  }
                 ]
               },
               {
@@ -124,16 +250,7 @@
                   "Vinagrete"
                 ]
               }
-            ],
-            "card": {
-              "image": "",
-              "imageAlt": "QR code para ver fotos dos pratos e drinks",
-              "lines": [
-                "Escaneie para ver fotos dos pratos e drinks.",
-                "Para mais conforto, você pode realizar o seu pedido através do tablet que fica ao lado da cama."
-              ],
-              "handle": "@lushmotel"
-            }
+            ]
           },
           {
             "variant": "plain",
@@ -144,17 +261,66 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Mix de pastéis", "qty": "(6 unidades)", "price": "R$ 43,00", "description": "Pastéis de camarão, muçarela e carne. Acompanha vinagrete." },
-                  { "name": "Quadradinhos de tapioca", "price": "R$ 39,00", "description": "Acompanham geleia adocicada de pimenta biquinho." },
-                  { "name": "Fritas com molho de queijo", "price": "R$ 41,00", "description": "Com toque de páprica picante e bacon crocante." },
-                  { "name": "Cubos de mignon ao molho de cerveja preta", "price": "R$ 82,00", "description": "Com lascas de gorgonzola. Acompanha fatias de pão italiano." },
-                  { "name": "Tábua de frios", "price": "R$ 61,00", "description": "Salame, caponata siciliana, presunto, azeitona preta, geleia de frutas, castanhas, queijos gorgonzola, parmesão e brie. Acompanha fatias de pão italiano." },
-                  { "name": "Frango crocante", "price": "R$ 44,00", "description": "Tiras de frango marinadas, empanadas e fritas. Acompanha molho ranch." },
-                  { "name": "Iscas de tilápia com fritas", "price": "R$ 56,00", "description": "Iscas de tilápia empanadas e fritas. Acompanha batata frita e molho ranch." },
-                  { "name": "Pizza de calabresa artesanal", "qty": "(6 pedaços)", "price": "R$ 61,00", "description": "Molho de tomate, muçarela, calabresa, cebola roxa e azeitona." },
-                  { "name": "Pizza margherita", "qty": "(6 pedaços)", "price": "R$ 61,00", "description": "Molho de tomate, muçarela, fatias de tomate, manjericão e azeitona." },
-                  { "name": "Pizza de frango com Catupiry", "qty": "(6 pedaços)", "price": "R$ 61,00", "description": "Molho de tomate, muçarela, frango temperado e Catupiry." },
-                  { "name": "Pizza de 4 queijos", "qty": "(6 pedaços)", "price": "R$ 61,00", "description": "Molho de tomate, muçarela, parmesão, gorgonzola e Catupiry." }
+                  {
+                    "name": "Mix de pastéis",
+                    "qty": "(6 unidades)",
+                    "price": "R$ 43,00",
+                    "description": "Pastéis de camarão, muçarela e carne. Acompanha vinagrete."
+                  },
+                  {
+                    "name": "Quadradinhos de tapioca",
+                    "price": "R$ 39,00",
+                    "description": "Acompanham geleia adocicada de pimenta biquinho."
+                  },
+                  {
+                    "name": "Fritas com molho de queijo",
+                    "price": "R$ 41,00",
+                    "description": "Com toque de páprica picante e bacon crocante."
+                  },
+                  {
+                    "name": "Cubos de mignon ao molho de cerveja preta",
+                    "price": "R$ 82,00",
+                    "description": "Com lascas de gorgonzola. Acompanha fatias de pão italiano."
+                  },
+                  {
+                    "name": "Tábua de frios",
+                    "price": "R$ 61,00",
+                    "description": "Salame, caponata siciliana, presunto, azeitona preta, geleia de frutas, castanhas, queijos gorgonzola, parmesão e brie. Acompanha fatias de pão italiano."
+                  },
+                  {
+                    "name": "Frango crocante",
+                    "price": "R$ 44,00",
+                    "description": "Tiras de frango marinadas, empanadas e fritas. Acompanha molho ranch."
+                  },
+                  {
+                    "name": "Iscas de tilápia com fritas",
+                    "price": "R$ 56,00",
+                    "description": "Iscas de tilápia empanadas e fritas. Acompanha batata frita e molho ranch."
+                  },
+                  {
+                    "name": "Pizza de calabresa artesanal",
+                    "qty": "(6 pedaços)",
+                    "price": "R$ 61,00",
+                    "description": "Molho de tomate, muçarela, calabresa, cebola roxa e azeitona."
+                  },
+                  {
+                    "name": "Pizza margherita",
+                    "qty": "(6 pedaços)",
+                    "price": "R$ 61,00",
+                    "description": "Molho de tomate, muçarela, fatias de tomate, manjericão e azeitona."
+                  },
+                  {
+                    "name": "Pizza de frango com Catupiry",
+                    "qty": "(6 pedaços)",
+                    "price": "R$ 61,00",
+                    "description": "Molho de tomate, muçarela, frango temperado e Catupiry."
+                  },
+                  {
+                    "name": "Pizza de 4 queijos",
+                    "qty": "(6 pedaços)",
+                    "price": "R$ 61,00",
+                    "description": "Molho de tomate, muçarela, parmesão, gorgonzola e Catupiry."
+                  }
                 ]
               },
               {
@@ -163,12 +329,37 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Mini churros", "price": "R$ 29,00", "description": "Mini churros recheados de doce de leite. Acompanham uma porção extra de doce de leite." },
-                  { "name": "Verrine de limão siciliano", "price": "R$ 29,00", "description": "Taça com creme de limão siciliano com farofa crocante de castanhas, compota de limão e chantilly." },
-                  { "name": "Brownie de chocolate", "price": "R$ 40,00", "description": "Servido com sorvete de baunilha." },
-                  { "name": "Torta cookie de Nutella", "price": "R$ 40,00", "description": "Servido com sorvete de baunilha." },
-                  { "name": "Sorvete artesanal", "qty": "(1 bola)", "price": "R$ 18,00", "description": "Baunilha, caramelo com flor de sal ou chocolate choco chip." },
-                  { "name": "Fatias de fruta", "price": "R$ 20,00", "description": "Mamão ou abacaxi." }
+                  {
+                    "name": "Mini churros",
+                    "price": "R$ 29,00",
+                    "description": "Mini churros recheados de doce de leite. Acompanham uma porção extra de doce de leite."
+                  },
+                  {
+                    "name": "Verrine de limão siciliano",
+                    "price": "R$ 29,00",
+                    "description": "Taça com creme de limão siciliano com farofa crocante de castanhas, compota de limão e chantilly."
+                  },
+                  {
+                    "name": "Brownie de chocolate",
+                    "price": "R$ 40,00",
+                    "description": "Servido com sorvete de baunilha."
+                  },
+                  {
+                    "name": "Torta cookie de Nutella",
+                    "price": "R$ 40,00",
+                    "description": "Servido com sorvete de baunilha."
+                  },
+                  {
+                    "name": "Sorvete artesanal",
+                    "qty": "(1 bola)",
+                    "price": "R$ 18,00",
+                    "description": "Baunilha, caramelo com flor de sal ou chocolate choco chip."
+                  },
+                  {
+                    "name": "Fatias de fruta",
+                    "price": "R$ 20,00",
+                    "description": "Mamão ou abacaxi."
+                  }
                 ]
               }
             ]
@@ -180,7 +371,6 @@
       "type": "menu",
       "props": {
         "eyebrow": "GASTROBAR",
-        "title": "LUSH",
         "columns": [
           {
             "variant": "plain",
@@ -191,10 +381,27 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Lush Sensation", "price": "R$ 572,00", "description": "Inclui dois drinks, jantar com dois pratos preliminares, dois pratos principais e duas sobremesas, todos de livre escolha do nosso cardápio. Acompanha uma garrafa do nosso espumante Lush by Casa Pedrucci." },
-                  { "name": "Espumante com morangos e chantilly", "price": "R$ 231,00", "description": "Espumante Lush by Casa Pedrucci. Acompanha morangos e chantilly." },
-                  { "name": "Menu do chef", "qty": "(valor por pessoa)", "price": "R$ 152,00", "description": "Experiência completa criada por nosso chef com um prato preliminar, um prato principal e uma sobremesa." },
-                  { "name": "Terapia dos pés", "price": "R$ 105,00", "description": "Escalda-pés para dois com tina de madeira e bolinhas de gude para massagear. Acompanha duas loções hidratantes e dois frascos de sais de extrato de calêndula e menta." }
+                  {
+                    "name": "Lush Sensation",
+                    "price": "R$ 572,00",
+                    "description": "Inclui dois drinks, jantar com dois pratos preliminares, dois pratos principais e duas sobremesas, todos de livre escolha do nosso cardápio. Acompanha uma garrafa do nosso espumante Lush by Casa Pedrucci."
+                  },
+                  {
+                    "name": "Espumante com morangos e chantilly",
+                    "price": "R$ 231,00",
+                    "description": "Espumante Lush by Casa Pedrucci. Acompanha morangos e chantilly."
+                  },
+                  {
+                    "name": "Menu do chef",
+                    "qty": "(valor por pessoa)",
+                    "price": "R$ 152,00",
+                    "description": "Experiência completa criada por nosso chef com um prato preliminar, um prato principal e uma sobremesa."
+                  },
+                  {
+                    "name": "Terapia dos pés",
+                    "price": "R$ 105,00",
+                    "description": "Escalda-pés para dois com tina de madeira e bolinhas de gude para massagear. Acompanha duas loções hidratantes e dois frascos de sais de extrato de calêndula e menta."
+                  }
                 ]
               },
               {
@@ -202,17 +409,61 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Água Lindoya Verão", "qty": "(300ml, com ou sem gás)", "price": "R$ 8,00" },
-                  { "name": "Água com gás San Pellegrino", "qty": "(250ml)", "price": "R$ 18,00" },
-                  { "name": "Refrigerante", "qty": "(350ml)", "price": "R$ 10,00", "description": "Coca-Cola, Coca-Cola Zero, Guaraná, Schweppes Citrus ou Água Tônica." },
-                  { "name": "Suco de fruta natural", "qty": "(500ml)", "price": "R$ 20,00", "description": "Laranja, laranja com acerola, abacaxi, abacaxi com hortelã ou morango." },
-                  { "name": "Água de coco", "qty": "(350ml)", "price": "R$ 15,00" },
-                  { "name": "Chá gelado Lush", "price": "R$ 16,00", "description": "Chá mate com abacaxi e hibisco." },
-                  { "name": "Pink soda lemonade", "price": "R$ 19,00", "description": "Hibisco, suco de limão, água com gás e espuma de gengibre." },
-                  { "name": "Gatorade", "price": "R$ 15,00" },
-                  { "name": "Red Bull", "price": "R$ 21,00", "description": "Tradicional, tropical ou melancia." },
-                  { "name": "Smirnoff Ice", "qty": "(long neck)", "price": "R$ 19,00" },
-                  { "name": "Cápsula de café", "price": "R$ 8,00" }
+                  {
+                    "name": "Água Lindoya Verão",
+                    "qty": "(300ml, com ou sem gás)",
+                    "price": "R$ 8,00"
+                  },
+                  {
+                    "name": "Água com gás San Pellegrino",
+                    "qty": "(250ml)",
+                    "price": "R$ 18,00"
+                  },
+                  {
+                    "name": "Refrigerante",
+                    "qty": "(350ml)",
+                    "price": "R$ 10,00",
+                    "description": "Coca-Cola, Coca-Cola Zero, Guaraná, Schweppes Citrus ou Água Tônica."
+                  },
+                  {
+                    "name": "Suco de fruta natural",
+                    "qty": "(500ml)",
+                    "price": "R$ 20,00",
+                    "description": "Laranja, laranja com acerola, abacaxi, abacaxi com hortelã ou morango."
+                  },
+                  {
+                    "name": "Água de coco",
+                    "qty": "(350ml)",
+                    "price": "R$ 15,00"
+                  },
+                  {
+                    "name": "Chá gelado Lush",
+                    "price": "R$ 16,00",
+                    "description": "Chá mate com abacaxi e hibisco."
+                  },
+                  {
+                    "name": "Pink soda lemonade",
+                    "price": "R$ 19,00",
+                    "description": "Hibisco, suco de limão, água com gás e espuma de gengibre."
+                  },
+                  {
+                    "name": "Gatorade",
+                    "price": "R$ 15,00"
+                  },
+                  {
+                    "name": "Red Bull",
+                    "price": "R$ 21,00",
+                    "description": "Tradicional, tropical ou melancia."
+                  },
+                  {
+                    "name": "Smirnoff Ice",
+                    "qty": "(long neck)",
+                    "price": "R$ 19,00"
+                  },
+                  {
+                    "name": "Cápsula de café",
+                    "price": "R$ 8,00"
+                  }
                 ],
                 "footnote": "* Consulte nossa equipe para mais drinks sem álcool."
               },
@@ -222,9 +473,18 @@
                 "accent": "accent",
                 "subtitle": "cervejas long neck",
                 "items": [
-                  { "name": "Corona", "price": "R$ 18,00" },
-                  { "name": "Stella Artois", "price": "R$ 18,00" },
-                  { "name": "Heineken", "price": "R$ 18,00" }
+                  {
+                    "name": "Corona",
+                    "price": "R$ 18,00"
+                  },
+                  {
+                    "name": "Stella Artois",
+                    "price": "R$ 18,00"
+                  },
+                  {
+                    "name": "Heineken",
+                    "price": "R$ 18,00"
+                  }
                 ]
               }
             ]
@@ -245,22 +505,37 @@
                 "accent": "green",
                 "intro": "Seleção de drinks desenvolvidos exclusivamente para o Lush, para despertar os seus sentidos.",
                 "items": [
-                  { "name": "Lua de mel", "price": "R$ 53,00", "description": "Gin Tanqueray, creme de abacaxi, suco de limão siciliano, xarope de baunilha, amoras e gelo de coco.", "noteLabel": "Divirta-se:", "note": "O depois aqui é tão importante quanto o durante. Quando terminarem o drink, experimentem juntos as sensações da lua de coco em contato com a pele." },
-                  { "name": "Beijo de jambu", "price": "R$ 44,00", "description": "Vodka Ketel One, mix de cítricos, manjericão, flor e espuma de jambu com toque de cardamomo.", "noteLabel": "Divirta-se:", "note": "Além de delicioso, o jambu adormece os lábios. Que tal um beijo a cada gole para aproveitar a sensação?" },
-                  { "name": "Jardim do Éden", "price": "R$ 40,00", "description": "Rum envelhecido, geleia de maçã com gengibre, Angostura Bitter e mix de cítricos. Servido com uma moeda de chocolate em cúpula com fumaça.", "noteLabel": "Divirta-se:", "note": "A fumaça é parte da brincadeira. Descubra seu aroma e divirtam-se com ela." },
-                  { "name": "Poção do amor", "price": "R$ 40,00", "description": "Cachaça azul, limão, cardamomo, flor comestível e poção mágica de clitória.", "noteLabel": "Divirta-se:", "note": "Como tudo que acontece no Lush, a magia é por sua conta. Misture o conteúdo do frasco ao copo e assista essa poção se transformar." }
+                  {
+                    "name": "Lua de mel",
+                    "price": "R$ 53,00",
+                    "description": "Gin Tanqueray, creme de abacaxi, suco de limão siciliano, xarope de baunilha, amoras e gelo de coco.",
+                    "noteLabel": "Divirta-se:",
+                    "note": "O depois aqui é tão importante quanto o durante. Quando terminarem o drink, experimentem juntos as sensações da lua de coco em contato com a pele."
+                  },
+                  {
+                    "name": "Beijo de jambu",
+                    "price": "R$ 44,00",
+                    "description": "Vodka Ketel One, mix de cítricos, manjericão, flor e espuma de jambu com toque de cardamomo.",
+                    "noteLabel": "Divirta-se:",
+                    "note": "Além de delicioso, o jambu adormece os lábios. Que tal um beijo a cada gole para aproveitar a sensação?"
+                  },
+                  {
+                    "name": "Jardim do Éden",
+                    "price": "R$ 40,00",
+                    "description": "Rum envelhecido, geleia de maçã com gengibre, Angostura Bitter e mix de cítricos. Servido com uma moeda de chocolate em cúpula com fumaça.",
+                    "noteLabel": "Divirta-se:",
+                    "note": "A fumaça é parte da brincadeira. Descubra seu aroma e divirtam-se com ela."
+                  },
+                  {
+                    "name": "Poção do amor",
+                    "price": "R$ 40,00",
+                    "description": "Cachaça azul, limão, cardamomo, flor comestível e poção mágica de clitória.",
+                    "noteLabel": "Divirta-se:",
+                    "note": "Como tudo que acontece no Lush, a magia é por sua conta. Misture o conteúdo do frasco ao copo e assista essa poção se transformar."
+                  }
                 ]
               }
-            ],
-            "card": {
-              "image": "",
-              "imageAlt": "QR code para ver fotos dos pratos e drinks",
-              "lines": [
-                "Escaneie para ver fotos dos pratos e drinks.",
-                "Para mais conforto, você pode realizar o seu pedido através do tablet que fica ao lado da cama."
-              ],
-              "handle": "@lushmotel"
-            }
+            ]
           },
           {
             "variant": "plain",
@@ -270,17 +545,61 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Negroni", "price": "R$ 41,00", "description": "Gin Tanqueray, Campari, vermute e laranja." },
-                  { "name": "Bramble", "price": "R$ 38,00", "description": "Gin Tanqueray, limão e amora." },
-                  { "name": "Aperol Spritz", "price": "R$ 41,00", "description": "Aperol, espumante, água com gás e laranja." },
-                  { "name": "Moscow Mule", "price": "R$ 44,00", "description": "Vodka Ketel One, Angostura, gengibre, limão e espuma de gengibre." },
-                  { "name": "Margarita", "price": "R$ 41,00", "description": "Tequila Don Julio, Cointreau e suco de limão." },
-                  { "name": "Blonde Citrus Highball", "price": "R$ 38,00", "description": "Whisky Johnnie Walker Blonde, Schweppes citrus e laranja." },
-                  { "name": "Gin de frutas vermelhas", "price": "R$ 41,00", "description": "Gin Tanqueray, frutas vermelhas, limão siciliano e alecrim." },
-                  { "name": "Gin Tonic", "price": "R$ 39,00", "description": "Gin Tanqueray, água tônica, limão siciliano e alecrim." },
-                  { "name": "Caipirinha", "price": "R$ 38,00", "description": "Cachaça com limão, abacaxi, morango ou frutas vermelhas." },
-                  { "name": "Caipiroska", "price": "R$ 38,00", "description": "Vodka Ketel One com limão, abacaxi, morango ou frutas vermelhas." },
-                  { "name": "Saqueirinha", "price": "R$ 38,00", "description": "Saquê com limão, abacaxi, morango ou frutas vermelhas." }
+                  {
+                    "name": "Negroni",
+                    "price": "R$ 41,00",
+                    "description": "Gin Tanqueray, Campari, vermute e laranja."
+                  },
+                  {
+                    "name": "Bramble",
+                    "price": "R$ 38,00",
+                    "description": "Gin Tanqueray, limão e amora."
+                  },
+                  {
+                    "name": "Aperol Spritz",
+                    "price": "R$ 41,00",
+                    "description": "Aperol, espumante, água com gás e laranja."
+                  },
+                  {
+                    "name": "Moscow Mule",
+                    "price": "R$ 44,00",
+                    "description": "Vodka Ketel One, Angostura, gengibre, limão e espuma de gengibre."
+                  },
+                  {
+                    "name": "Margarita",
+                    "price": "R$ 41,00",
+                    "description": "Tequila Don Julio, Cointreau e suco de limão."
+                  },
+                  {
+                    "name": "Blonde Citrus Highball",
+                    "price": "R$ 38,00",
+                    "description": "Whisky Johnnie Walker Blonde, Schweppes citrus e laranja."
+                  },
+                  {
+                    "name": "Gin de frutas vermelhas",
+                    "price": "R$ 41,00",
+                    "description": "Gin Tanqueray, frutas vermelhas, limão siciliano e alecrim."
+                  },
+                  {
+                    "name": "Gin Tonic",
+                    "price": "R$ 39,00",
+                    "description": "Gin Tanqueray, água tônica, limão siciliano e alecrim."
+                  },
+                  {
+                    "name": "Caipirinha",
+                    "price": "R$ 38,00",
+                    "description": "Cachaça com limão, abacaxi, morango ou frutas vermelhas."
+                  },
+                  {
+                    "name": "Caipiroska",
+                    "price": "R$ 38,00",
+                    "description": "Vodka Ketel One com limão, abacaxi, morango ou frutas vermelhas."
+                  },
+                  {
+                    "name": "Saqueirinha",
+                    "price": "R$ 38,00",
+                    "description": "Saquê com limão, abacaxi, morango ou frutas vermelhas."
+                  }
                 ]
               },
               {
@@ -289,14 +608,38 @@
                 "heading": "ornament",
                 "accent": "accent",
                 "items": [
-                  { "name": "Taça", "price": "R$ 53,00" },
-                  { "name": "Toalha de piso", "price": "R$ 47,00" },
-                  { "name": "Toalha de rosto", "price": "R$ 63,00" },
-                  { "name": "Toalha de banho", "price": "R$ 112,00" },
-                  { "name": "Roupão", "price": "R$ 210,00" },
-                  { "name": "Lençol", "price": "R$ 180,00" },
-                  { "name": "Edredom", "price": "R$ 525,00" },
-                  { "name": "Boia de flamingo", "price": "R$ 210,00" }
+                  {
+                    "name": "Taça",
+                    "price": "R$ 53,00"
+                  },
+                  {
+                    "name": "Toalha de piso",
+                    "price": "R$ 47,00"
+                  },
+                  {
+                    "name": "Toalha de rosto",
+                    "price": "R$ 63,00"
+                  },
+                  {
+                    "name": "Toalha de banho",
+                    "price": "R$ 112,00"
+                  },
+                  {
+                    "name": "Roupão",
+                    "price": "R$ 210,00"
+                  },
+                  {
+                    "name": "Lençol",
+                    "price": "R$ 180,00"
+                  },
+                  {
+                    "name": "Edredom",
+                    "price": "R$ 525,00"
+                  },
+                  {
+                    "name": "Boia de flamingo",
+                    "price": "R$ 210,00"
+                  }
                 ]
               }
             ]
@@ -312,15 +655,27 @@
           {
             "title": "Unidades",
             "links": [
-              { "label": "Lush Ipiranga", "href": "https://lushmotel.com.br/pt-BR" },
-              { "label": "Lush Lapa", "href": "https://lushmotel.com.br/pt-BR" }
+              {
+                "label": "Lush Ipiranga",
+                "href": "https://lushmotel.com.br/pt-BR"
+              },
+              {
+                "label": "Lush Lapa",
+                "href": "https://lushmotel.com.br/pt-BR"
+              }
             ]
           },
           {
             "title": "Ajuda",
             "links": [
-              { "label": "Política de privacidade", "href": "https://lushmotel.com.br/pt-BR/privacy-policy" },
-              { "label": "Termos de uso", "href": "https://lushmotel.com.br/pt-BR/terms" }
+              {
+                "label": "Política de privacidade",
+                "href": "https://lushmotel.com.br/pt-BR/privacy-policy"
+              },
+              {
+                "label": "Termos de uso",
+                "href": "https://lushmotel.com.br/pt-BR/terms"
+              }
             ]
           }
         ],

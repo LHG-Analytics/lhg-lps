@@ -24,6 +24,8 @@ import { PeriodsPanel } from "./PeriodsPanel";
 import { ImageUploadField } from "@/app/admin/_components/ImageUploadField";
 import { SeoPanel, type SeoMeta } from "./SeoPanel";
 import { GeoPanel, type GeoMeta } from "./GeoPanel";
+import { MenuEditor } from "./MenuEditor";
+import type { MenuBlockProps } from "@/lib/schema";
 import { FloatingInspector } from "./FloatingInspector";
 
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
@@ -168,7 +170,6 @@ const BLOCK_DEFAULTS: Record<string, Record<string, unknown>> = {
   },
   menu: {
     eyebrow: "GASTROBAR",
-    title: "",
     columns: [
       {
         variant: "plain",
@@ -1125,21 +1126,33 @@ export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initial
                   </div>
 
                   {tab === "visual" && (
-                    <div style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
-                      <input
-                        type="text"
-                        placeholder="Buscar campo…"
-                        value={fieldFilter}
-                        onChange={(e) => setFieldFilter(e.target.value)}
-                        style={{ ...fieldStyle, fontSize: 11, marginBottom: 12, padding: "6px 10px" }}
-                      />
-                      <PropForm
-                        data={selectedBlock.props}
-                        path={[]}
-                        brandId={brandId}
-                        onChange={(path, val) => updateBlockProp(path, val)}
-                        filter={fieldFilter || undefined}
-                      />
+                    <div className="admin-scroll admin-panel" style={{ position: "absolute", top: 44, left: 0, right: 0, bottom: 0, overflow: "auto", padding: 16 }}>
+                      {/* O cardápio tem 3 níveis de aninhamento (coluna → grupo →
+                          produto); o PropForm genérico fica impraticável nesse
+                          formato, então ganha um editor próprio. */}
+                      {selectedBlock.type === "menu" ? (
+                        <MenuEditor
+                          props={selectedBlock.props as MenuBlockProps}
+                          onChange={(path, val) => updateBlockProp(path, val)}
+                        />
+                      ) : (
+                        <>
+                          <input
+                            type="text"
+                            placeholder="Buscar campo…"
+                            value={fieldFilter}
+                            onChange={(e) => setFieldFilter(e.target.value)}
+                            style={{ ...fieldStyle, fontSize: 11, marginBottom: 12, padding: "6px 10px" }}
+                          />
+                          <PropForm
+                            data={selectedBlock.props}
+                            path={[]}
+                            brandId={brandId}
+                            onChange={(path, val) => updateBlockProp(path, val)}
+                            filter={fieldFilter || undefined}
+                          />
+                        </>
+                      )}
                     </div>
                   )}
 

@@ -437,26 +437,19 @@ const MenuColumn = z.object({
   /** `panel` pinta a coluna com o fundo de destaque. */
   variant: z.enum(["plain", "panel"]).default("plain"),
   sections: z.array(MenuSection).default([]),
-  /** Cartão ao pé da coluna, com QR e chamada. */
-  card: z.object({
-    image: z.string().optional(),
-    imageAlt: z.string().optional(),
-    lines: z.array(z.string()).default([]),
-    handle: z.string().optional(),
-  }).optional(),
 });
 
 const MenuBlock = z.object({
   type: z.literal("menu"),
   props: z.object({
-    /** Sobrelinha do cabeçalho, ex.: "GASTROBAR". */
+    /** Sobrelinha acima do logo, ex.: "GASTROBAR". O nome da marca vem do
+     * `brand.logo` — não se digita aqui. */
     eyebrow: z.string().optional(),
-    /** Título do cardápio. Ausente = usa o logo da marca. */
-    title: z.string().optional(),
     columns: z.array(MenuColumn).default([]),
     footnote: z.string().optional(),
-    /** Paleta do cardápio. O impresso não segue o tema da LP, então cada
-     * token vira CSS var no wrapper; ausente cai no default do globals.css. */
+    /** Sobrescreve cores derivadas de `brand.theme`. Serve para um cardápio
+     * que precise fugir da paleta da marca (ex.: reproduzir um impresso
+     * claro sobre uma marca de tema escuro). */
     palette: z.object({
       bg:       z.string().optional(),
       ink:      z.string().optional(),
@@ -466,7 +459,6 @@ const MenuBlock = z.object({
       panelInk: z.string().optional(),
       gold:     z.string().optional(),
       green:    z.string().optional(),
-      cardBg:   z.string().optional(),
     }).optional(),
   }),
 });
