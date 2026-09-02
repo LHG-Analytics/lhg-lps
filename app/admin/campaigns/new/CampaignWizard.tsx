@@ -282,32 +282,59 @@ const BR: Record<string, BlockRenderer> = {
 }
 
 const DESIGN_W = 300
-const DISPLAY_W = 144
+const DISPLAY_W = 152
+/** Altura fixa da moldura. Deixar cada mockup crescer conforme o número de
+ *  blocos produzia cartões de alturas diferentes e uma grade visivelmente
+ *  irregular; com moldura fixa a página é escalada para caber inteira e todos
+ *  os cartões alinham. */
+const FRAME_H = 196
+
+const frameStyle: React.CSSProperties = {
+  height: FRAME_H,
+  borderRadius: 8,
+  background: "rgba(0,0,0,0.22)",
+  border: "1px solid rgba(255,255,255,0.05)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  overflow: "hidden",
+  flexShrink: 0,
+}
 
 function TemplateMockup({ blockTypes }: { blockTypes: string[] }) {
-  const scale = DISPLAY_W / DESIGN_W
-
   if (!blockTypes.length) {
     return (
-      <div style={{ width: DISPLAY_W, height: 110, borderRadius: 5, border: "1.5px dashed rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }}>
-        <div style={{ fontSize: 18, opacity: 0.2 }}>+</div>
+      <div style={{ ...frameStyle, flexDirection: "column", gap: 7, borderStyle: "dashed", borderColor: "rgba(255,255,255,0.09)" }}>
+        <div style={{ fontSize: 20, color: "#3A3850", lineHeight: 1 }}>+</div>
         <span style={{ fontSize: 8.5, color: "#3A3850", letterSpacing: "0.1em" }}>EM BRANCO</span>
       </div>
     )
   }
 
   const totalH = blockTypes.reduce((s, t) => s + (MH[t] ?? 40), 0)
-  const displayH = Math.round(totalH * scale)
+  // Escala que cabe na moldura pelos dois eixos — página alta encolhe em vez
+  // de ser cortada, então o template inteiro fica visível no picker.
+  const scale = Math.min(DISPLAY_W / DESIGN_W, FRAME_H / totalH)
 
   return (
-    <div style={{ width: DISPLAY_W, height: displayH, overflow: "hidden", borderRadius: 5, border: "1px solid rgba(255,255,255,0.1)", flexShrink: 0 }}>
-      <div style={{ width: DESIGN_W, transformOrigin: "top left", transform: `scale(${scale})` }}>
-        {blockTypes.map((t, i) => {
-          const Renderer = BR[t]
-          return Renderer
-            ? <Renderer key={i} />
-            : <div key={i} style={{ height: 40, background: "rgba(255,255,255,0.03)", borderLeft: "2px solid rgba(255,255,255,0.08)" }} />
-        })}
+    <div style={frameStyle}>
+      <div
+        style={{
+          width: Math.round(DESIGN_W * scale),
+          height: Math.round(totalH * scale),
+          borderRadius: 4,
+          overflow: "hidden",
+          border: "1px solid rgba(255,255,255,0.1)",
+        }}
+      >
+        <div style={{ width: DESIGN_W, transformOrigin: "top left", transform: `scale(${scale})` }}>
+          {blockTypes.map((t, i) => {
+            const Renderer = BR[t]
+            return Renderer
+              ? <Renderer key={i} />
+              : <div key={i} style={{ height: 40, background: "rgba(255,255,255,0.03)", borderLeft: "2px solid rgba(255,255,255,0.08)" }} />
+          })}
+        </div>
       </div>
     </div>
   )
@@ -347,7 +374,10 @@ function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerProps) {
         </div>
 
         {/* Grid */}
-        <div style={{ padding: 24, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16, alignItems: "start" }}>
+        {/* `alignItems` fica no default (stretch): os cartões de uma linha
+            assumem a mesma altura, então descrições de tamanhos diferentes
+            não desalinham a grade. */}
+        <div style={{ padding: 24, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(196px, 1fr))", gap: 14 }}>
           {ALL.map((tpl) => {
             const isSelected = selected.id === tpl.id
             const blockTypes = (tpl.blocks as Array<{ type: string }>).map((b) => b.type)
@@ -361,10 +391,13 @@ function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerProps) {
                   borderRadius: 10,
                   border: `1.5px solid ${isSelected ? "rgba(166,124,255,0.6)" : "rgba(255,255,255,0.07)"}`,
                   background: isSelected ? "rgba(166,124,255,0.07)" : "rgba(255,255,255,0.02)",
-                  padding: "14px 14px 16px",
+                  padding: "12px 12px 14px",
                   cursor: "pointer",
                   position: "relative",
                   transition: "border-color 120ms, background 120ms",
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: 0,
                 }}
                 onMouseEnter={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)" }}
                 onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)" }}
@@ -373,22 +406,22 @@ function TemplatePicker({ selected, onSelect, onClose }: TemplatePickerProps) {
                   <div style={{ position: "absolute", top: 10, right: 10, width: 18, height: 18, borderRadius: "50%", background: "#A67CFF", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#fff", zIndex: 1 }}>✓</div>
                 )}
 
-                {/* Visual mockup */}
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+                {/* Moldura de altura fixa — mantém o alinhamento da grade */}
+                <div style={{ marginBottom: 12 }}>
                   <TemplateMockup blockTypes={blockTypes} />
                 </div>
 
                 {/* Info */}
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 5, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: isSelected ? "#C4AEFF" : "#F0EEF8" }}>{tpl.name}</span>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: isSelected ? "#C4AEFF" : "#F0EEF8", marginBottom: 6, lineHeight: 1.25 }}>
+                  {tpl.name}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 7 }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.08em", padding: "2px 6px", borderRadius: 4, background: `${catColor}18`, color: catColor, border: `1px solid ${catColor}30` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 7, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 8.5, fontWeight: 700, letterSpacing: "0.07em", padding: "2px 6px", borderRadius: 4, background: `${catColor}18`, color: catColor, border: `1px solid ${catColor}30`, whiteSpace: "nowrap" }}>
                     {tpl.categoryLabel.toUpperCase()}
                   </span>
-                  {blockTypes.length > 0 && <span style={{ fontSize: 10, color: "#3A3850" }}>{blockTypes.length} blocos</span>}
+                  {blockTypes.length > 0 && <span style={{ fontSize: 9.5, color: "#3A3850", whiteSpace: "nowrap" }}>{blockTypes.length} blocos</span>}
                 </div>
-                <p style={{ fontSize: 11, color: "#6B6780", margin: 0, lineHeight: 1.5 }}>{tpl.description}</p>
+                <p style={{ fontSize: 10.5, color: "#6B6780", margin: 0, lineHeight: 1.5 }}>{tpl.description}</p>
               </div>
             )
           })}
