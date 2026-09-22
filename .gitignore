@@ -49,3 +49,6 @@ CLAUDE.md
 *.jpeg
 *.jpg
 !public/**
+
+# Orchestration Console / Maestri
+.maestri/
