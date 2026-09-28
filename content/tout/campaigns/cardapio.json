@@ -1,0 +1,410 @@
+{
+  "slug": "cardapio",
+  "brand": "tout",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Gastrobar Tout · Cardápio",
+    "description": "Cardápio completo do Tout Motel, em Campinas: café da manhã, pratos preliminares, pratos principais, grill house, pizzas, sanduíches, sobremesas, drinks, vinhos e carta de bebidas. Servido na suíte.",
+    "canonical": "https://toutmotel.com.br/campanhas/cardapio",
+    "robots": "index"
+  },
+  "campaign": {
+    "name": "Cardápio Gastrobar Tout",
+    "range": { "start": "", "end": "", "premium": "", "label": "" },
+    "countdown": { "target": "" },
+    "lots": [],
+    "periods": [],
+    "dates": []
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": { "tag": "Gastrobar · Cardápio" }
+    },
+    {
+      "type": "menu",
+      "props": {
+        "eyebrow": "GASTROBAR",
+        "columns": [
+          {
+            "variant": "plain",
+            "sections": [
+              {
+                "title": "Pro dia nascer feliz",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Café Tout", "price": "R$ 75", "description": "Café, leite ou chá, suco de laranja natural, ovos mexidos, muçarela e peito de peru. Mini pão francês, pão doce e pão de queijo, manteiga, cream cheese e geleia." },
+                  { "name": "Café Tout Premium", "price": "R$ 115", "description": "Café, leite ou chá, suco de laranja natural, ovos mexidos, muçarela, peito de peru e bolo com calda de chocolate. Mini pão francês, pão doce, mini croissant, pão de queijo, manteiga, cream cheese e geleia de frutas. Mais um acompanhamento da seção \"Adicionais\" a sua escolha." },
+                  { "name": "Brunch Tout", "price": "R$ 145", "description": "Café, leite ou chá, mini garrafa de espumante, suco de laranja, ovos mexidos, bacon, muçarela, peito de peru, quiche de tomate confit e parmesão, e bolo com calda de chocolate. Mini pão francês, pão doce, mini croissant, pão de queijo, manteiga, cream cheese, e geleia de frutas. Mais um acompanhamento da seção \"Adicionais\" a sua escolha." }
+                ]
+              },
+              {
+                "title": "Adicionais",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Omelete", "price": "R$ 23", "description": "Omelete com muçarela e peito de peru ou muçarela com tomate." },
+                  { "name": "Tapioca", "price": "R$ 27", "description": "Tapioca de muçarela e peito de peru, muçarela com tomate e orégano ou Nutella com morangos." },
+                  { "name": "Misto quente", "price": "R$ 29", "description": "Pão ciabatta assado com muçarela e peito de peru." },
+                  { "name": "Seleção de frutas", "price": "R$ 21", "description": "Fatias de frutas frescas e selecionadas." },
+                  { "name": "Cesta de pães", "price": "R$ 29", "description": "Cesta de pães variados com mini pão francês, pão doce, mini croissant e pão de queijo quentinho, acompanhados de manteiga, cream cheese e geleia de frutas." }
+                ]
+              },
+              {
+                "title": "Para dividir",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Mix de pasteís", "qty": "(06 unidades)", "price": "R$ 37", "description": "Pastéis crocantes de queijo e carne servidos com vinagrete." },
+                  { "name": "Dadinho de tapioca", "price": "R$ 37", "description": "Cubos de tapioca e queijo coalho, servidos com geleia de pimenta biquinho." },
+                  { "name": "Frango crocante", "price": "R$ 43", "description": "Tiras de peito de frango empanadas e crocantes, servidas com molho ranch." },
+                  { "name": "Bolinho de carne de panela", "qty": "(06 unidades)", "price": "R$ 43", "description": "Bolinhos artesanais de carne de panela, servidos com molho de pimenta." },
+                  { "name": "Fritas com molho de queijo", "price": "R$ 39", "description": "Servidas com molho cremoso de queijo, páprica picante e bacon crocante." },
+                  { "name": "Tábua de queijos e frios", "price": "R$ 55", "description": "Acompanha torradas e geleia artesanal de frutas vermelhas." },
+                  { "name": "Iscas de tilápia", "price": "R$ 45", "description": "Iscas de Tilápia empanadas e crocantes servidas com molho Tartaro." }
+                ]
+              },
+              {
+                "title": "Tout acaba em Pizza",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Margherita", "price": "R$ 58", "description": "Molho de tomate, muçarela derretida, tomate fresco, azeitonas e manjericão." },
+                  { "name": "Calabresa", "price": "R$ 60", "description": "Molho de tomate, muçarela derretida, calabresa fatiada e cebola." },
+                  { "name": "Frango & Catupiry", "price": "R$ 60", "description": "Molho de tomate, muçarela derretida, frango desfiado e Catupiry." },
+                  { "name": "Quatro queijos", "price": "R$ 65", "description": "Molho de tomate, muçarela derretida, gorgonzola, parmesão e Catupiry." }
+                ]
+              }
+            ]
+          },
+          {
+            "variant": "panel",
+            "sections": [
+              {
+                "title": "Pratos Preliminares",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Tartar de salmão", "price": "R$ 43", "description": "Salmão em cubos, temperado com mostarda dijon, limão siciliano, ervas e shoyu, finalizado com azeite extra virgem e redução de balsâmico. Servido com torradas." },
+                  { "name": "Steak tartar com torradas", "price": "R$ 39", "description": "Filé mignon picado, temperado com mostarda dijon, alcaparras, pepino em conserva, cebola roxa e ervas frescas, finalizado com leve toque de especiarias. Servido com torradas." },
+                  { "name": "Mix de bruschetta", "qty": "(04 unidades)", "price": "R$ 35", "description": "Bruschettas em pão italiano tostado com duas combinações: tomate cereja confitado com muçarela derretida e mix de cogumelos finalizados no azeite." },
+                  { "name": "Salada mediterrânea", "price": "R$ 32", "description": "Mix de folhas com abobrinha grelhada, mussarela de búfula, tomate confitado com redução de aceto balsâmico." },
+                  { "name": "Salada supreme", "price": "R$ 31", "description": "Mix de folhas frescas, cenoura ralada, pepino, cebola roxa, tomate cereja, queijo parmesão, torradinhas e molho de mostarda e mel." }
+                ]
+              },
+              {
+                "title": "Ato principal",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Cupim braseado ao molho rústico", "price": "R$ 69", "description": "Cupim desfiado, servido com mandioca cremosa e farofa." },
+                  { "name": "Risoto de camarão", "price": "R$ 76", "description": "Risoto de camarão salteado, preparado com arroz arbóreo, tomate cereja e finalizado com molho de ervas." },
+                  { "name": "Salmão & fettuccine", "price": "R$ 79", "description": "Salmão grelhado servido com fettuccine ao molho de limão siciliano." },
+                  { "name": "Parmeggiana de filé mignon", "price": "R$ 75", "description": "Filé mignon empanado com molho de tomate caseiro, muçarela gratinada, acompanhado de arroz branco e batatas fritas." },
+                  { "name": "Filé mignon & risoto de parmesão", "price": "R$ 74", "description": "Filé mignon grelhado, servido com risoto de parmesão e finalizado com molho de ervas." },
+                  { "name": "Risoto pomodoro & gorgonzola", "price": "R$ 56", "description": "Risoto cremoso de tomate confit, finalizado com queijo gorgonzola e manjericão. Prato vegetariano." }
+                ]
+              },
+              {
+                "title": "Grill house",
+                "heading": "ornament",
+                "accent": "gold",
+                "subtitle": "corte especial e um acompanhamento à sua escolha",
+                "items": [
+                  { "name": "Picanha grelhada", "qty": "(220g)", "price": "R$ 79" },
+                  { "name": "Fraldinha grelhada", "qty": "(220g)", "price": "R$ 66" },
+                  { "name": "Filé mignon grelhado", "qty": "(220g)", "price": "R$ 75" },
+                  { "name": "Filé de frango grelhado", "qty": "(180g)", "price": "R$ 53" },
+                  { "name": "Tilápia grelhada", "qty": "(180g)", "price": "R$ 57" },
+                  { "name": "Salmão grelhado", "qty": "(180g)", "price": "R$ 72" }
+                ]
+              },
+              {
+                "title": "Acompanhamentos",
+                "heading": "plain",
+                "accent": "gold",
+                "subtitle": "R$ 16 por porção extra",
+                "items": [],
+                "inlineItems": ["Arroz e feijão", "Batata frita", "Mix de folhas", "Batata gratinada", "Legumes grelhados", "Farofa"]
+              }
+            ]
+          },
+          {
+            "variant": "plain",
+            "sections": [
+              {
+                "title": "Sanduíches com fritas",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Special Burguer", "price": "R$ 47", "description": "Blend de carnes, servido no pão de brioche com bacon, muçarela, tomate e alface." },
+                  { "name": "Ciabatta de filé de frango", "price": "R$ 38", "description": "Filé de frango grelhado com bacon, alface fresca e tomate no pão Cibatta, finalizado com maionese especial da casa." },
+                  { "name": "Boquinha de anjo de Toscana", "price": "R$ 35", "description": "Linguiça Toscana grelhada com muçarela e molho de ervas no pão Ciabatta." },
+                  { "name": "Boquinha de anjo de filé mignon", "price": "R$ 45", "description": "Filé mignon grelhado, muçarela com tomate e orégano no pão Ciabatta." }
+                ]
+              },
+              {
+                "title": "Adocica, meu amor",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Cheesecake de frutas vermelhas", "price": "R$ 37", "description": "Cheesecake com base de amêndoas, finalizado com calda de frutas vermelhas." },
+                  { "name": "Brownie com sorvete", "price": "R$ 37", "description": "Brownie de chocolate belga, servido com sorvete de creme e farofa crocante." },
+                  { "name": "Mousse de chocolate", "price": "R$ 29", "description": "Mousse de chocolate belga, servido com raspas de chocolate." },
+                  { "name": "Mousse de limão siciliano", "price": "R$ 28", "description": "Mousse de limão siciliano com farofa doce crocante, finalizado com chantilly." },
+                  { "name": "Taça de morangos com chantilly", "price": "R$ 25", "description": "Taça de Morangos frescos e Chantilly" },
+                  { "name": "Taça de sorvete", "price": "R$ 15", "description": "Taça de sorvete de creme com calda quente de chocolate." }
+                ]
+              },
+              {
+                "title": "Urgencinhas",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Absorvente", "price": "R$ 7" },
+                  { "name": "Kit de barbear", "price": "R$ 20" },
+                  { "name": "Cigarro", "price": "R$ 30", "description": "Marlboro Red, Golden ou Double Mix." },
+                  { "name": "Isqueiro", "price": "R$ 15", "description": "Mini Cricket" },
+                  { "name": "Cabo para celular", "price": "R$ 45", "description": "Iphone, Micro USB, Type C." },
+                  { "name": "Fonte para celular", "price": "R$ 45", "description": "Universal e veicular." }
+                ]
+              },
+              {
+                "title": "Leve para casa",
+                "heading": "ornament",
+                "accent": "accent",
+                "intro": "Itens danificados e mau uso da suíte serão cobrados no check-out. Caso o item não esteja listado aqui, consulte o preço na recepção.",
+                "items": [
+                  { "name": "Chinelo", "price": "R$ 50" },
+                  { "name": "Cinzeiro", "price": "R$ 35" },
+                  { "name": "Toalha de piso ou fronha", "price": "R$ 55" },
+                  { "name": "Toalha de rosto", "price": "R$ 70" },
+                  { "name": "Toalha de banho", "price": "R$ 95" },
+                  { "name": "Lençol", "price": "R$ 180" },
+                  { "name": "Roupão", "price": "R$ 250" },
+                  { "name": "Edredon", "price": "R$ 350" },
+                  { "name": "Travesseiro", "price": "R$ 150" },
+                  { "name": "Taça", "price": "R$ 35" }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "menu",
+      "props": {
+        "eyebrow": "GASTROBAR",
+        "columns": [
+          {
+            "variant": "plain",
+            "sections": [
+              {
+                "title": "Bebidas",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": []
+              },
+              {
+                "title": "Soft Drinks",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Água sem gás", "price": "R$ 8" },
+                  { "name": "Água com gás", "price": "R$ 8" },
+                  { "name": "Refrigerante", "price": "R$ 10", "description": "Cola-cola, Coca-cola Zero, Guaraná, Água Tônica" },
+                  { "name": "Água de coco", "price": "R$ 15" },
+                  { "name": "Sucos naturais", "price": "R$ 19", "description": "Laranja, limão, morango, abacaxi e abacaxi com hortelã" }
+                ]
+              },
+              {
+                "title": "Outros",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Gatorade*", "price": "R$ 17" },
+                  { "name": "Red Bull*", "price": "R$ 23" },
+                  { "name": "Smifnoff Ice*", "price": "R$ 23" },
+                  { "name": "Gelo para drinks*", "price": "R$ 5" },
+                  { "name": "Balde de gelo grande", "price": "R$ 15" }
+                ]
+              },
+              {
+                "title": "Cervejas",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Stella Artois", "price": "R$ 18" },
+                  { "name": "Heineken", "price": "R$ 18" }
+                ]
+              },
+              {
+                "title": "É dose",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Cachaça Santo Grau", "price": "R$ 20" },
+                  { "name": "Tequila Jose Cuervo Ouro", "price": "R$ 31" },
+                  { "name": "Licor 43", "price": "R$ 31" },
+                  { "name": "Vodka Ketel One", "price": "R$ 25" },
+                  { "name": "Whisky J.W. Red Label", "price": "R$ 35" },
+                  { "name": "Whisky J.W. Black Label", "price": "R$ 45" },
+                  { "name": "Gin Tanqueray", "price": "R$ 31" }
+                ]
+              },
+              {
+                "title": "Para durar mais",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Cachaça Santo Grau", "price": "R$ 179" },
+                  { "name": "Tequila Jose Cuervo Ouro", "price": "R$ 308" },
+                  { "name": "Licor 43", "price": "R$ 318" },
+                  { "name": "Vodka Ketel One", "price": "R$ 249" },
+                  { "name": "Whisky J.W. Red Label", "price": "R$ 259" },
+                  { "name": "Whisky J.W. Black Label", "price": "R$ 465" },
+                  { "name": "Gin Tanqueray", "price": "R$ 279" },
+                  { "name": "Cachaça Ypioca", "price": "R$ 69" }
+                ]
+              }
+            ]
+          },
+          {
+            "variant": "panel",
+            "sections": [
+              {
+                "title": "Bons drinks",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Caipirinha", "price": "R$ 35", "description": "Cachaça Ypióca e limão, abacaxi, abacaxi com hortelã, morango ou frutas vermelhas." },
+                  { "name": "Caipiroska", "price": "R$ 37", "description": "Vodka Ketel One e limão, abacaxi, abacaxi com hortelã, morango ou frutas vermelhas." },
+                  { "name": "Sakerinha", "price": "R$ 37", "description": "Sake e limão, abacaxi, abacaxi com hortelã, morango ou frutas vermelhas." },
+                  { "name": "Gin & Tônica", "price": "R$ 38", "description": "Gin Tanqueray, limão siciliano, alecrim e água tônica." },
+                  { "name": "Gin com frutas vermelhas", "price": "R$ 41", "description": "Gin Tanqueray, calda de frutas vermelhas e água tônica." },
+                  { "name": "Negroni", "price": "R$ 39", "description": "Gin Tanqueray, Campari e Vermouth Rosso." },
+                  { "name": "Moscow Mule", "price": "R$ 37", "description": "Vodka Ketel One, suco de limão e espuma de gengibre." },
+                  { "name": "Mojito", "price": "R$ 35", "description": "Rum, hortelã, suco de limão, calda de açúcar e água com gás." },
+                  { "name": "Batida de coco com maracujá", "price": "R$ 32", "description": "Cachaça, leite de coco, leite condensado, suco de limão e maracujá." },
+                  { "name": "Pink Lemonade (sem álcool)", "price": "R$ 22", "description": "Chá de hibisco, suco de limão, água com gás e espuma de gengibre." }
+                ]
+              },
+              {
+                "title": "Juntos e misturados",
+                "heading": "ornament",
+                "accent": "accent",
+                "subtitle": "balde de gelo incluso",
+                "items": [
+                  { "name": "Espumante, morangos e chantilly", "price": "R$ 179" },
+                  { "name": "6 Stellas Artois", "price": "R$ 99" },
+                  { "name": "6 Heineken", "price": "R$ 99" },
+                  { "name": "6 Smirnoff Ice", "price": "R$ 128" },
+                  { "name": "Whisky Double Black & 6 Red Bull *", "price": "R$ 572" },
+                  { "name": "Whisky Red Label & 6 Red Bull *", "price": "R$ 375" },
+                  { "name": "Vodka Ketel One & 6 Red Bull *", "price": "R$ 365" },
+                  { "name": "Gin Tanqueray & 6 tônicas", "price": "R$ 345" },
+                  { "name": "Gin Tanqueray & 6 Red Bull *", "price": "R$ 395" }
+                ]
+              }
+            ]
+          },
+          {
+            "variant": "plain",
+            "sections": [
+              {
+                "title": "Experiência tout",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Menu do chef", "price": "R$ 129", "description": "1 prato preliminar + 1 prato principal + 1 sobremesa" },
+                  { "name": "Tout Sensation", "price": "R$ 469", "description": "1 prato preliminar + 2 pratos principais + 2 sobremesas. 1 garrafa de espumante Casa Pedrucci Brut + café da manhã premium" }
+                ]
+              },
+              {
+                "title": "Vinho, vi, bebi",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": []
+              },
+              {
+                "title": "Tintos",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "K42 Carménère", "price": "R$ 128", "description": "Chile" },
+                  { "name": "Lorca Malbec", "price": "R$ 125", "description": "Argentina" },
+                  { "name": "Korta Reserve Cabernet Sauvignon", "price": "R$ 148", "description": "Chile" },
+                  { "name": "Miolo Seleção Tinto", "price": "R$ 98", "description": "Portugal" },
+                  { "name": "Monte do Estevalinho", "price": "R$ 132", "description": "Portugal" }
+                ]
+              },
+              {
+                "title": "Rosé",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Miolo Seleção Rosé", "price": "R$ 89", "description": "Brasil" },
+                  { "name": "Alma e Coração Rosé", "price": "R$ 145", "description": "Portugal" }
+                ]
+              },
+              {
+                "title": "Brancos",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Lorca Chardonnay", "price": "R$ 125", "description": "Argentina" },
+                  { "name": "Inabalável Branco", "price": "R$ 145", "description": "Portugal" }
+                ]
+              },
+              {
+                "title": "Espumantes",
+                "heading": "plain",
+                "accent": "accent",
+                "items": [
+                  { "name": "Casa Pedrucci Brut Tradicional", "price": "R$ 149" },
+                  { "name": "Casa Pedrucci Brut Rosé", "price": "R$ 149" },
+                  { "name": "Casa Pedrucci Moscatel", "price": "R$ 141" },
+                  { "name": "Casa Perini", "qty": "375ml", "price": "R$ 75" }
+                ]
+              }
+            ]
+          }
+        ],
+        "footnote": "* Consulte os sabores disponíveis"
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Tout Motel — cardápio servido na sua suíte, em Campinas.",
+        "columns": [
+          {
+            "title": "Unidade",
+            "links": [
+              { "label": "Tout · Campinas", "href": "https://toutmotel.com.br/pt-BR/campinas" }
+            ]
+          },
+          {
+            "title": "Reservas",
+            "links": [
+              { "label": "Reservar agora", "href": "https://toutmotel.com.br/pt-BR" },
+              { "label": "Concierge 24h", "href": "https://wa.me/551931996531" }
+            ]
+          },
+          {
+            "title": "Institucional",
+            "links": [
+              { "label": "@tout.motel", "href": "https://www.instagram.com/tout.motel" },
+              { "label": "Política de privacidade", "href": "https://toutmotel.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso", "href": "https://toutmotel.com.br/pt-BR/terms" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Tout Motel. Todos os direitos reservados.",
+        "ageNotice": "Experiência para maiores de 18 anos."
+      }
+    }
+  ]
+}
