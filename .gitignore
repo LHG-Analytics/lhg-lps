@@ -52,3 +52,6 @@ CLAUDE.md
 
 # Orchestration Console / Maestri
 .maestri/
+
+# Cardápios em PDF (insumo para transcrição, não vai pro build)
+docs/cardapios/

@@ -1,0 +1,145 @@
+{
+  "slug": "cardapio",
+  "brand": "andardecima",
+  "lang": "pt-BR",
+  "meta": {
+    "title": "Gastrobar Andar de Cima · Cardápio",
+    "description": "Cardápio da gastronomia 24 horas do Andar de Cima Suítes, em São Paulo: café da manhã, petiscos para dividir, pizzas, lanches, pratos principais e sobremesas. Peça pelo tablet ou ligue na recepção.",
+    "canonical": "https://andardecimasuites.com.br/campanhas/cardapio",
+    "robots": "index"
+  },
+  "campaign": {
+    "name": "Cardápio Gastrobar Andar de Cima",
+    "range": { "start": "", "end": "", "premium": "", "label": "Gastronomia 24 horas" },
+    "countdown": { "target": "" },
+    "lots": [],
+    "periods": [],
+    "dates": []
+  },
+  "blocks": [
+    {
+      "type": "nav",
+      "props": { "tag": "Gastronomia 24 horas · Cardápio" }
+    },
+    {
+      "type": "menu",
+      "props": {
+        "eyebrow": "GASTRONOMIA 24 HORAS",
+        "columns": [
+          {
+            "variant": "plain",
+            "sections": [
+              {
+                "title": "Para dar água",
+                "titleEmphasis": "na boca",
+                "heading": "ornament",
+                "accent": "accent",
+                "intro": "Em qualquer momento do dia, seus desejos podem ser saciados com a nossa deliciosa gastronomia. Faça seu pedido pelo tablet ou ligue na recepção.",
+                "items": []
+              },
+              {
+                "title": "Para acordar",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Café da manhã", "price": "R$ 75", "description": "Café, leite e suco de laranja. Cesta de pães. Ovos mexidos. Manteiga, requeijão e géleia. Queijo muçarela e peito de peru." }
+                ]
+              },
+              {
+                "title": "Para dividir",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Batata frita canoa", "price": "R$ 25" },
+                  { "name": "Sticks de tapioca", "price": "R$ 39", "description": "acompanha geleia de pimenta biquinho." },
+                  { "name": "Iscas de filet mignon", "price": "R$ 79", "description": "acompanha molho quatro queijos e torrada." }
+                ]
+              }
+            ]
+          },
+          {
+            "variant": "panel",
+            "sections": [
+              {
+                "title": "Pizzas",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Pizza de margherita", "price": "R$ 48" },
+                  { "name": "Pizza de calabresa", "price": "R$ 48" },
+                  { "name": "Pizza de alho poró e shitake", "price": "R$ 52" },
+                  { "name": "Pizza de 4 queijos", "price": "R$ 52" }
+                ]
+              },
+              {
+                "title": "Lanches",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Misto quente", "price": "R$ 26", "description": "peito de peru e muçarela." },
+                  { "name": "Mini hambúrguer", "price": "R$ 32", "description": "2 unidades, acompanha batata frita." },
+                  { "name": "Mini hambúrguer com bacon", "price": "R$ 32", "description": "2 unidades, acompanha batata frita." }
+                ]
+              }
+            ]
+          },
+          {
+            "variant": "plain",
+            "sections": [
+              {
+                "title": "Pratos principais",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Couscous marroquino", "price": "R$ 60", "description": "com filé de frango e legumes grelhados." },
+                  { "name": "Filé mignon à parmegiana", "price": "R$ 69", "description": "acompanha arroz branco e batata rústica." },
+                  { "name": "Strogonoff de carne", "price": "R$ 69", "description": "acompanha arroz branco e batata palha." },
+                  { "name": "Salmão grelhado", "price": "R$ 74", "description": "com purê de mandioquinha e legumes." }
+                ]
+              },
+              {
+                "title": "Sobremesas",
+                "heading": "ornament",
+                "accent": "accent",
+                "items": [
+                  { "name": "Brownie", "price": "R$ 24", "description": "com sorvete de baunilha e castanha de caju." },
+                  { "name": "Sorvete de baunilha", "price": "R$ 11", "description": "1 bola." }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "type": "footer",
+      "props": {
+        "tagline": "Andar de Cima Suítes — gastronomia 24 horas, servida na sua suíte.",
+        "columns": [
+          {
+            "title": "Unidade",
+            "links": [
+              { "label": "Andar de Cima · São Paulo", "href": "https://andardecimasuites.com.br/pt-BR/sao-paulo" }
+            ]
+          },
+          {
+            "title": "Reservas",
+            "links": [
+              { "label": "Faça sua reserva", "href": "https://andardecimasuites.com.br/pt-BR" },
+              { "label": "Concierge 24h", "href": "https://wa.me/551151960787" }
+            ]
+          },
+          {
+            "title": "Institucional",
+            "links": [
+              { "label": "Política de privacidade", "href": "https://andardecimasuites.com.br/pt-BR/privacy-policy" },
+              { "label": "Termos de uso", "href": "https://andardecimasuites.com.br/pt-BR/terms" }
+            ]
+          }
+        ],
+        "copyright": "© 2026 Andar de Cima Suítes. Todos os direitos reservados.",
+        "ageNotice": "Experiência para maiores de 18 anos."
+      }
+    }
+  ]
+}
