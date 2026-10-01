@@ -100,9 +100,8 @@ async function getRouteMap(): Promise<RouteCache> {
           entry,
         });
         // Segmento que o CDN repassa: o que sobra do base_path depois do
-        // prefixo consumido pela regra de rewrite do domínio. O prefixo é
-        // `/campanhas/` na maioria das marcas e `/campanha/` no Altana.
-        const publicSeg = basePath.replace(/^\/campanhas?\//, "").replace(/^\//, "");
+        // prefixo consumido pela regra de rewrite do domínio.
+        const publicSeg = basePath.replace(/^\/campanhas\//, "").replace(/^\//, "");
         if (publicSeg && publicSeg !== row.slug) {
           brandPathMap.set(`${row.brand_id}/${publicSeg}`, row.slug);
         }
