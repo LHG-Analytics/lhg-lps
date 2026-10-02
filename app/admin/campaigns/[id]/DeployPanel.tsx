@@ -21,24 +21,35 @@ interface Props {
   open: boolean;
   onClose: () => void;
   campaignId: string;
+  /** `brands.id` da marca dona da campanha. Vai no Target da regra do Amplify
+   * (`/<brandId>/<*>`): é o primeiro segmento que o proxy e a rota
+   * `app/[brand]/[campaign]` leem para saber de que marca é a requisição. */
+  brandId: string;
   /** Domínio da marca dona da campanha — a URL pública se monta a partir dele. */
   brandDomain: string;
   initial: DeployConfig;
   onSaved: (cfg: DeployConfig) => void;
 }
 
-/** Domínios onde a regra wildcard `/campanhas/<*>` → Vercel já existe no
- * Amplify. Espelha o estado da infra, que é configurada por domínio pela Softo:
- * uma marca fora desta lista precisa da regra criada antes de publicar em
- * subdiretório, senão a URL responde 404 mesmo com tudo certo no CMS.
+/** Domínios onde a regra `/campanhas/<*>` → `https://lhg-lps.vercel.app/<brandId>/<*>`
+ * já existe no Amplify, com a marca embutida no Target. Espelha o estado da
+ * infra, que é configurada por domínio pela Softo: uma marca fora desta lista
+ * precisa da regra criada antes de publicar em subdiretório, senão a URL
+ * responde 404 mesmo com tudo certo no CMS.
+ *
+ * Os cinco apexes respondem pelo CloudFront do Amplify (site institucional
+ * Next, com redirect de idioma para /pt-BR). O Target PRECISA embutir a marca:
+ * o Amplify sobrescreve o Host e a Vercel não repassa o domínio original, então
+ * uma regra genérica (`/campanhas/<*>` sem a marca) chega indistinguível e o
+ * proxy entrega a primeira campanha publicada com aquele base_path — foi
+ * exatamente o bug do cardápio do Altana servindo o do Lush (2026-10-01).
  * Ao habilitar um domínio novo, adicione-o aqui. */
 const CAMPANHAS_WILDCARD_DOMAINS = [
   "lushmotel.com.br",
   "andardecimasuites.com.br",
   "toutmotel.com.br",
   "lemonmotel.com.br",
-  // altanamotel.com.br fica fora: o dominio responde por LiteSpeed, nao pela
-  // Vercel, entao subdiretorio ainda nao serve ali.
+  "altanamotel.com.br",
 ];
 
 const fld: React.CSSProperties = {
@@ -52,7 +63,7 @@ const card: React.CSSProperties = {
   borderRadius: 8, padding: 14,
 };
 
-export function DeployPanel({ open, onClose, campaignId, brandDomain, initial, onSaved }: Props) {
+export function DeployPanel({ open, onClose, campaignId, brandId, brandDomain, initial, onSaved }: Props) {
   const [mode, setMode]           = useState<DeployMode>(initial.mode);
   const [domain, setDomain]       = useState(initial.domain);
   const [basePath, setBasePath]   = useState(initial.basePath);
@@ -309,7 +320,8 @@ export function DeployPanel({ open, onClose, campaignId, brandDomain, initial, o
                 <div style={{ ...card, borderColor: "rgba(46,184,122,0.25)", display: "flex", flexDirection: "column", gap: 8 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#2EB87A" }}>✓ Pronto para publicar</div>
                   <div style={{ fontSize: 11, color: "#8E8AA8", lineHeight: 1.6 }}>
-                    A regra <code style={{ color: "#C4AEFF" }}>/campanhas/{"<*>"}</code> já está configurada no Amplify
+                    A regra <code style={{ color: "#C4AEFF" }}>/campanhas/{"<*>"}</code> →{" "}
+                    <code style={{ color: "#C4AEFF" }}>https://{vercelHost}/{brandId}/{"<*>"}</code> já está configurada no Amplify
                     de <strong style={{ color: "#F0EEF8" }}>{brandDomain}</strong> e cobre qualquer slug futuro.
                     Nenhuma configuração adicional é necessária.
                   </div>
@@ -329,11 +341,25 @@ export function DeployPanel({ open, onClose, campaignId, brandDomain, initial, o
                   </div>
                   <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8 }}>
                     <div style={{ fontSize: 10, color: "#8E8AA8", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.07em" }}>
-                      Peça à Softo esta regra em {brandDomain}
+                      Peça à Softo esta regra em {brandDomain} (Amplify → Rewrites and redirects)
                     </div>
-                    <Row label="Tipo" value="Rewrite (200)" />
-                    <Row label="Origem" value="/campanhas/<*>" />
-                    <Row label="Destino" value={`https://${vercelHost}/campanhas/<*>`} />
+                    <Row label="Source address" value="/campanhas/<*>" />
+                    <Row label="Target address" value={`https://${vercelHost}/${brandId}/<*>`} />
+                    <Row label="Type" value="200 (Rewrite)" />
+                    <Row label="Country code" value="vazio" />
+                  </div>
+                  <div style={{ fontSize: 10, color: "#8E8AA8", lineHeight: 1.6 }}>
+                    <strong style={{ color: "#F0A84A" }}>O Target precisa ter a marca</strong> (
+                    <code style={{ color: "#C4AEFF" }}>/{brandId}/</code>) e <strong>não</strong> pode repetir{" "}
+                    <code style={{ color: "#C4AEFF" }}>campanhas</code>: o <code style={{ color: "#C4AEFF" }}>{"<*>"}</code> captura
+                    só o que vem depois de <code style={{ color: "#C4AEFF" }}>/campanhas/</code>. O Amplify sobrescreve o Host e a
+                    Vercel não repassa o domínio original, então sem a marca no caminho a requisição chega igual à de qualquer outra
+                    unidade e o site passa a mostrar a LP de outra marca.
+                  </div>
+                  <div style={{ fontSize: 10, color: "#8E8AA8", lineHeight: 1.6 }}>
+                    No Amplify a <strong>primeira regra que casa vence</strong>: editar a regra existente em vez de criar outra com o
+                    mesmo Source. Se houver também uma regra para <code style={{ color: "#C4AEFF" }}>/pt-BR/campanhas/{"<*>"}</code>, ela
+                    precisa do mesmo Target. A mudança vale sem novo deploy, mas pode levar alguns minutos para propagar.
                   </div>
                   <div style={{ fontSize: 10, color: "#55526A", lineHeight: 1.5 }}>
                     Regra criada uma única vez por domínio — depois dela, toda campanha nova em{" "}

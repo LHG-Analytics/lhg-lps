@@ -51,6 +51,10 @@ E configurar o domínio no painel do projeto Vercel.
 2. Criar `components/blocks/<Block>.tsx` (Server por default; `"use client"` só se houver estado).
 3. Plugar em [components/BlockRenderer.tsx](components/BlockRenderer.tsx). O switch é exhaustive — TS reclama se faltar.
 
+## Roteamento por domínio (Amplify → Vercel)
+
+A URL pública `<dominio-da-marca>/campanhas/<slug>` chega aqui por uma regra de rewrite no Amplify de cada marca, cujo Target **precisa embutir a marca**: `https://lhg-lps.vercel.app/<brand_id>/<*>`. Uma regra genérica (sem a marca) faz o domínio mostrar a LP de outra marca. O padrão completo, quem configura o quê e o roteiro de diagnóstico estão em [docs/roteamento-amplify.md](docs/roteamento-amplify.md).
+
 ## Variáveis de ambiente
 
 ```
@@ -92,7 +96,7 @@ lib/
   amenities.tsx                 ICONS + LABELS dos chips de comodidade
 public/brands/<brand>/<asset>   Imagens, vídeos, logos
 scripts/validate-content.ts     CI gate
-vercel.json                     Rewrites de subdomínio
+vercel.json                     Só o $schema — nenhum rewrite; o roteamento por domínio/path vive em proxy.ts
 ```
 
 Detalhes de convenções, regras (zero hardcode em componente etc.) e onde NÃO mexer estão em [CLAUDE.md](CLAUDE.md).

@@ -1244,6 +1244,7 @@ export function CampaignEditor({ campaignId, brandId, brandDomain, slug, initial
         open={deployOpen}
         onClose={() => setDeployOpen(false)}
         campaignId={campaignId}
+        brandId={brandId}
         brandDomain={brandDomain || `${brandId}.com.br`}
         initial={deploy}
         onSaved={(cfg) => setDeploy(cfg)}
